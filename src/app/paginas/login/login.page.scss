@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Holtwood+One+SC&family=Lily+Script+One&family=Rubik+Mono+One&family=Ultra&display=swap');
+
+h1
+{
+    font-family: 'Holtwood One SC', serif;
+    font-size: 30px;
+    text-align: center;
+    color: #FC3B3B;
+}
+
+.accesos-rapidos
+{
+    font-family: 'Holtwood One SC', serif;
+    font-size: 20px;
+    --text-align: center;
+    color: #FC3B3B;
+}
+
+.boton-redondo ion-button
+{
+    background-color: #FC3B3B;
+    --background: transparent;
+    --box-shadow: none;
+    font-family: 'Holtwood One SC', serif;
+    font-size: 20px;
+    height: 150px;
+    width: 150px;
+    margin: 30px 0;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 10px 0 #be2c2c;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.boton-redondo ion-button:active {
+    box-shadow: none;
+    transform: translateY(10px);
+  }
+
+.boton-redondo-chico ion-button
+{
+    background-color: #FC3B3B;
+    --background: transparent;
+    font-family: 'Holtwood One SC', serif;
+    font-size: 10px;
+    height: 75px;
+    width: 75px;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 5px 0 #be2c2c;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.boton-redondo-chico ion-button:active {
+  box-shadow: none;
+  transform: translateY(5px);
+}
+
+ion-item
+{
+    width: 90%;
+    border-radius: 40px;
+    margin: 5px;
+}
+
+.pantalla
+{
+    height: 100%;
+    background-color:#FFB8B8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+form
+{
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
+}
+
+small
+{
+    color:red;
+}
+
+.usuarios
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    background-color:#FFB8B8;
+    width: 70%;
+    margin-bottom: 25px;
+}
+
+.input
+{
+    --background: #FD7E7E;
+    color: white;
+}
