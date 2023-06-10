@@ -31,7 +31,7 @@
     "@capacitor/status-bar": "4.1.1",
     "@ionic/angular": "^7.0.0",
     "cordova-plugin-vibration": "^3.1.1",
-    "firebase": "^9.21.0",
+    "firebase": "^9.22.2",
     "ionicons": "^7.0.0",
     "ngx-window-token": "^7.0.0",
     "rxjs": "~7.5.0",
