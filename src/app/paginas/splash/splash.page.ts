@@ -10,7 +10,7 @@ export class SplashPage implements OnInit {
 
   constructor(private navCtrl: NavController) {
     setTimeout(()=>{
-      this.navCtrl.navigateRoot(['/home']);
+      this.navCtrl.navigateRoot(['/login']);
     },5600);
   }
 

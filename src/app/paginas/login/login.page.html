@@ -1,34 +1,49 @@
 <ion-content [fullscreen]="true">
   <div class="pantalla">
-    <h1>INICIAR SESIóN</h1>
-    <form>
-      <ion-item class="input">
-        <ion-icon name="mail-outline" slot="start"></ion-icon>
-        <ion-label position="floating">Correo electrónico</ion-label>
-        <ion-input type="email"></ion-input>
-      </ion-item>
-      <div>
-        <small>
-          &#9888; Debe ingresar un correo electrónico
-        </small>
-        <small>
-          &#9888; El correo electrónico no tiene un formato válido (ejemplo@ejemplo.com)
-        </small>
-      </div>
-      <ion-item class="input">
-        <ion-icon name="key-outline" slot="start"></ion-icon>
-        <ion-label position="floating">Contraseña</ion-label>
-        <ion-input type="password"></ion-input>
-      </ion-item>
-      <div>
-        <small>
-          &#9888; Debe ingresar una contraseña
-        </small>
-      </div>
-      <div class="boton-redondo">
-        <ion-button type="submit">INGRESAR</ion-button>
-      </div>
+    <div class="clara-huevo">
+      <h1>Iniciar sesión</h1>
+      <form [formGroup]="formLogin">
 
-    </form> 
+        <ion-item>
+          <ion-label position="floating">Correo electrónico</ion-label>
+          <ion-input formControlName="email" type="email"></ion-input>
+        </ion-item>
+        <small
+          *ngIf="
+          formLogin.controls['email'].errors?.['required'] &&
+          (formLogin.controls['email'].touched)">
+          El correo electrónico es requerido
+        </small>
+        <small
+          *ngIf="
+          formLogin.controls['email'].errors?.['pattern'] &&
+          formLogin.controls['email'].touched">
+          El correo electrónico no tiene un formato válido
+        </small>
+
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input formControlName="password" type="password"></ion-input>
+        </ion-item>
+
+        <small
+          *ngIf="
+          formLogin.controls['password'].errors?.['required'] &&
+          (formLogin.controls['password'].touched)">
+          La contraseña es requerida
+        </small>
+        <small
+          *ngIf="
+          formLogin.controls['password'].errors?.['pattern'] &&
+          (formLogin.controls['password'].touched)">
+          La contraseña requiere mínimo 6 caracteres
+        </small>
+        
+        <div class="yema-huevo">
+          <ion-button type="submit">INGRESAR</ion-button>
+        </div>
+      </form> 
+    </div>
   </div>
+  <!-- <app-spinner></app-spinner> -->
 </ion-content>
