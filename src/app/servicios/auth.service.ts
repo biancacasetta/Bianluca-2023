@@ -10,7 +10,7 @@ export class AuthService {
 
   constructor( private router: Router, private angularFireAuth: AngularFireAuth) { }
 
-  inicarSesion(email:string,contraseña:string)
+  iniciarSesion(email:string,contraseña:string)
   {
     try {
     this.angularFireAuth
@@ -47,7 +47,6 @@ export class AuthService {
         console.log(error.message);
       }
     }
-    //asd
   }
 
 
