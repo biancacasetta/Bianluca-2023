@@ -70,3 +70,10 @@ small
     color: white;
     padding: 0 5px;
 }
+
+.hidden
+{
+    position: absolute;
+    z-index: 100;
+    display: none;
+}

@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { LoginPageRoutingModule } from './login-routing.module';
 
 import { LoginPage } from './login.page';
+import { AuthService } from 'src/app/servicios/auth.service';
+import { SpinnerComponent } from 'src/app/componentes/spinner/spinner.component';
 
 @NgModule({
   imports: [
@@ -17,6 +19,7 @@ import { LoginPage } from './login.page';
     FormsModule,
     ReactiveFormsModule 
   ],
-  declarations: [LoginPage]
+  providers: [AuthService],
+  declarations: [LoginPage, SpinnerComponent]
 })
 export class LoginPageModule {}
