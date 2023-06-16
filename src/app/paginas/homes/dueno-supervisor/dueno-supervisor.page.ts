@@ -26,7 +26,6 @@ export class DuenoSupervisorPage implements OnInit {
     this.firebaseServ.obtenerColeccion('clientes-pendientes').subscribe((res)=>{
       this.listaClientes = res;
     });
-    console.log(this.listaClientes);
   }
 
   aceptarCliente(cliente:any)
