@@ -21,12 +21,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                  <td>a</td>
-                  <td>b</td>
-                  <td>c</td>
+                <tr *ngFor="let cliente of listaClientes">
+                  <td><img [src]="cliente.imagen" alt="Imagen cliente"></td>
+                  <td>{{cliente.nombre}}<br>{{cliente.apellido}}</td>
+                  <td>{{cliente.email}}</td>
                   <td>
-                    <div class="botonera" *ngFor="let cliente of listaClientes">
+                    <div class="botonera">
                       <ion-button class="boton-aceptar" (click)="aceptarCliente(cliente)"></ion-button>
                       <ion-button class="boton-denegar" (click)="rechazarCliente(cliente)"></ion-button>
                     </div>
