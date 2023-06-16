@@ -13,7 +13,6 @@ import { SpinnerComponent } from 'src/app/componentes/spinner/spinner.component'
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     IonicModule,
     LoginPageRoutingModule,
     FormsModule,
