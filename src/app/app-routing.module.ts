@@ -23,8 +23,6 @@ const routes: Routes = [
     path: 'dueno-supervisor',
     loadChildren: () => import('./paginas/homes/dueno-supervisor/dueno-supervisor.module').then( m => m.DuenoSupervisorPageModule)
   }
-
-  
 ];
 
 @NgModule({
