@@ -1,0 +1,11 @@
+<ion-content [fullscreen]="true">
+    
+    <div class="pantalla">
+      <div class="clara-huevo">
+        <app-registro-cliente></app-registro-cliente> 
+      </div>
+    </div>
+    <div class="contenedor-spinner" *ngIf="spinner">
+      <app-spinner></app-spinner>
+    </div>
+  </ion-content>
