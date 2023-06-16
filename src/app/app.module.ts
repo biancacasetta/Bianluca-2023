@@ -11,11 +11,13 @@ import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { SpinnerModule } from './componentes/spinner/spinner.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule,
      IonicModule.forRoot(), 
+     SpinnerModule,
      AppRoutingModule, 
      provideFirebaseApp(() => initializeApp(environment.firebase)), 
      provideAuth(() => getAuth()), 

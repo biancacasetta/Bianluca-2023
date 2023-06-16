@@ -8,7 +8,7 @@ import { LoginPageRoutingModule } from './login-routing.module';
 
 import { LoginPage } from './login.page';
 import { AuthService } from 'src/app/servicios/auth.service';
-import { SpinnerComponent } from 'src/app/componentes/spinner/spinner.component';
+import { SpinnerModule } from 'src/app/componentes/spinner/spinner.module';
 
 @NgModule({
   imports: [
@@ -16,9 +16,10 @@ import { SpinnerComponent } from 'src/app/componentes/spinner/spinner.component'
     IonicModule,
     LoginPageRoutingModule,
     FormsModule,
+    SpinnerModule,
     ReactiveFormsModule 
   ],
   providers: [AuthService],
-  declarations: [LoginPage, SpinnerComponent]
+  declarations: [LoginPage]
 })
 export class LoginPageModule {}
