@@ -16,6 +16,6 @@ import { SpinnerComponent } from '../componentes/spinner/spinner.component';
     IonicModule,
     HomePageRoutingModule
   ],
-  declarations: [HomePage,SpinnerComponent]
+  declarations: [HomePage]
 })
 export class HomePageModule {}

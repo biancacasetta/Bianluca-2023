@@ -1,0 +1,44 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">DUEÑO/SUPERVISOR</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="tabla">
+    <div class="encabezado-tabla">
+        <img class="logo" src="../../../../assets/icon/icon.png" alt="Icono empresa">
+        <h3>Clientes en espera</h3>
+    </div>
+    <div class="seccion-tabla">
+        <table>
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>a</td>
+                  <td>b</td>
+                  <td>c</td>
+                  <td>
+                    <div class="botonera" *ngFor="let cliente of listaClientes">
+                      <ion-button class="boton-aceptar" (click)="aceptarCliente(cliente)"></ion-button>
+                      <ion-button class="boton-denegar" (click)="rechazarCliente(cliente)"></ion-button>
+                    </div>
+                  </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="contenedor-pop-up" class="esconder pop-up">
+        <h4>Razones del rechazo</h4>
+        <input class="input-razones" type="text" placeholder="Razones...">
+        <ion-button class="boton-razones" (click)="cerrarPopUp()">Enviar</ion-button>
+    </div>
+  </div>
+</ion-content>
