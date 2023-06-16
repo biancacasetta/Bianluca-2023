@@ -18,8 +18,13 @@ const routes: Routes = [
   {
     path: 'registro',
     loadChildren: () => import('./paginas/registro/registro.module').then( m => m.RegistroPageModule)
+  },
+  {
+    path: 'dueno-supervisor',
+    loadChildren: () => import('./paginas/homes/dueno-supervisor/dueno-supervisor.module').then( m => m.DuenoSupervisorPageModule)
   }
 
+  
 ];
 
 @NgModule({

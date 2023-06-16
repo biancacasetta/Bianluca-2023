@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase/compat/app';
 
@@ -8,7 +9,8 @@ import * as firebase from 'firebase/compat/app';
 })
 export class AuthService {
 
-  constructor( private router: Router, private angularFireAuth: AngularFireAuth) { }
+  constructor( private router: Router, private angularFireAuth: AngularFireAuth,
+    private angularFirestore: AngularFirestore) { }
 
   iniciarSesion(email:string,contraseña:string)
   {
@@ -33,20 +35,20 @@ export class AuthService {
     }
   }
 
-    cerrarSesion()
+  cerrarSesion()
+  {
+    try
     {
-      try
-      {
-        this.angularFireAuth.signOut().then(() => {
-          setTimeout(() => {
-            console.log("Sesión cerrada exitosamente.");
-            this.router.navigate(['/login']);
-          }, 2000);
-        });
-      } catch (error:any) {
-        console.log(error.message);
-      }
+      this.angularFireAuth.signOut().then(() => {
+        setTimeout(() => {
+          console.log("Sesión cerrada exitosamente.");
+          this.router.navigate(['/login']);
+        }, 2000);
+      });
+    } catch (error:any) {
+      console.log(error.message);
     }
   }
+}
 
 
