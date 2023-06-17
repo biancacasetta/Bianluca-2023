@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 
 @Component({
   selector: 'app-registro',
@@ -8,11 +10,69 @@ import { Component, OnInit } from '@angular/core';
 export class RegistroPage implements OnInit {
 
   spinner: boolean = false;
+  modoRegistro: boolean = true;
+  scannerActive: boolean = false;
+  infoDni:any;
 
-  constructor() {}
+  constructor(private vibration: Vibration) {}
 
   ngOnInit() {
   }
+
+  cambiarModo() {
+    this.modoRegistro = !this.modoRegistro;
+  }
+
+  async checkPermission() {
+    return new Promise(async (resolve, reject) => {
+      const status = await BarcodeScanner.checkPermission({ force: true });
+      if (status.granted) {
+        resolve(true);
+      } else if (status.denied) {
+        BarcodeScanner.openAppSettings();
+        resolve(false);
+      }
+    });
+  }
+
+  //PARA USAR DESDE LA PC
+  /*async startScanner ()  {
+    this.scannerActive = true;
+    await BarcodeScanner.checkPermission({ force: true });
+    BarcodeScanner.hideBackground();
+    this.resultado = await BarcodeScanner.startScan();
+    if(this.resultado.hasContent) {
+      console.log(this.resultado.content);
+      console.log("hay contenido");
+    }
+  };*/
+
+  //PARA USAR DESDE EL CELULAR
+  async startScanner() {
+    this.scannerActive = true;
+    const allowed = await this.checkPermission();
+    if (allowed) {
+      BarcodeScanner.hideBackground();
+      const resultado = await BarcodeScanner.startScan();
+      if (resultado.hasContent) {
+        this.infoDni = resultado.content.split('@');
+        alert(this.infoDni);
+        this.vibration.vibrate(300);
+        this.scannerActive = false;
+      } else {
+        alert('NO DATA FOUND!');
+      }
+    } else {
+      alert('NOT ALLOWED!');
+    }
+  }
+
+  stopScan()  {
+    this.scannerActive = false;
+    BarcodeScanner.showBackground();
+    BarcodeScanner.stopScan();
+  }
+
 
 
 }

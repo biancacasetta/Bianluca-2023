@@ -7,6 +7,8 @@ import { RegistroPage } from './registro.page';
 
 import { RegistroClienteComponent } from 'src/app/componentes/registro-cliente/registro-cliente.component';
 import { SpinnerModule } from 'src/app/componentes/spinner/spinner.module';
+import { ModoAnonimoComponent } from 'src/app/componentes/modo-anonimo/modo-anonimo.component';
+import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 
 @NgModule({
   imports: [
@@ -17,6 +19,7 @@ import { SpinnerModule } from 'src/app/componentes/spinner/spinner.module';
     RegistroPageRoutingModule,
     ReactiveFormsModule 
   ],
-  declarations: [RegistroPage, RegistroClienteComponent]
+  providers: [Vibration],
+  declarations: [RegistroPage, RegistroClienteComponent, ModoAnonimoComponent]
 })
 export class RegistroPageModule {}

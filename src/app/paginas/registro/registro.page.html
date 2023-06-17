@@ -1,11 +1,24 @@
-<ion-content [fullscreen]="true">
-    
+<ion-content [fullscreen]="true" *ngIf="!scannerActive">
     <div class="pantalla">
-      <div class="clara-huevo">
-        <app-registro-cliente></app-registro-cliente> 
+
+      <div class="toggle">
+        <ion-label>Modo<br>registro</ion-label>
+        <ion-toggle (ionChange)="cambiarModo()"></ion-toggle>
+        <ion-label>Modo<br>anónimo</ion-label>
       </div>
+
+      <app-registro-cliente *ngIf="modoRegistro" (escanearDNI)="startScanner()" [resultadoScanDni]="infoDni"></app-registro-cliente>
+      <app-modo-anonimo *ngIf="!modoRegistro"></app-modo-anonimo>
+
     </div>
     <div class="contenedor-spinner" *ngIf="spinner">
       <app-spinner></app-spinner>
     </div>
   </ion-content>
+
+<div *ngIf="scannerActive" class="pantalla-scan">
+    <div class="scan-box"></div>
+    <ion-button (click)="stopScan()" class="boton-cerrar">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+</div>
