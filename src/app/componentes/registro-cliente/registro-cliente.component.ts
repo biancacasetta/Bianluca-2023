@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/servicios/auth.service';
 
@@ -8,6 +8,8 @@ import { AuthService } from 'src/app/servicios/auth.service';
   styleUrls: ['./registro-cliente.component.scss'],
 })
 export class RegistroClienteComponent  implements OnInit {
+  @Output() escanearDNI: EventEmitter<void> = new EventEmitter<void>();
+  @Input() resultadoScanDni: any;
 
   //@ts-ignore
   formRegistro:FormGroup;
@@ -27,6 +29,11 @@ export class RegistroClienteComponent  implements OnInit {
   
   ngOnInit() {}
 
+  escanearDni()
+  {
+    this.escanearDNI.emit();
+  }
+  
   registrarCliente()
   {
 
