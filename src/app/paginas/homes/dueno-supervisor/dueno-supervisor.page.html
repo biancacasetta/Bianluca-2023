@@ -8,16 +8,16 @@
   <div class="tabla">
     <div class="encabezado-tabla">
         <img class="logo" src="../../../../assets/icon/icon.png" alt="Icono empresa">
-        <h3>Clientes en espera</h3>
+        <h3>CLIENTES EN ESPERA</h3>
     </div>
     <div class="seccion-tabla">
         <table>
             <thead>
                 <tr>
-                    <th>Imagen</th>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Acción</th>
+                    <th>IMAGEN</th>
+                    <th>NOMBRE</th>
+                    <th>CORREO</th>
+                    <th>ACCIÓN</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,9 +36,25 @@
         </table>
     </div>
     <div id="contenedor-pop-up" class="esconder pop-up">
+      <form [formGroup]="formPopUp" (ngSubmit)="enviarRazones()">
         <h4>Razones del rechazo</h4>
-        <input class="input-razones" type="text" placeholder="Razones...">
-        <ion-button class="boton-razones" (click)="cerrarPopUp()">Enviar</ion-button>
+        <input formControlName="razones" class="input-razones" type="text" placeholder=" Explicar razones">
+        <small
+              class="mensaje-error"
+              *ngIf="
+              formPopUp.controls['razones'].errors?.['required'] &&
+              (formPopUp.controls['razones'].touched || razonesTouched)">
+              Debe indicar las razones
+        </small>
+        <small
+            class="mensaje-error"
+            *ngIf="formPopUp.controls['razones'].errors?.['minlength'] ||
+                    (formPopUp.controls['razones'].errors?.['maxLength'] &&
+                    formPopUp.controls['razones'].touched)">
+              Debe tener un mínimo de 10 carácteres y máximo 40    
+        </small>
+        <ion-button class="boton-razones" type="submit">Enviar</ion-button>
+      </form>
     </div>
   </div>
 </ion-content>

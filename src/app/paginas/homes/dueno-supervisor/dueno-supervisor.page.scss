@@ -1,11 +1,20 @@
-*
-{
-    font-family:    TakaoPGothic, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
+
+@font-face {
+    font-family: KATO;
+    src: url(../../../../assets/fonts/KATO____.ttf);
 }
+
 
 ion-header,ion-toolbar
 {
     --background:  #FA5046;
+}
+
+ion-header ion-toolbar ion-title,h3, th
+{
+    font-family: 'KATO';
+    letter-spacing: 1px;
 }
 
 .tabla
@@ -52,12 +61,16 @@ thead th
     font-size: 0.938rem;
 }
 
+td
+{
+    font-family: 'Mate SC', serif;
+}
+
 th,td{
     border-bottom: 0.063rem solid #070000;
-    padding: 0.625rem 1.25rem;
+    padding: 0.625rem 0.65rem;
     word-break: break-all;
     text-align: center;
-
 }
 
 td img
@@ -103,7 +116,10 @@ tr:hover{
 
 .botonera
 {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .boton-aceptar
@@ -126,6 +142,16 @@ tr:hover{
     --box-shadow: none;
 }
 
+form
+{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+}
+
 
 .pop-up
 {
@@ -133,7 +159,7 @@ tr:hover{
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(247, 154, 154, 0.5);
+  background-color: rgba(241, 206, 206, 0.5);
   align-content: center;
   text-align: center;
   border: 0.188rem solid black;
@@ -146,6 +172,7 @@ tr:hover{
   width: 80%;
   color: rgb(253, 253, 253);
   backdrop-filter: blur(0.625rem);
+  font-family: 'Mate SC', serif;
 }
 
 .esconder
@@ -155,17 +182,44 @@ tr:hover{
 
 .input-razones
 {
-    width: 70%;
-    color: white;
+    width: 80%;
+    color: black;
+    border-radius: 20px;
+    border-color: black;
+    height: 15%;
+    background-color: white;
+}
+
+.pop-up h4
+{
+    color: #1b1919;
+    font-weight: bold;
 }
 
 .input-razones::placeholder
 {
-    color:white;
+    color:black;
 }
 
-.boton-razones
+
+.boton-razones {
+    background-color: #FA5046;
+    --background: transparent;
+    --box-shadow: none;
+    color: rgb(19, 18, 18);
+    border: none;
+    padding: 10px 40px;
+    border-radius: 10px;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  small
 {
     background-color: #FA5046;
-    border-radius: 10px;
+    color: white;
+    padding: 0 5px;
 }
