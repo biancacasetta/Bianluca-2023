@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
@@ -7,6 +7,7 @@ import { FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./modo-anonimo.component.scss'],
 })
 export class ModoAnonimoComponent implements OnInit {
+  @Output() activarSpinner: EventEmitter<any> = new EventEmitter<any>();
 
   //@ts-ignore
   formAnonimo:FormGroup;
@@ -19,5 +20,13 @@ export class ModoAnonimoComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  ingresar()
+  {
+    if(this.formAnonimo.valid)
+    {
+      this.activarSpinner.emit();
+    }
+  } 
 
 }

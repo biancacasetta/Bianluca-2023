@@ -7,8 +7,8 @@
         <ion-label>Modo<br>anónimo</ion-label>
       </div>
 
-      <app-registro-cliente *ngIf="modoRegistro" (escanearDNI)="startScanner()" [resultadoScanDni]="infoDni"></app-registro-cliente>
-      <app-modo-anonimo *ngIf="!modoRegistro"></app-modo-anonimo>
+      <app-registro-cliente *ngIf="modoRegistro" (activarSpinner)="activarSpinner()" (escanearDNI)="startScanner()" [resultadoScanDni]="infoDni"></app-registro-cliente>
+      <app-modo-anonimo *ngIf="!modoRegistro" (activarSpinner)="activarSpinner()"></app-modo-anonimo>
 
     </div>
     <div class="contenedor-spinner" *ngIf="spinner">

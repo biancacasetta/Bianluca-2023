@@ -35,19 +35,6 @@ export class RegistroPage implements OnInit {
     });
   }
 
-  //PARA USAR DESDE LA PC
-  /*async startScanner ()  {
-    this.scannerActive = true;
-    await BarcodeScanner.checkPermission({ force: true });
-    BarcodeScanner.hideBackground();
-    this.resultado = await BarcodeScanner.startScan();
-    if(this.resultado.hasContent) {
-      console.log(this.resultado.content);
-      console.log("hay contenido");
-    }
-  };*/
-
-  //PARA USAR DESDE EL CELULAR
   async startScanner() {
     this.scannerActive = true;
     const allowed = await this.checkPermission();
@@ -73,6 +60,13 @@ export class RegistroPage implements OnInit {
     BarcodeScanner.stopScan();
   }
 
+  activarSpinner()
+  {
+    this.spinner = true;
 
+    setTimeout(() => {
+      this.spinner = false;
+    }, 3000);
+  }
 
 }

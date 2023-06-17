@@ -41,6 +41,8 @@
 .pantalla .toggle ion-toggle
 {
     padding: 0.7rem;
+    --handle-background-checked: white;
+    --track-background-checked: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.39);
 }
 
 app-registro-cliente, app-modo-anonimo
