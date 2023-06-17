@@ -7,7 +7,7 @@
         <ion-label>Modo<br>anónimo</ion-label>
       </div>
 
-      <app-registro-cliente *ngIf="modoRegistro" (escanearDNI)="startScanner()" [resultadoScanDni]="resultado"></app-registro-cliente>
+      <app-registro-cliente *ngIf="modoRegistro" (escanearDNI)="startScanner()" [resultadoScanDni]="infoDni"></app-registro-cliente>
       <app-modo-anonimo *ngIf="!modoRegistro"></app-modo-anonimo>
 
     </div>

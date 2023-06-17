@@ -12,7 +12,7 @@ export class RegistroPage implements OnInit {
   spinner: boolean = false;
   modoRegistro: boolean = true;
   scannerActive: boolean = false;
-  resultado:any;
+  infoDni:any;
 
   constructor(private vibration: Vibration) {}
 
@@ -36,7 +36,7 @@ export class RegistroPage implements OnInit {
   }
 
   //PARA USAR DESDE LA PC
-  async startScanner ()  {
+  /*async startScanner ()  {
     this.scannerActive = true;
     await BarcodeScanner.checkPermission({ force: true });
     BarcodeScanner.hideBackground();
@@ -45,24 +45,27 @@ export class RegistroPage implements OnInit {
       console.log(this.resultado.content);
       console.log("hay contenido");
     }
-  };
+  };*/
 
   //PARA USAR DESDE EL CELULAR
-  /*async startScanner() {
+  async startScanner() {
     this.scannerActive = true;
     const allowed = await this.checkPermission();
     if (allowed) {
       BarcodeScanner.hideBackground();
-      this.resultado = await BarcodeScanner.startScan();
-      if (this.resultado.hasContent) {
+      const resultado = await BarcodeScanner.startScan();
+      if (resultado.hasContent) {
+        this.infoDni = resultado.content.split('@');
+        alert(this.infoDni);
         this.vibration.vibrate(300);
+        this.scannerActive = false;
       } else {
         alert('NO DATA FOUND!');
       }
     } else {
       alert('NOT ALLOWED!');
     }
-  }*/
+  }
 
   stopScan()  {
     this.scannerActive = false;

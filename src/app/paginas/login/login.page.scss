@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
+
+@font-face {
+    font-family: KATO;
+    src: url(../../../assets/fonts/KATO____.ttf);
+}
 
 .pantalla
 {
@@ -24,6 +29,7 @@
     box-shadow: inset -30px -15px 30px rgba(0, 0, 0, 0.2), 20px 20px 20px rgba(0, 0, 0, 0.1);
     transition: 0.5s;
     border-radius: 40% 60% 38% 62% / 30% 45% 55% 70% ;
+    font-family: 'Mate SC', serif;
 }
 
 .pantalla .clara-huevo form
@@ -35,6 +41,12 @@
     width: 90%;
 }
 
+.pantalla .clara-huevo h1
+{
+    text-transform: uppercase;
+    font-family: KATO;
+}
+
 .pantalla .clara-huevo form ion-item
 {
     width: 80%;
@@ -42,12 +54,17 @@
     border-radius: 50px;
     --background: lightgray;
     --color: black;
-    --font-family: 'Dancing Script', cursive;
+}
+
+.pantalla .clara-huevo form ion-item ion-label
+{
+    font-family: 'Mate SC', serif;
 }
 
 .pantalla .clara-huevo form ion-item ion-input
 {
     --border: none;
+    font-family: 'Mate SC', serif;
 }
 
 .pantalla .clara-huevo form .yema-huevo ion-button
@@ -61,6 +78,7 @@
     color: white;
     border-radius: 45% 55% 42% 58% / 51% 55% 45% 49% ;
     font-size: 1.2em;
+    font-family: KATO;
     margin: 5vh 0 0 15vw;
 }
 

@@ -14,6 +14,11 @@
     width: 100%;
 }
 
+h1
+{
+    margin-top: 0;
+}
+
 .pantalla > ion-button
 {
     width: 70%;
@@ -30,19 +35,26 @@
     text-transform: none;
 }
 
+.pantalla form .pagina
+{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
 .pantalla form ion-item ion-label
 {
     font-family: 'Mate SC', serif;
 }
 
-form ion-item
+form .pagina ion-item
 {
     width: 100%;
     margin: 5px;
     border-radius: 50px;
-    --background: lightgray;
     --color: black;
-    font-size: 15px;
 }
 
 .pantalla form ion-item ion-input
@@ -67,6 +79,7 @@ ion-button
 
 small
 {
+    text-align: center;
     background-color: #FA5046;
     color: white;
     padding: 0 5px;
