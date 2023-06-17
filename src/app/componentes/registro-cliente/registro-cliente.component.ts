@@ -15,6 +15,7 @@ export class RegistroClienteComponent  implements OnInit {
   formRegistro:FormGroup;
   emailPattern:any = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   spinner:boolean = false;
+  paginaRegistro = 1;
 
   constructor(private formBuilder: FormBuilder, private auth: AuthService)
   {
@@ -29,6 +30,31 @@ export class RegistroClienteComponent  implements OnInit {
   
   ngOnInit() {}
 
+  ngAfterViewInit()
+  {
+    if(this.resultadoScanDni != undefined)
+    {
+      if(this.resultadoScanDni.length > 10) //DNI viejo
+      {
+        this.formRegistro.get('nombre').setValue(this.resultadoScanDni[5]);
+        this.formRegistro.get('apellido').setValue(this.resultadoScanDni[4]);
+        this.formRegistro.get('dni').setValue(this.resultadoScanDni[1].trim());
+        if(this.resultadoScanDni[1].includes("F") || this.resultadoScanDni[1].includes("M"))
+        {
+          this.resultadoScanDni[1] = this.resultadoScanDni[1].replace('F', '0').replace('M', '0');
+          alert(this.resultadoScanDni[1]);
+          this.formRegistro.get('dni').setValue(parseInt(this.resultadoScanDni[1]));
+        }
+      }
+      else //DNI nuevo
+      {
+        this.formRegistro.get('nombre').setValue(this.resultadoScanDni[2]);
+        this.formRegistro.get('apellido').setValue(this.resultadoScanDni[1]);
+        this.formRegistro.get('dni').setValue(this.resultadoScanDni[4]);
+      }
+    }
+  }
+  
   escanearDni()
   {
     this.escanearDNI.emit();
