@@ -1,10 +1,7 @@
 <div class="pantalla">
   <h1>Registro de cliente</h1>
   
-  <div class="botones">
-    <ion-button>Escanear<br>DNI</ion-button>
-    <ion-button>Modo<br>anónimo</ion-button>
-  </div>
+    <ion-button (click)="escanearDni()">Escanear DNI</ion-button>
   
   <form [formGroup]="formRegistro" (ngSubmit)="registrarCliente()">
       <ion-item>
@@ -40,8 +37,8 @@
       <small *ngIf=
           "formRegistro.controls['dni'].errors?.['pattern'] &&
           (formRegistro.controls['dni'].touched)">
-          El DNI debe tener 8 dígitos
-          (colocar 0 adelante si tiene 7)
+          El DNI debe tener 8 dígitos<br>
+          (colocar un 0 adelante si tiene 7)
       </small>
   
       <ion-item>
@@ -79,8 +76,9 @@
         <ion-input formControlName="confirmarPassword" type="password"></ion-input>
       </ion-item>
     
-    <div class="yema-huevo">
-      <ion-button type="submit">REGISTRAR</ion-button>
+    <div class="registrar">
+      <ion-button routerLink="/login">CANCELAR</ion-button>
+      <ion-button type="submit">CONTINUAR</ion-button>
     </div>
   </form>
 </div>
