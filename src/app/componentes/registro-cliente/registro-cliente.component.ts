@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/servicios/auth.service';
+import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
+import { getStorage, ref, uploadString } from 'firebase/storage';
 
 @Component({
   selector: 'app-registro-cliente',
@@ -16,6 +18,7 @@ export class RegistroClienteComponent  implements OnInit {
   emailPattern:any = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   spinner:boolean = false;
   paginaRegistro = 1;
+  fotoCapturada:any = "/assets/icon/foto-avatar.avif";
 
   constructor(private formBuilder: FormBuilder, private auth: AuthService)
   {
@@ -58,6 +61,16 @@ export class RegistroClienteComponent  implements OnInit {
   escanearDni()
   {
     this.escanearDNI.emit();
+  }
+
+  async sacarFoto() {
+    const foto = await Camera.getPhoto({
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Camera,
+      quality: 100,
+    });
+
+    this.fotoCapturada = foto.dataUrl;
   }
   
   registrarCliente()
