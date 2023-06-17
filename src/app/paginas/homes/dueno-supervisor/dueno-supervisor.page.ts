@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -10,7 +11,15 @@ export class DuenoSupervisorPage implements OnInit {
 
   listaClientes:any[]=[];
   popUp:any;
-  constructor(private firebaseServ:FirebaseService) { }
+  formPopUp: FormGroup;
+  razonesTouched:boolean = false;
+
+  constructor(private firebaseServ:FirebaseService,
+    private formBuilder:FormBuilder) { 
+      this.formPopUp = this.formBuilder.group({
+        razones: ['',[Validators.required,Validators.minLength(10), Validators.maxLength(40)]]
+      })
+    }
 
   ngOnInit() {
     this.cargarClientes();
@@ -28,23 +37,31 @@ export class DuenoSupervisorPage implements OnInit {
     });
   }
 
-  aceptarCliente(cliente:any)
+  aceptarCliente(clienteAceptado:any)
   {
-    console.log("Aceptado: " + cliente);
-    // Se cambia el estado del cliente a aceptado.
+    clienteAceptado.estado = "Esperando";
+    this.firebaseServ.agregarDocumento(clienteAceptado,'clientes-aceptados');
+    this.firebaseServ.eliminarDocumento(clienteAceptado,'clientes-pendientes');
+    this.listaClientes = this.listaClientes.filter(cliente => cliente != clienteAceptado);
   }
 
   rechazarCliente(cliente:any)
   {
-    console.log("Rechazado: " + cliente);
-    // Se cambia el estado del cliente a rechazado
+    this.firebaseServ.agregarDocumento(cliente,'clientes-rechazados');
+    this.listaClientes = this.listaClientes.filter(cliente => cliente != cliente);
 
     //Damos razones por las cuales no fue aceptado, y enviamos mail.
     this.popUp.classList.remove("esconder");
   }
 
-  cerrarPopUp()
+  enviarRazones()
   {
-    this.popUp.classList.add("esconder");
+    this.razonesTouched = true;
+    if(this.formPopUp.valid)
+    {
+      this.popUp.classList.add("esconder");
+      console.log(this.formPopUp.getRawValue().razones);
+      this.razonesTouched = false;
+    }
   }
 }

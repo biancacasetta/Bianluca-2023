@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
 
 @font-face {
-    font-family: sigokae-demo;
-    src: url(../../../assets/fonts/sigokae-demo.regular.ttf);
+    font-family: KATO;
+    src: url(../../../assets/fonts/KATO____.ttf);
 }
 
 @-webkit-keyframes scale-out-vertical{0%{-webkit-transform:scaleY(1);transform:scaleY(1);opacity:1}100%{-webkit-transform:scaleY(0);transform:scaleY(0);opacity:1}}@keyframes scale-out-vertical{0%{-webkit-transform:scaleY(1);transform:scaleY(1);opacity:1}100%{-webkit-transform:scaleY(0);transform:scaleY(0);opacity:1}}
@@ -11,7 +11,7 @@
     -webkit-animation:scale-out-vertical 1s cubic-bezier(.55,.085,.68,.53) 3.8s both;animation:scale-out-vertical 1s cubic-bezier(.55,.085,.68,.53) 3.8s both;
     h1, h2
     {
-        font-family: 'sigokae-demo';
+        font-family: 'KATO';
         color: #f3d9d9;
         text-align: center;
         font-size: 35px;
