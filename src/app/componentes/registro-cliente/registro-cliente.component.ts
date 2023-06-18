@@ -113,9 +113,12 @@ export class RegistroClienteComponent  implements OnInit {
       
       await this.subirFoto();
       this.activarSpinner.emit();
-      this.firestore.agregarDocumento(this.cliente, "clientes-pendientes");
-      this.formRegistro.reset();
-      this.paginaRegistro = 1;
+
+      setTimeout(() => {
+        this.firestore.agregarDocumento(this.cliente, "clientes-pendientes");
+        this.formRegistro.reset();
+        this.paginaRegistro = 1;
+      }, 3000);
     }
   }
 
