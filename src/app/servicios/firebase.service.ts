@@ -17,7 +17,7 @@ export class FirebaseService {
   agregarDocumento(dato:any,nombreColeccion:string)
   {
     return new Promise<void> ((resolve, rejected) => {
-      this.angularFirestore.collection(nombreColeccion).doc(dato.dni).set({
+      this.angularFirestore.collection(nombreColeccion).doc(dato.dni + '.' + dato.hora).set({
       apellido: dato.apellido,
       nombre: dato.nombre,
       dni: dato.dni,
@@ -41,7 +41,7 @@ export class FirebaseService {
     .doc<any>(`${nombreColeccion}/${datoAEliminar}`)
     .delete()
     .then(() =>{
-      console.log(`Se elimino ${datoAEliminar.apellido} de la lista ${nombreColeccion}`);
+      console.log(`Se eliminó ${datoAEliminar.apellido} de la lista ${nombreColeccion}`);
     })
     .catch((error) =>{
       console.log(error.code);
