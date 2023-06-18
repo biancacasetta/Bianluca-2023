@@ -27,14 +27,14 @@ export class AuthService {
               },1500);   
             })
             .catch((error) => {
-              throw new Error(error.code); 
+              console.log(error.code);
             });
         })
         .catch((error) => {
-          throw new Error(error.code); 
+          console.log(error.code);
         });
     } catch (error:any) {
-      throw new Error(error.code); 
+      console.log(error.code);
     }
   }
 

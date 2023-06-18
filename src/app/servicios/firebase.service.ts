@@ -14,8 +14,6 @@ export class FirebaseService {
     return coleccion.valueChanges();
   }
 
- 
-
   agregarDocumento(dato:any,nombreColeccion:string)
   {
     return new Promise<void> ((resolve, rejected) => {
