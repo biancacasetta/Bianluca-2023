@@ -44,7 +44,7 @@ export class FirebaseService {
     .doc<any>(`${nombreColeccion}/${datoAEliminar.dni}.${datoAEliminar.hora}`)
     .delete()
     .then(() =>{
-      console.log(`Se elimino ${datoAEliminar.apellido} de la lista ${nombreColeccion}`);
+      console.log(`Se eliminó ${datoAEliminar.apellido} de la lista ${nombreColeccion}`);
     })
     .catch((error) =>{
       console.log(error.code);

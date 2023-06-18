@@ -5,7 +5,7 @@
       <form [formGroup]="formLogin" (ngSubmit)="login()">
         <ion-item>
           <ion-label position="floating">Correo electrónico</ion-label>
-          <ion-input formControlName="email" type="email"></ion-input>
+          <ion-input formControlName="email" type="email" [disabled]="popup"></ion-input>
         </ion-item>
         <small
           *ngIf="
@@ -22,7 +22,7 @@
 
         <ion-item>
           <ion-label position="floating">Contraseña</ion-label>
-          <ion-input formControlName="password" type="password"></ion-input>
+          <ion-input formControlName="password" type="password" [disabled]="popup"></ion-input>
         </ion-item>
 
         <small
@@ -42,7 +42,8 @@
         <ion-text><a routerLink="/dueno-supervisor">lala</a></ion-text>
         
         <div class="yema-huevo">
-          <ion-button type="submit">INGRESAR</ion-button>
+          <ion-button type="submit"
+          [disabled]="popup">INGRESAR</ion-button>
         </div>
       </form> 
     </div>
@@ -50,4 +51,9 @@
   <div class="contenedor-spinner" *ngIf="spinner">
     <app-spinner></app-spinner>
   </div>
+
+  <div class="popup" *ngIf="popup">
+		<h3>{{mensajePopup}}</h3>
+    <ion-button (click)="popup = false">ACEPTAR</ion-button>
+	</div>
 </ion-content>

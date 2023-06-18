@@ -101,3 +101,30 @@ small
     transform: translate(-50%, -50%);
     z-index: 9999;
 }
+
+.popup
+{
+    position: absolute;
+    width: 80%;
+    height: 25%;
+    backdrop-filter: blur(3px);
+    background-color: #FF8F82;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    border-radius: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Mate SC', serif;
+    padding: 2vh;
+}
+
+.popup ion-button
+{
+    font-family: KATO;
+    --background:#FA5046;
+}
