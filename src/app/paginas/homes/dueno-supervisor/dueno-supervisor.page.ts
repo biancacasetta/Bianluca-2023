@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import * as emailjs from 'emailjs-com';
 import { init } from "emailjs-com";
+import { AuthService } from 'src/app/servicios/auth.service';
 init("3Ur_in2ApRQf6g6Ka");
 
 @Component({
@@ -20,7 +21,8 @@ export class DuenoSupervisorPage implements OnInit {
   clienteARechazar:any;
 
   constructor(private firebaseServ:FirebaseService,
-    private formBuilder:FormBuilder) { 
+    private formBuilder:FormBuilder,
+    private authServ:AuthService) { 
       this.formPopUp = this.formBuilder.group({
         razones: ['',[Validators.required,Validators.minLength(10), Validators.maxLength(40)]]
       })
@@ -28,7 +30,6 @@ export class DuenoSupervisorPage implements OnInit {
 
   ngOnInit() {
     this.cargarClientes();
-    this.activarSpinner();
   }
 
   ngAfterViewInit()
@@ -47,8 +48,9 @@ export class DuenoSupervisorPage implements OnInit {
 
   aceptarCliente(clienteAceptado:any)
   {
-    this.firebaseServ.agregarDocumento(clienteAceptado,'clientes-aceptados');
+    this.firebaseServ.agregarDocumento(clienteAceptado,'usuarios-aceptados');
     this.firebaseServ.eliminarDocumento(clienteAceptado,'clientes-pendientes');
+    this.authServ.registrarUsuario(clienteAceptado);
     const listaAux = this.listaClientes;
     this.listaClientes = listaAux.filter(cliente => cliente != clienteAceptado);
     this.enviarEmail(clienteAceptado,"Fuiste aceptado. Ya podés iniciar sesión","cliente_aceptado");
