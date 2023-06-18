@@ -8,7 +8,7 @@
     <div class="pagina" *ngIf="paginaRegistro == 1">
         <ion-item>
             <ion-label position="floating">Nombre</ion-label>
-            <ion-input formControlName="nombre" type="text"></ion-input>
+            <ion-input class="primera-mayuscula" formControlName="nombre" type="text"></ion-input>
         </ion-item>
     
         <small *ngIf=
@@ -19,7 +19,7 @@
     
         <ion-item>
             <ion-label position="floating">Apellido</ion-label>
-            <ion-input formControlName="apellido" type="text"></ion-input>
+            <ion-input class="primera-mayuscula" formControlName="apellido" type="text"></ion-input>
         </ion-item>
         <small *ngIf=
             "formRegistro.controls['apellido'].errors?.['required'] &&
@@ -45,7 +45,10 @@
 
         <div class="registrar">
             <ion-button routerLink="/login">CANCELAR</ion-button>
-            <ion-button type="subrmit" (click)="paginaRegistro = 2">CONTINUAR</ion-button>
+            <ion-button (click)="paginaRegistro = 2"
+            [disabled]="formRegistro.controls['nombre'].errors ||
+            formRegistro.controls['apellido'].errors ||
+            formRegistro.controls['dni'].errors">CONTINUAR</ion-button>
         </div>
     </div>
   
@@ -92,19 +95,24 @@
 
         <div class="registrar">
           <ion-button (click)="paginaRegistro = 1">ATRÁS</ion-button>
-          <ion-button type="submit" (click)="paginaRegistro = 3">CONTINUAR</ion-button>
+          <ion-button (click)="paginaRegistro = 3"
+          [disabled]="formRegistro.controls['email'].errors ||
+            formRegistro.controls['password'].errors ||
+            formRegistro.value.confirmarPassword != formRegistro.value.password">CONTINUAR</ion-button>
         </div>
     </div>
 
     <div class="pagina" *ngIf="paginaRegistro == 3">
-        <ion-label>¡Sacate una foto!</ion-label>
-        <ion-button>
-            <ion-icon name="camera"></ion-icon>
+        <ion-button (click)="sacarFoto()">
+            <ion-icon name="camera"></ion-icon>¡Sacate una foto!
         </ion-button>
-        
+
+        <img src="{{fotoCapturada}}">
+
         <div class="registrar">
             <ion-button (click)="paginaRegistro = 2">ATRÁS</ion-button>
-            <ion-button type="submit" (click)="registrarCliente()">REGISTRARSE</ion-button>
+            <ion-button type="submit"
+            [disabled]="fotoCapturada == '/assets/icon/foto-avatar.avif'">REGISTRARSE</ion-button>
         </div>
     </div>
     

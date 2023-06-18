@@ -61,7 +61,12 @@ form .pagina ion-item
 {
     --border: none;
     font-family: 'Mate SC', serif;
-    font-size: 0.8em;
+    font-size: 1em;
+}
+
+.primera-mayuscula
+{
+    text-transform: capitalize;
 }
 
 .pantalla form .registrar
@@ -83,4 +88,16 @@ small
     background-color: #FA5046;
     color: white;
     padding: 0 5px;
+}
+
+ion-icon
+{
+    padding: 0 2vw 0 0;
+}
+
+img
+{
+    margin: 5vw;
+    border-radius: 20%;
+    max-width: 150px;
 }
