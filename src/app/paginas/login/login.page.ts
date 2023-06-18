@@ -71,12 +71,7 @@ export class LoginPage implements OnInit {
         switch(estado)
         {
           case "":
-            let mensaje = this.auth.iniciarSesion(this.formLogin.value.email, this.formLogin.value.password);
-            if(mensaje != "")
-            {
-              this.mensajePopup = mensaje;
-              this.popup = true;
-            }
+            this.auth.iniciarSesion(this.formLogin.value.email, this.formLogin.value.password)
             break;
           case "Pendiente":
             this.mensajePopup = "Aún no se procesó tu registro.";
