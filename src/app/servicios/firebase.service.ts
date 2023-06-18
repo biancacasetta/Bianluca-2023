@@ -14,6 +14,8 @@ export class FirebaseService {
     return coleccion.valueChanges();
   }
 
+ 
+
   agregarDocumento(dato:any,nombreColeccion:string)
   {
     return new Promise<void> ((resolve, rejected) => {
@@ -32,13 +34,14 @@ export class FirebaseService {
     })
     .catch(error=>rejected(error))
   });
-    
   }
+
+ 
 
   eliminarDocumento(datoAEliminar:any,nombreColeccion:string)
   {
     this.angularFirestore
-    .doc<any>(`${nombreColeccion}/${datoAEliminar}`)
+    .doc<any>(`${nombreColeccion}/${datoAEliminar.dni}.${datoAEliminar.hora}`)
     .delete()
     .then(() =>{
       console.log(`Se eliminó ${datoAEliminar.apellido} de la lista ${nombreColeccion}`);
