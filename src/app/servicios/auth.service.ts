@@ -27,16 +27,15 @@ export class AuthService {
               },1500);   
             })
             .catch((error) => {
-              return this.crearMensaje(error.code);
+              throw new Error(error.code); 
             });
         })
         .catch((error) => {
-          return this.crearMensaje(error.code);
+          throw new Error(error.code); 
         });
     } catch (error:any) {
-      return this.crearMensaje(error.code);
+      throw new Error(error.code); 
     }
-    return "";
   }
 
   obtenerUsuarioPorEmail(email:string)
@@ -94,7 +93,7 @@ export class AuthService {
     })
   }
 
-  private crearMensaje(errorCode: string): string {
+  crearMensaje(errorCode: string): string {
     let mensaje: string = '';
     switch (errorCode) {
       case 'auth/internal-error':
