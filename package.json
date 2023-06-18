@@ -36,6 +36,8 @@
     "@ionic/pwa-elements": "^3.1.1",
     "cordova-plugin-email-composer": "^0.10.1",
     "cordova-plugin-vibration": "^3.1.1",
+    "emailjs": "^4.0.2",
+    "emailjs-com": "^3.2.0",
     "firebase": "^9.22.2",
     "ionicons": "^7.0.0",
     "ngx-window-token": "^7.0.0",

@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { DuenoSupervisorPageRoutingModule } from './dueno-supervisor-routing.module';
 
 import { DuenoSupervisorPage } from './dueno-supervisor.page';
+import { SpinnerModule } from 'src/app/componentes/spinner/spinner.module';
 
 @NgModule({
   imports: [
@@ -14,6 +15,7 @@ import { DuenoSupervisorPage } from './dueno-supervisor.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    SpinnerModule,
     DuenoSupervisorPageRoutingModule
   ],
   declarations: [DuenoSupervisorPage]
