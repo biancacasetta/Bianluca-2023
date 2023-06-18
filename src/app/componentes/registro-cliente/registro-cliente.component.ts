@@ -4,6 +4,8 @@ import { AuthService } from 'src/app/servicios/auth.service';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
 import { FirebaseStorage, getStorage, ref, uploadString } from 'firebase/storage';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { resolve } from 'dns';
 
 @Component({
   selector: 'app-registro-cliente',
@@ -20,8 +22,12 @@ export class RegistroClienteComponent  implements OnInit {
   emailPattern:any = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   paginaRegistro = 1;
   fotoCapturada:any = "/assets/icon/foto-avatar.avif";
+  cliente:any = {};
 
-  constructor(private formBuilder: FormBuilder, private auth: AuthService, private firestore: FirebaseService)
+  constructor(private formBuilder: FormBuilder,
+    private auth: AuthService,
+    private firestore: FirebaseService,
+    private angularFirestorage: AngularFireStorage)
   {
     this.formRegistro = this.formBuilder.group({
       nombre: ['', [Validators.required]],
@@ -64,7 +70,8 @@ export class RegistroClienteComponent  implements OnInit {
     this.escanearDNI.emit();
   }
 
-  async sacarFoto() {
+  async sacarFoto()
+  {
     const foto = await Camera.getPhoto({
       resultType: CameraResultType.DataUrl,
       source: CameraSource.Camera,
@@ -72,25 +79,46 @@ export class RegistroClienteComponent  implements OnInit {
     });
 
     this.fotoCapturada = foto.dataUrl;
+  }
 
+  async subirFoto(): Promise<void>
+  {
+      const storage = getStorage();
+      const fecha = new Date().getTime();
+  
+      this.cliente.hora = fecha;
+  
+      const nombreFoto = `${this.formRegistro.value.dni} ${fecha}`;
+      const storageRef = ref(storage, nombreFoto);
+      const url = this.angularFirestorage.ref(nombreFoto);
+  
+      await uploadString(storageRef as any, this.fotoCapturada, 'data_url').then(() =>
+      {
+        url.getDownloadURL().subscribe((url1: any) => {
+          this.cliente.rutaFoto = url1;
+        });
+      });
   }
   
-  registrarCliente()
+  async registrarCliente(): Promise<void>
   {
     if(this.formRegistro.valid)
     {
-      this.activarSpinner.emit();
+      this.cliente.nombre = this.formRegistro.value.nombre;
+      this.cliente.apellido = this.formRegistro.value.apellido,
+      this.cliente.dni = this.formRegistro.value.dni,
+      this.cliente.email = this.formRegistro.value.email,
+      this.cliente.password = this.formRegistro.value.password,
+      this.cliente.perfil = "cliente";
       
-      let cliente = {
-        nombre: this.formRegistro.value.nombre,
-        apellido: this.formRegistro.value.apellido,
-        dni: this.formRegistro.value.dni,
-        email: this.formRegistro.value.email,
-        password: this.formRegistro.value.password,
-        perfil: "cliente"
-      }
-  
-      this.firestore.agregarDocumento(cliente, "clientes-pendientes");
+      await this.subirFoto();
+      this.activarSpinner.emit();
+
+      setTimeout(() => {
+        this.firestore.agregarDocumento(this.cliente, "clientes-pendientes");
+        this.formRegistro.reset();
+        this.paginaRegistro = 1;
+      }, 3000);
     }
   }
 
