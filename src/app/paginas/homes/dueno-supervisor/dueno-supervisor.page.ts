@@ -19,7 +19,8 @@ export class DuenoSupervisorPage implements OnInit {
   razonesTouched:boolean = false;
   verificarCuentaCliente:boolean = false;
   clienteARechazar:any;
-
+  popup:boolean = false;
+  
   constructor(private firebaseServ:FirebaseService,
     private formBuilder:FormBuilder,
     private authServ:AuthService) { 
@@ -36,6 +37,13 @@ export class DuenoSupervisorPage implements OnInit {
   {
     this.popUp = document.getElementById('contenedor-pop-up');
     
+  }
+
+  cerrarSesion()
+  {
+    this.popup = false;
+    this.activarSpinner();
+    this.authServ.cerrarSesion();
   }
 
   cargarClientes()
@@ -84,6 +92,7 @@ export class DuenoSupervisorPage implements OnInit {
     {
       this.firebaseServ.agregarDocumento(this.clienteARechazar,'clientes-rechazados');
       this.firebaseServ.eliminarDocumento(this.clienteARechazar,'clientes-pendientes');
+      this.firebaseServ.borrarFoto(this.clienteARechazar.rutaFoto);
       const listaAux = this.listaClientes;
       this.listaClientes = listaAux.filter(cliente => cliente != cliente);
       this.enviarEmail(this.clienteARechazar,this.formPopUp.getRawValue().razones,"cliente_rechazado");

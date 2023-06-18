@@ -1,10 +1,16 @@
-<ion-header [translucent]="true" *ngIf="!spinnerActivo">
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title class="ion-text-center">DUEÑO/SUPERVISOR</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" *ngIf="!spinnerActivo">
+<ion-fab *ngIf="!spinnerActivo"  vertical="start" horizontal="end" >
+  <ion-fab-button color="none" (click)="popup = true" class="sin-fondo">
+    <img class="imagen-cerrar-sesion" src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
+  </ion-fab-button>
+</ion-fab>
+
+<ion-content [fullscreen]="true">
   <div class="tabla">
     <div class="encabezado-tabla">
         <img class="logo" src="../../../../assets/icon/icon.png" alt="Icono empresa">
@@ -60,6 +66,15 @@
       </form>
     </div>
   </div>
+  <div class="contenedor-spinner" *ngIf="spinnerActivo">
+    <app-spinner></app-spinner>
+  </div>
+  <div class="popup" *ngIf="popup">
+    <h4>¿Desea cerrar sesión?</h4>
+    <div class="botonera-popup">
+      <ion-button (click)="popup = false">CANCELAR</ion-button>
+      <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
+    </div>
+  </div>
 </ion-content>
 
-<app-spinner *ngIf="spinnerActivo"></app-spinner>
