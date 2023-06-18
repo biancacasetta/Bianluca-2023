@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
-import { EmailComposer, EmailComposerOptions } from '@awesome-cordova-plugins/email-composer/ngx';
+import * as emailjs from 'emailjs-com';
+import { init } from "emailjs-com";
+init("3Ur_in2ApRQf6g6Ka");
 
 @Component({
   selector: 'app-dueno-supervisor',
@@ -9,17 +11,16 @@ import { EmailComposer, EmailComposerOptions } from '@awesome-cordova-plugins/em
   styleUrls: ['./dueno-supervisor.page.scss'],
 })
 export class DuenoSupervisorPage implements OnInit {
-
+  spinnerActivo = false;
   listaClientes:any[]=[];
   popUp:any;
   formPopUp: FormGroup;
   razonesTouched:boolean = false;
   verificarCuentaCliente:boolean = false;
-  clienteRechazado:any;
+  clienteARechazar:any;
 
   constructor(private firebaseServ:FirebaseService,
-    private formBuilder:FormBuilder,
-    private emailComposer:EmailComposer) { 
+    private formBuilder:FormBuilder) { 
       this.formPopUp = this.formBuilder.group({
         razones: ['',[Validators.required,Validators.minLength(10), Validators.maxLength(40)]]
       })
@@ -27,83 +28,80 @@ export class DuenoSupervisorPage implements OnInit {
 
   ngOnInit() {
     this.cargarClientes();
+    this.activarSpinner();
   }
 
   ngAfterViewInit()
   {
     this.popUp = document.getElementById('contenedor-pop-up');
+    
   }
 
   cargarClientes()
   {
+    this.listaClientes = [];
     this.firebaseServ.obtenerColeccion('clientes-pendientes').subscribe((res)=>{
       this.listaClientes = res;
-    });
+    });  
   }
 
   aceptarCliente(clienteAceptado:any)
   {
-    clienteAceptado.estado = "Esperando";
     this.firebaseServ.agregarDocumento(clienteAceptado,'clientes-aceptados');
     this.firebaseServ.eliminarDocumento(clienteAceptado,'clientes-pendientes');
-    this.listaClientes = this.listaClientes.filter(cliente => cliente != clienteAceptado);
+    const listaAux = this.listaClientes;
+    this.listaClientes = listaAux.filter(cliente => cliente != clienteAceptado);
+    this.enviarEmail(clienteAceptado,"Fuiste aceptado. Ya podés iniciar sesión","cliente_aceptado");
+    this.activarSpinner();
   }
 
-  rechazarCliente(cliente:any)
+  activarSpinner()
   {
-    this.firebaseServ.agregarDocumento(cliente,'clientes-rechazados');
-    this.listaClientes = this.listaClientes.filter(cliente => cliente != cliente);
-    this.clienteRechazado = cliente;
-    //Damos razones por las cuales no fue aceptado, y enviamos mail.
-    this.popUp.classList.remove("esconder");
+    this.spinnerActivo = true;
+    setTimeout(()=>{
+      this.spinnerActivo = false;
+    },2000);
   }
 
-  async enviarRazones()
+  accionRechazar(cliente:any)
+  {
+    this.popUp = document.getElementById('contenedor-pop-up');
+    this.popUp.classList.remove("esconder");
+    this.clienteARechazar = cliente;
+  }
+
+  cancelarRechazo()
+  {
+    this.popUp.classList.add("esconder");
+  }
+
+  async rechazarCliente()
   {
     this.razonesTouched = true;
     if(this.formPopUp.valid)
     {
-      await this.emailComposer.hasAccount().then(async()=>{
-        await this.emailComposer.isAvailable().then((estaDisponible:boolean)=>{
-            if(estaDisponible)
-            {
-              this.enviarEmail(this.formPopUp.getRawValue().razones);
-            }
-            else
-            {
-              alert("No esta disponible");
-            }
-          });       
-      }).catch((error)=>{
-        alert(error.code);
-      });
-
+      this.firebaseServ.agregarDocumento(this.clienteARechazar,'clientes-rechazados');
+      this.firebaseServ.eliminarDocumento(this.clienteARechazar,'clientes-pendientes');
+      const listaAux = this.listaClientes;
+      this.listaClientes = listaAux.filter(cliente => cliente != cliente);
+      this.enviarEmail(this.clienteARechazar,this.formPopUp.getRawValue().razones,"cliente_rechazado");
+      this.cargarClientes();
       this.popUp.classList.add("esconder");
       this.razonesTouched = false;
+      this.activarSpinner();
     }
   }
 
-  async enviarEmail(contenido:string)
+  enviarEmail(usuario:any,mensaje:string,templateId:string)
   {
-    const estaPermitido = await this.emailComposer.hasPermission()
-
-    if(estaPermitido)
-    {
-      console.log("Esta permitido");
-      const email: EmailComposerOptions = {
-        to: this.clienteRechazado.email,
-        cc: 'noreply@bianluca.com',
-        attachments: ['base64:../../../../assets/icon/icon.png'],
-        subject: 'Razones por la cual no esta admitido',
-        body: contenido,
-        isHtml: true
-      };
-      this.emailComposer.open(email);
-    }
-    else
-    {
-      alert("No esta permitido");
-    }
-
+    const template = {
+      user_email: usuario.email,
+      to_name: usuario.nombre,
+      message: mensaje,
+      nombre_restaurante: 'Restaurante Bianluca'
+    };
+    emailjs.send("service_xljpmy6",templateId,template)
+    .then(res => console.log("Correo enviado.", res.status, res.text))
+    .catch(error => console.log("Error al enviar", error));
   }
 }

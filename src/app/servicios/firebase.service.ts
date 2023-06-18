@@ -16,13 +16,29 @@ export class FirebaseService {
 
   agregarDocumento(dato:any,nombreColeccion:string)
   {
-    return this.angularFirestore.collection(nombreColeccion).add(dato);
+    return new Promise<void> ((resolve, rejected) => {
+      this.angularFirestore.collection(nombreColeccion).doc(dato.dni).set({
+      apellido: dato.apellido,
+      nombre: dato.nombre,
+      dni: dato.dni,
+      email: dato.email,
+      password: dato.password,
+      hora: dato.hora,
+      rutaFoto: dato.rutaFoto,
+      perfil: dato.perfil,
+    })
+    .then(()=>{
+      resolve();
+    })
+    .catch(error=>rejected(error))
+  });
+    
   }
 
   eliminarDocumento(datoAEliminar:any,nombreColeccion:string)
   {
     this.angularFirestore
-    .doc<any>(`${nombreColeccion}/${datoAEliminar.id}`)
+    .doc<any>(`${nombreColeccion}/${datoAEliminar}`)
     .delete()
     .then(() =>{
       console.log(`Se elimino ${datoAEliminar.apellido} de la lista ${nombreColeccion}`);
