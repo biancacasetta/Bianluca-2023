@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registro',
@@ -14,7 +15,7 @@ export class RegistroPage implements OnInit {
   scannerActive: boolean = false;
   infoDni:any;
 
-  constructor(private vibration: Vibration) {}
+  constructor(private vibration: Vibration, private router: Router) {}
 
   ngOnInit() {
   }
@@ -66,6 +67,7 @@ export class RegistroPage implements OnInit {
 
     setTimeout(() => {
       this.spinner = false;
+      this.router.navigateByUrl("/login");
     }, 3000);
   }
 
