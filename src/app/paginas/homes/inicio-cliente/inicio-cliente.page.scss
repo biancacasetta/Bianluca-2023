@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
+
+@font-face {
+    font-family: KATO;
+    src: url(../../../../assets/fonts/KATO____.ttf);
+}
+
+
+ion-header,ion-toolbar
+{
+    --background:  #FA5046;
+}
+
+ion-header ion-toolbar ion-title
+{
+    font-family: KATO;
+    letter-spacing: 1px;
+}
+
+.imagen-cerrar-sesion
+{
+    width: 40px;
+}
+
+.sin-fondo {
+    --box-shadow: none;  
+}

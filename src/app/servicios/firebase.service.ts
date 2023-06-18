@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +36,7 @@ export class FirebaseService {
   });
   }
 
- 
+  
 
   eliminarDocumento(datoAEliminar:any,nombreColeccion:string)
   {
@@ -48,4 +50,27 @@ export class FirebaseService {
       console.log(error.code);
     })
   }
+
+  borrarFoto(rutaFoto:string){
+    let storageRef = firebase.storage().ref();
+
+    if (rutaFoto != "../../../assets/icon/foto-avatar-avif"){
+    
+      storageRef.listAll().then((lista)=>{
+
+        lista.items.forEach(f => {
+          f.getDownloadURL().then((link)=>{
+            if (link == rutaFoto){    
+              f.delete();
+              console.log("foto borrada");
+            }
+          });
+        });
+
+      }).catch(e=>{
+        alert(e);
+      });
+    }
+  }
+
 }

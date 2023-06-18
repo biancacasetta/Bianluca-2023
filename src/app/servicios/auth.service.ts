@@ -12,37 +12,23 @@ export class AuthService {
   constructor( private router: Router, private angularFireAuth: AngularFireAuth,
     private firebaseServ:FirebaseService) { }
 
-  iniciarSesion(email:string,contraseña:string)
-  {
-    try {
-    this.angularFireAuth
-        .setPersistence(firebase.default.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-          this.angularFireAuth
-            .signInWithEmailAndPassword(email, contraseña)
-            .then((data) => {
-              this.obtenerUsuarioPorEmail(email); 
-              setTimeout(()=>{
-                this.redirigirPorUsuario(this.usuarioAceptado.perfil);
-              },1500);   
-            })
-            .catch((error) => {
-              console.log(error.code);
-            });
-        })
-        .catch((error) => {
-          console.log(error.code);
-        });
-    } catch (error:any) {
-      console.log(error.code);
-    }
-  }
+  iniciarSesion(email:string, contraseña:string){
+    return new Promise((resolve, rejected) => {
+      this.angularFireAuth.signInWithEmailAndPassword(email,contraseña).then(usuario =>{
+        this.obtenerUsuarioPorEmail(email); 
+        setTimeout(()=>{
+          this.redirigirPorUsuario(this.usuarioAceptado.perfil);
+        },1500);   
+        resolve(usuario);
+      })
+      .catch(error => rejected(error));
+    });
+  }  
 
   obtenerUsuarioPorEmail(email:string)
   {
     this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
       res.forEach((usuario)=>{
-        console.log(usuario);
         if(usuario.email == email)
         {
           this.usuarioAceptado = usuario;
