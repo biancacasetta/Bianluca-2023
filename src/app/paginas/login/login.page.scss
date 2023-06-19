@@ -9,6 +9,8 @@
 {
     min-height: 100%;
     background-color: #FF8F82;
+    overflow-x: hidden;
+    overflow-y: scroll;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,11 +25,10 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 110vw;
-    height: 90vh;
+    width: 110vmin;
+    height: 160vmin;
     background-color: whitesmoke;
     box-shadow: inset -30px -15px 30px rgba(0, 0, 0, 0.2), 20px 20px 20px rgba(0, 0, 0, 0.1);
-    transition: 0.5s;
     border-radius: 40% 60% 38% 62% / 30% 45% 55% 70% ;
     font-family: 'Mate SC', serif;
 }
@@ -113,7 +114,7 @@ small
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 9999;
-    border-radius: 5%;
+    border-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -127,4 +128,28 @@ small
 {
     font-family: KATO;
     --background:#FA5046;
+}
+
+ion-fab
+{
+    font-family: KATO;
+}
+
+ion-fab ion-fab-button
+{
+    width: 115px;
+    --border-radius: 5%;
+    --background: #FA5046;
+}
+
+ion-fab ion-icon
+{
+    padding-right: 2vw;
+}
+
+ion-fab ion-fab-list ion-button
+{
+    font-family: KATO;
+    --background: #FA5046;
+    width: 150px;
 }

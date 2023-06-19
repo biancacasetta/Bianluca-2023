@@ -14,6 +14,11 @@
     <div class="contenedor-spinner" *ngIf="spinner">
       <app-spinner></app-spinner>
     </div>
+
+    <div class="popup" *ngIf="popup">
+      <h5>Se guardó su registro. Va a recibir un correo cuando se apruebe o rechace.</h5>
+      <ion-button routerLink="/login" (click)="popup = false">ACEPTAR</ion-button>
+    </div>
   </ion-content>
 
 <div *ngIf="scannerActive" class="pantalla-scan">

@@ -48,18 +48,22 @@ export class RegistroClienteComponent  implements OnInit {
       {
         this.formRegistro.get('nombre').setValue(this.resultadoScanDni[5]);
         this.formRegistro.get('apellido').setValue(this.resultadoScanDni[4]);
-        this.formRegistro.get('dni').setValue(this.resultadoScanDni[1].trim());
+        this.resultadoScanDni[1] = this.resultadoScanDni[1].trim();
         if(this.resultadoScanDni[1].includes("F") || this.resultadoScanDni[1].includes("M"))
         {
           this.resultadoScanDni[1] = this.resultadoScanDni[1].replace('F', '0').replace('M', '0');
-          alert(this.resultadoScanDni[1]);
-          this.formRegistro.get('dni').setValue(this.resultadoScanDni[1]);
         }
+        this.formRegistro.get('dni').setValue(this.resultadoScanDni[1]);
       }
       else //DNI nuevo
       {
         this.formRegistro.get('nombre').setValue(this.resultadoScanDni[2]);
         this.formRegistro.get('apellido').setValue(this.resultadoScanDni[1]);
+        this.resultadoScanDni[4] = this.resultadoScanDni[4].trim();
+        if(this.resultadoScanDni[4].includes("F") || this.resultadoScanDni[4].includes("M"))
+        {
+          this.resultadoScanDni[4] = this.resultadoScanDni[4].replace('F', '0').replace('M', '0');
+        }
         this.formRegistro.get('dni').setValue(this.resultadoScanDni[4]);
       }
     }
@@ -111,6 +115,7 @@ export class RegistroClienteComponent  implements OnInit {
       this.cliente.password = this.formRegistro.value.password,
       this.cliente.perfil = "cliente";
       
+
       await this.subirFoto();
       this.activarSpinner.emit();
 
