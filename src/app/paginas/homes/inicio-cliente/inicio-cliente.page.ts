@@ -20,6 +20,12 @@ export class InicioClientePage implements OnInit {
   clienteEsperando:any = {};
   email:string = "";
   spinnerActivo:boolean = false;
+  pantalla:number = 2;
+  // PANTALLA 2
+  mensajeToolBar = "BIENVENIDO";
+  mensajePantalla2 = "Aguarde a que el metre le asigne su mesa";
+  clienteSentado = false;
+  // PANTALLA 3
   constructor(private authServ:AuthService,
     private vibration: Vibration,
     private firebaseServ:FirebaseService) { 
@@ -124,6 +130,7 @@ export class InicioClientePage implements OnInit {
           }
           this.scannerActive = false;
           this.contadorPersonas = 1;
+          this.pantalla = 2;
           this.activarSpinner();
         }
         else if(resultado.content == "mesa")
@@ -166,7 +173,9 @@ export class InicioClientePage implements OnInit {
       apellido: cliente.apellido,
       hora: cliente.hora,
       perfil: cliente.perfil,
-      comenzales: this.contadorPersonas
+      rutaFoto: cliente.rutaFoto,
+      comenzales: this.contadorPersonas,
+      sentado: false,
     };
   }
 
