@@ -34,6 +34,10 @@ const routes: Routes = [
   {
     path: 'inicio-cliente/mesa',
     loadChildren: () => import('./paginas/mesa/mesa.module').then( m => m.MesaPageModule)
+  },
+  {
+    path: 'mozo',
+    loadChildren: () => import('./paginas/homes/mozo/mozo.module').then( m => m.MozoPageModule)
   }
 
 
