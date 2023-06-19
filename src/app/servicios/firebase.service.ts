@@ -51,12 +51,12 @@ export class FirebaseService {
   agregarDocumentoAnonimo(dato:any,nombreColeccion:string)
   {
     return new Promise<void> ((resolve, rejected) => {
-      this.angularFirestore.collection(nombreColeccion).doc(dato.nombre + '.' + dato.hora).set({
-      id: dato.nombre + '.' + dato.hora,
+      this.angularFirestore.collection(nombreColeccion).doc(dato.id).set({
+      id: dato.id,
+      apellido: dato.apellido,
       nombre: dato.nombre,
       hora: dato.hora,
       perfil: dato.perfil,
-      comenzales: dato.comenzales
     })
     .then(()=>{
       this.usuarioAnonimo = dato;

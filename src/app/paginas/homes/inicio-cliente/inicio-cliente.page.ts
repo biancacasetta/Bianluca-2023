@@ -12,6 +12,7 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 export class InicioClientePage implements OnInit {
   contadorPersonas:number = 1;
   popup:boolean = false;
+  listaEspera:any[]=[];
   mensajePopUp:string = "";
   scannerActive: boolean = false;
   resultadoQR:string = "";
@@ -34,6 +35,9 @@ export class InicioClientePage implements OnInit {
           this.usuarioLogueado = usuario;
         }
       })
+    });
+    this.firebaseServ.obtenerColeccion('lista-espera').subscribe((usuarios)=>{
+      this.listaEspera = usuarios;
     });
   }
   
@@ -102,14 +106,21 @@ export class InicioClientePage implements OnInit {
           this.clienteEsperando.comenzales = this.contadorPersonas;
           if(this.usuarioLogueado.perfil == "cliente")
           {
-            this.asignarDatos(this.usuarioLogueado);
-            this.firebaseServ.agregarDocumento(this.clienteEsperando,'lista-espera');
+            if(!this.verificarListaEspera())
+            {
+              this.asignarDatos(this.usuarioLogueado);
+              this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
+            }
+            else
+            {
+              this.mensajePopUp = "Ya está ingresado en la lista de espera.";
+              this.popup = true;
+            }
           }
           else
           {
-            console.log(this.firebaseServ.obtenerClienteAnonimo());
             this.asignarDatos(this.firebaseServ.obtenerClienteAnonimo());
-            this.firebaseServ.agregarDocumentoAnonimo(this.clienteEsperando,'lista-espera');
+            this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
           }
           this.scannerActive = false;
           this.contadorPersonas = 1;
@@ -135,6 +146,18 @@ export class InicioClientePage implements OnInit {
     }
   }
 
+  verificarListaEspera()
+  {
+    let estaEnLista = false;
+    this.listaEspera.forEach((usuario)=>{
+      if(this.usuarioLogueado.dni == usuario.dni)
+      {
+        estaEnLista = true;
+      }
+    });
+    return estaEnLista;
+  }
+
   asignarDatos(cliente:any)
   {
     this.clienteEsperando = {
@@ -142,6 +165,7 @@ export class InicioClientePage implements OnInit {
       nombre: cliente.nombre,
       apellido: cliente.apellido,
       hora: cliente.hora,
+      perfil: cliente.perfil,
       comenzales: this.contadorPersonas
     };
   }
