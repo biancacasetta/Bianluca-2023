@@ -48,9 +48,10 @@
       <img class="peces" src="../../../../assets/inicio-cliente/pez-koi.png" alt="Peces koi">
     </div>
     <div class="contenedor-h">
-      <h3>{{mensajePantalla2}}</h3>
+      <h3 *ngIf="!clienteEsperando.sentado">Aguarde a que el metre le asigne su mesa.</h3>
+      <h3 *ngIf="clienteEsperando.sentado">El QR de su mesa está disponible para escanear.</h3>
     </div>
-    <div class="contenedor-qr" *ngIf="clienteSentado">
+    <div class="contenedor-qr" *ngIf="clienteEsperando.sentado">
       <ion-label>Escanee su mesa <ion-icon name="arrow-down-circle-outline"></ion-icon></ion-label>
         <ion-button fill="solid" class="boton-qr" (click)="startScanner()">
           <div class="contenedor-icon-qr">
@@ -66,7 +67,7 @@
     </div>
   </div>
   <div class="pantalla" *ngIf="pantalla == 3">
-    
+    <h3>Coming soon...</h3>
   </div>
   <div class="contenedor-spinner" *ngIf="spinnerActivo">
     <app-spinner></app-spinner>
