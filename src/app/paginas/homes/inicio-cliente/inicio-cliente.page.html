@@ -1,7 +1,7 @@
 <ion-header [translucent]="true" *ngIf="!scannerActive">
   <ion-toolbar>
     <ion-title class="ion-text-center">
-      BIENVENIDO
+      {{mensajeToolBar}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -13,7 +13,7 @@
 </ion-fab>
 
 <ion-content [fullscreen]="true" *ngIf="!scannerActive">
-  <div class="pantalla">
+  <div class="pantalla" *ngIf="pantalla == 1">
     <div class="contenedor-personas">
       <ion-label clasS="ion-text-center">¿Para cuantas personas es la mesa?</ion-label>
       <div class="contenedor-cant-personas">
@@ -42,6 +42,31 @@
           </div>
         </ion-button>   
       </div>
+  </div>
+  <div class="pantalla-2" *ngIf="pantalla == 2">
+    <div class="contenedor-imagen rotate-center" >
+      <img class="peces" src="../../../../assets/inicio-cliente/pez-koi.png" alt="Peces koi">
+    </div>
+    <div class="contenedor-h">
+      <h3>{{mensajePantalla2}}</h3>
+    </div>
+    <div class="contenedor-qr" *ngIf="clienteSentado">
+      <ion-label>Escanee su mesa <ion-icon name="arrow-down-circle-outline"></ion-icon></ion-label>
+        <ion-button fill="solid" class="boton-qr" (click)="startScanner()">
+          <div class="contenedor-icon-qr">
+            <ion-icon class="icon-qr" slot="start" name="qr-code-outline"></ion-icon>
+            <div class="contenedor-h2">
+              <h2>ESCANEAR MESA</h2>
+            </div>
+          </div>
+        </ion-button>   
+      </div>
+    <div class="contenedor-qr-2">
+
+    </div>
+  </div>
+  <div class="pantalla" *ngIf="pantalla == 3">
+    
   </div>
   <div class="contenedor-spinner" *ngIf="spinnerActivo">
     <app-spinner></app-spinner>
