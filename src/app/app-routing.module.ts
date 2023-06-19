@@ -29,6 +29,10 @@ const routes: Routes = [
   },  {
     path: 'metre',
     loadChildren: () => import('./paginas/homes/metre/metre.module').then( m => m.MetrePageModule)
+  },
+  {
+    path: 'mozo',
+    loadChildren: () => import('./paginas/homes/mozo/mozo.module').then( m => m.MozoPageModule)
   }
 
 

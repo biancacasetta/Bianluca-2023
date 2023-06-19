@@ -54,6 +54,9 @@ export class AuthService {
       case "metre":
         this.router.navigate(['/metre']);
         break;
+      case "mozo":
+        this.router.navigate(['/mozo']);
+        break;  
         //Falta agregar los otros tipos de usuarios
     }
   }
