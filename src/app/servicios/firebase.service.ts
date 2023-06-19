@@ -20,6 +20,7 @@ export class FirebaseService {
   {
     return new Promise<void> ((resolve, rejected) => {
       this.angularFirestore.collection(nombreColeccion).doc(dato.dni + '.' + dato.hora).set({
+      id: dato.dni + '.' + dato.hora,
       nombre: dato.nombre,
       apellido: dato.apellido,
       dni: dato.dni,
@@ -27,6 +28,22 @@ export class FirebaseService {
       password: dato.password,
       hora: dato.hora,
       rutaFoto: dato.rutaFoto,
+      perfil: dato.perfil,
+    })
+    .then(()=>{
+      resolve();
+    })
+    .catch(error=>rejected(error))
+  });
+  }
+
+  agregarDocumentoAnonimo(dato:any,nombreColeccion:string)
+  {
+    return new Promise<void> ((resolve, rejected) => {
+      this.angularFirestore.collection(nombreColeccion).doc(dato.nombre + '.' + dato.hora).set({
+      id: dato.nombre + '.' + dato.hora,
+      nombre: dato.nombre,
+      hora: dato.hora,
       perfil: dato.perfil,
     })
     .then(()=>{
