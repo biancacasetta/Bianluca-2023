@@ -35,6 +35,7 @@ export class ModoAnonimoComponent implements OnInit {
       this.clienteAnonimo.perfil = "anónimo";
       this.clienteAnonimo.hora = fecha;
       this.clienteAnonimo.id = `${this.clienteAnonimo.nombre}.${this.clienteAnonimo.hora}`;
+      this.clienteAnonimo.rutaFoto = "/assets/metre/incognito.png";
 
       this.activarSpinner.emit();
   

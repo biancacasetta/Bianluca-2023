@@ -15,18 +15,20 @@
     <h4 class="ion-text-center">LISTA DE ESPERA</h4>
     <img class="neko" src="../../../../assets/metre/neko.gif">
     
-    <ion-card *ngFor="let cliente of listaEspera">
-      <ion-card-header>
-        <ion-card-title>{{cliente.nombre}} {{cliente.apellido}}</ion-card-title>
-        <ion-card-subtitle>Mesa para {{cliente.comenzales}} personas</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-thumbnail>
-          <img src="{{cliente.rutaFoto}}"/>
-        </ion-thumbnail>
-        <ion-button (click)="eliminarDeListaEspera(cliente)">SENTAR</ion-button>
-      </ion-card-content>
-    </ion-card>
+    <div class="card" *ngFor="let cliente of listaEspera">
+      <ion-card *ngIf="!cliente.sentado">
+        <ion-card-header>
+          <ion-card-title>{{cliente.nombre}} {{cliente.apellido}}</ion-card-title>
+          <ion-card-subtitle>Mesa para {{cliente.comenzales}} personas</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-thumbnail>
+            <img src="{{cliente.rutaFoto}}"/>
+          </ion-thumbnail>
+          <ion-button (click)="eliminarDeListaEspera(cliente)">SENTAR</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 
   <div class="contenedor-spinner" *ngIf="spinner">

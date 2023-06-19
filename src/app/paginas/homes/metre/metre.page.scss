@@ -37,6 +37,14 @@ ion-fab-button
     width: 40%;
 }
 
+.pantalla .card
+{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .pantalla ion-card
 {
     width: 90%;
