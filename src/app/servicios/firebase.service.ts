@@ -58,6 +58,16 @@ export class FirebaseService {
     })
   }
 
+  actualizarMesaPorId(mesaActualizada:any)
+  {
+    this.angularFirestore.collection('mesas',ref => ref.where('id','==',mesaActualizada.id)).get()
+    .subscribe(QuerySnapshot => {
+      QuerySnapshot.forEach(doc =>{
+        doc.ref.update(mesaActualizada);
+      });
+    })
+  }
+
   agregarDocumentoAnonimo(dato:any,nombreColeccion:string)
   {
     return new Promise<void> ((resolve, rejected) => {
@@ -86,8 +96,6 @@ export class FirebaseService {
   {
     return this.angularFirestore.collection(nombreColeccion).add(datos);
   }
-
-  
 
   eliminarDocumento(datoAEliminar:any,nombreColeccion:string)
   {
