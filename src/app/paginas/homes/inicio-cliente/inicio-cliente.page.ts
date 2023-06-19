@@ -18,6 +18,7 @@ export class InicioClientePage implements OnInit {
   usuarioLogueado:any;
   clienteEsperando:any = {};
   email:string = "";
+  spinnerActivo:boolean = false;
   constructor(private authServ:AuthService,
     private vibration: Vibration,
     private firebaseServ:FirebaseService) { 
@@ -36,11 +37,13 @@ export class InicioClientePage implements OnInit {
     });
   }
   
-   ngAfterViewInit()
+  activarSpinner()
   {
-
+    this.spinnerActivo = true;
+    setTimeout(()=>{
+      this.spinnerActivo = false;
+    },2000);
   }
-
   cerrarSesion()
   {
     this.authServ.cerrarSesion();
@@ -91,20 +94,39 @@ export class InicioClientePage implements OnInit {
     if (allowed) {
       BarcodeScanner.hideBackground();
       const resultado = await BarcodeScanner.startScan();
-      if (resultado.hasContent) {
+      if (resultado.hasContent) 
+      {
         this.vibration.vibrate(300);
-        if(this.usuarioLogueado.perfil != undefined)
+        if(resultado.content == 'lista-espera')
         {
-          this.clienteEsperando = this.usuarioLogueado;
+          this.clienteEsperando.comenzales = this.contadorPersonas;
+          if(this.usuarioLogueado.perfil == "cliente")
+          {
+            this.asignarDatos(this.usuarioLogueado);
+            this.firebaseServ.agregarDocumento(this.clienteEsperando,'lista-espera');
+          }
+          else
+          {
+            console.log(this.firebaseServ.obtenerClienteAnonimo());
+            this.asignarDatos(this.firebaseServ.obtenerClienteAnonimo());
+            this.firebaseServ.agregarDocumentoAnonimo(this.clienteEsperando,'lista-espera');
+          }
+          this.scannerActive = false;
+          this.contadorPersonas = 1;
+          this.activarSpinner();
+        }
+        else if(resultado.content == "mesa")
+        {
+          this.mensajePopUp = "Debe estar en la lista de espera para sentarse en una mesa.";
+          this.popup = true;
+          this.stopScan();
         }
         else
         {
-          this.clienteEsperando.nombre = this.usuarioLogueado.nombre;
+          this.mensajePopUp = "Debe utilizar un QR válido de la empresa.";
+          this.popup = true;
+          this.stopScan();
         }
-        this.clienteEsperando.comenzales = this.contadorPersonas;
-        this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
-        this.scannerActive = false;
-        this.contadorPersonas = 1;
       } else {
         alert('NO DATA FOUND!');
       }
@@ -113,6 +135,16 @@ export class InicioClientePage implements OnInit {
     }
   }
 
+  asignarDatos(cliente:any)
+  {
+    this.clienteEsperando = {
+      id: cliente.id,
+      nombre: cliente.nombre,
+      apellido: cliente.apellido,
+      hora: cliente.hora,
+      comenzales: this.contadorPersonas
+    };
+  }
 
   stopScan()  {
     this.scannerActive = false;
