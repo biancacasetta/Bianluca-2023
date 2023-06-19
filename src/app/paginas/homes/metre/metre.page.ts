@@ -37,7 +37,7 @@ export class MetrePage implements OnInit {
     }, 2000);
   }
 
-  eliminarDeListaEspera(cliente:any)
+  sentarCliente(cliente:any)
   {
     cliente.sentado = true;
     this.firestore.actualizarClientePorId("lista-espera", cliente);
