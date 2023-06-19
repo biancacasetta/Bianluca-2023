@@ -26,9 +26,14 @@ const routes: Routes = [
   {
     path: 'inicio-cliente',
     loadChildren: () => import('./paginas/homes/inicio-cliente/inicio-cliente.module').then( m => m.InicioClientePageModule)
-  },  {
+  },
+  {
     path: 'metre',
     loadChildren: () => import('./paginas/homes/metre/metre.module').then( m => m.MetrePageModule)
+  },
+  {
+    path: 'inicio-cliente/mesa',
+    loadChildren: () => import('./paginas/mesa/mesa.module').then( m => m.MesaPageModule)
   },
   {
     path: 'mozo',

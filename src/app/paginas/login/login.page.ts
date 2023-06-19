@@ -114,6 +114,10 @@ export class LoginPage implements OnInit {
         this.formLogin.get('email').setValue("metre@metre.com");
         this.formLogin.get('password').setValue("metre1");
         break;
+      case "mozo":
+        this.formLogin.get('email').setValue("mozo1@mozos.com");
+        this.formLogin.get('password').setValue("mozos1");
+        break;
       case "cocinero":
         this.formLogin.get('email').setValue("cocinero@cocinero.com");
         this.formLogin.get('password').setValue("cocinero");
