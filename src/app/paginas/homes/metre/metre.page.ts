@@ -39,7 +39,8 @@ export class MetrePage implements OnInit {
 
   eliminarDeListaEspera(cliente:any)
   {
-    this.firestore.eliminarDocumento(cliente, "lista-espera");
+    cliente.sentado = true;
+    this.firestore.actualizarClientePorId("lista-espera", cliente);
     this.activarSpinner();
   }
 
