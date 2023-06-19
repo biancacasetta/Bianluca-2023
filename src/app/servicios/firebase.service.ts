@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
+import { QuerySnapshot } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
-
+  private usuarioAnonimo:any;
   constructor(private angularFirestore: AngularFirestore) { }
 
   obtenerColeccion(nombreColeccion:string)
@@ -37,20 +38,37 @@ export class FirebaseService {
   });
   }
 
+  eliminarClientePorCampo(nombreVariable:string,valorVariable:string,nombreColeccion:string)
+  {
+    this.angularFirestore.collection(nombreColeccion, ref => ref.where(nombreVariable,'==',valorVariable)).get()
+    .subscribe(QuerySnapshot => {
+      QuerySnapshot.forEach(doc =>{
+        doc.ref.delete();
+      });
+    });
+  }
+
   agregarDocumentoAnonimo(dato:any,nombreColeccion:string)
   {
     return new Promise<void> ((resolve, rejected) => {
-      this.angularFirestore.collection(nombreColeccion).doc(dato.nombre + '.' + dato.hora).set({
-      id: dato.nombre + '.' + dato.hora,
+      this.angularFirestore.collection(nombreColeccion).doc(dato.id).set({
+      id: dato.id,
+      apellido: dato.apellido,
       nombre: dato.nombre,
       hora: dato.hora,
       perfil: dato.perfil,
     })
     .then(()=>{
+      this.usuarioAnonimo = dato;
       resolve();
     })
     .catch(error=>rejected(error))
   });
+  }
+
+  obtenerClienteAnonimo()
+  {
+    return this.usuarioAnonimo;
   }
 
   agregarDocumentoGenerico(datos:any,nombreColeccion:string)
@@ -63,10 +81,10 @@ export class FirebaseService {
   eliminarDocumento(datoAEliminar:any,nombreColeccion:string)
   {
     this.angularFirestore
-    .doc<any>(`${nombreColeccion}/${datoAEliminar.dni}.${datoAEliminar.hora}`)
+    .doc<any>(`${nombreColeccion}/${datoAEliminar.id}`)
     .delete()
     .then(() =>{
-      console.log(`Se eliminó ${datoAEliminar.apellido} de la lista ${nombreColeccion}`);
+      console.log(`Se eliminó ${datoAEliminar.nombre} de la lista ${nombreColeccion}`);
     })
     .catch((error) =>{
       console.log(error.code);

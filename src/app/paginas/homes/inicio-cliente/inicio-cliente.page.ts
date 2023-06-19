@@ -12,12 +12,14 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 export class InicioClientePage implements OnInit {
   contadorPersonas:number = 1;
   popup:boolean = false;
+  listaEspera:any[]=[];
   mensajePopUp:string = "";
   scannerActive: boolean = false;
   resultadoQR:string = "";
   usuarioLogueado:any;
   clienteEsperando:any = {};
   email:string = "";
+  spinnerActivo:boolean = false;
   constructor(private authServ:AuthService,
     private vibration: Vibration,
     private firebaseServ:FirebaseService) { 
@@ -34,13 +36,18 @@ export class InicioClientePage implements OnInit {
         }
       })
     });
+    this.firebaseServ.obtenerColeccion('lista-espera').subscribe((usuarios)=>{
+      this.listaEspera = usuarios;
+    });
   }
   
-   ngAfterViewInit()
+  activarSpinner()
   {
-
+    this.spinnerActivo = true;
+    setTimeout(()=>{
+      this.spinnerActivo = false;
+    },2000);
   }
-
   cerrarSesion()
   {
     this.authServ.cerrarSesion();
@@ -91,20 +98,46 @@ export class InicioClientePage implements OnInit {
     if (allowed) {
       BarcodeScanner.hideBackground();
       const resultado = await BarcodeScanner.startScan();
-      if (resultado.hasContent) {
+      if (resultado.hasContent) 
+      {
         this.vibration.vibrate(300);
-        if(this.usuarioLogueado.perfil != undefined)
+        if(resultado.content == 'lista-espera')
         {
-          this.clienteEsperando = this.usuarioLogueado;
+          this.clienteEsperando.comenzales = this.contadorPersonas;
+          if(this.usuarioLogueado.perfil == "cliente")
+          {
+            if(!this.verificarListaEspera())
+            {
+              this.asignarDatos(this.usuarioLogueado);
+              this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
+            }
+            else
+            {
+              this.mensajePopUp = "Ya está ingresado en la lista de espera.";
+              this.popup = true;
+            }
+          }
+          else
+          {
+            this.asignarDatos(this.firebaseServ.obtenerClienteAnonimo());
+            this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
+          }
+          this.scannerActive = false;
+          this.contadorPersonas = 1;
+          this.activarSpinner();
+        }
+        else if(resultado.content == "mesa")
+        {
+          this.mensajePopUp = "Debe estar en la lista de espera para sentarse en una mesa.";
+          this.popup = true;
+          this.stopScan();
         }
         else
         {
-          this.clienteEsperando.nombre = this.usuarioLogueado.nombre;
+          this.mensajePopUp = "Debe utilizar un QR válido de la empresa.";
+          this.popup = true;
+          this.stopScan();
         }
-        this.clienteEsperando.comenzales = this.contadorPersonas;
-        this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
-        this.scannerActive = false;
-        this.contadorPersonas = 1;
       } else {
         alert('NO DATA FOUND!');
       }
@@ -113,6 +146,29 @@ export class InicioClientePage implements OnInit {
     }
   }
 
+  verificarListaEspera()
+  {
+    let estaEnLista = false;
+    this.listaEspera.forEach((usuario)=>{
+      if(this.usuarioLogueado.dni == usuario.dni)
+      {
+        estaEnLista = true;
+      }
+    });
+    return estaEnLista;
+  }
+
+  asignarDatos(cliente:any)
+  {
+    this.clienteEsperando = {
+      id: cliente.id,
+      nombre: cliente.nombre,
+      apellido: cliente.apellido,
+      hora: cliente.hora,
+      perfil: cliente.perfil,
+      comenzales: this.contadorPersonas
+    };
+  }
 
   stopScan()  {
     this.scannerActive = false;

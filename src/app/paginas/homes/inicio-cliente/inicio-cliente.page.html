@@ -43,6 +43,9 @@
         </ion-button>   
       </div>
   </div>
+  <div class="contenedor-spinner" *ngIf="spinnerActivo">
+    <app-spinner></app-spinner>
+  </div>
   <div class="popup" *ngIf="popup">
     <h4>{{mensajePopUp}}</h4>
       <ion-button (click)="popup = false">ACEPTAR</ion-button>
