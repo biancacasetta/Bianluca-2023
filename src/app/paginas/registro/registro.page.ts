@@ -14,6 +14,7 @@ export class RegistroPage implements OnInit {
   modoRegistro: boolean = true;
   scannerActive: boolean = false;
   infoDni:any;
+  popup:boolean = false;
 
   constructor(private vibration: Vibration, private router: Router) {}
 
@@ -44,7 +45,6 @@ export class RegistroPage implements OnInit {
       const resultado = await BarcodeScanner.startScan();
       if (resultado.hasContent) {
         this.infoDni = resultado.content.split('@');
-        alert(this.infoDni);
         this.vibration.vibrate(300);
         this.scannerActive = false;
       } else {
@@ -67,7 +67,10 @@ export class RegistroPage implements OnInit {
 
     setTimeout(() => {
       this.spinner = false;
-      this.router.navigateByUrl("/login");
+      if(this.modoRegistro)
+      {
+        this.popup = true;
+      }
     }, 3000);
   }
 

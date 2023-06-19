@@ -71,7 +71,13 @@ export class LoginPage implements OnInit {
         switch(estado)
         {
           case "":
-            this.auth.iniciarSesion(this.formLogin.value.email, this.formLogin.value.password)
+            this.auth.iniciarSesion(this.formLogin.value.email, this.formLogin.value.password).then(() => {
+              console.log("¡Login exitoso!");
+            })
+            .catch((error) => {
+              this.mensajePopup = this.auth.crearMensaje(error.code);
+              this.popup = true;
+            });
             break;
           case "Pendiente":
             this.mensajePopup = "Aún no se procesó tu registro.";
@@ -86,5 +92,40 @@ export class LoginPage implements OnInit {
         this.spinner = false;
       }, 2000);
     }
-  }      
+    else
+    {
+      setTimeout(() => {
+        this.spinner = false;
+        this.mensajePopup = "Faltan completar campos";
+        this.popup = true;
+      }, 2000);
+    }
+  }
+  
+  insertarAccesosRapidos(perfil:string)
+  {
+    switch(perfil)
+    {
+      case "dueño":
+        this.formLogin.get('email').setValue("duenio@duenio.com");
+        this.formLogin.get('password').setValue("duenio");
+        break;
+      case "metre":
+        this.formLogin.get('email').setValue("metre@metre.com");
+        this.formLogin.get('password').setValue("metre1");
+        break;
+      case "cocinero":
+        this.formLogin.get('email').setValue("cocinero@cocinero.com");
+        this.formLogin.get('password').setValue("cocinero");
+        break;
+      case "bartender":
+        this.formLogin.get('email').setValue("bartender@bartender.com");
+        this.formLogin.get('password').setValue("bartender");
+        break;
+      case "cliente":
+        this.formLogin.get('email').setValue("nahuquilmes2000@gmail.com");
+        this.formLogin.get('password').setValue("quilmes");
+        break;
+    }
+  }
 }

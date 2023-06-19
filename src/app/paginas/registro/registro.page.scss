@@ -12,7 +12,7 @@
     background-image: url("../../../assets/icon/fondo-salmon.avif");
     background-repeat: no-repeat;
     background-size: cover;
-    background-position:unset;
+    overflow: scroll;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -90,3 +90,30 @@ app-registro-cliente, app-modo-anonimo
     top: 0;
     right: 0;
   }
+
+  .popup
+{
+    position: absolute;
+    width: 80%;
+    height: 25%;
+    backdrop-filter: blur(3px);
+    background-color: #FF8F82;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    border-radius: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Mate SC', serif;
+    padding: 2vh;
+}
+
+.popup ion-button
+{
+    font-family: KATO;
+    --background:#FA5046;
+}

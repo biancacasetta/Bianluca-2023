@@ -10,7 +10,7 @@
         <small
           *ngIf="
           formLogin.controls['email'].errors?.['required'] &&
-          (formLogin.controls['email'].touched)">
+          formLogin.controls['email'].touched">
           El correo electrónico es requerido
         </small>
         <small
@@ -39,7 +39,6 @@
         </small>
 
         <ion-text>Si no te registraste, podés hacerlo <a routerLink="/registro">acá</a></ion-text>
-        <ion-text><a routerLink="/dueno-supervisor">lala</a></ion-text>
         
         <div class="yema-huevo">
           <ion-button type="submit"
@@ -48,6 +47,26 @@
       </form> 
     </div>
   </div>
+
+  <ion-fab slot="fixed" horizontal="start" vertical="bottom">
+    <ion-fab-button>
+      <ion-icon name="chevron-up"></ion-icon>ACCESOS<br>RÁPIDOS
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <!-- DUEÑO -->
+      <ion-button (click)="insertarAccesosRapidos('dueño')"><ion-icon name="briefcase"></ion-icon>DUEÑO</ion-button>
+      <!-- METRE -->
+      <ion-button (click)="insertarAccesosRapidos('metre')"><ion-icon name="footsteps"></ion-icon>METRE</ion-button>
+      <!-- COCINERO -->
+      <ion-button (click)="insertarAccesosRapidos('cocinero')"><ion-icon name="restaurant"></ion-icon>COCINERO</ion-button>
+      <!-- BARTENDER -->
+      <ion-button (click)="insertarAccesosRapidos('bartender')"><ion-icon name="wine"></ion-icon>BARTENDER</ion-button>
+      <!-- CLIENTE -->
+      <ion-button (click)="insertarAccesosRapidos('cliente')"><ion-icon name="person"></ion-icon>CLIENTE</ion-button>
+    </ion-fab-list>
+  </ion-fab>
+
+
   <div class="contenedor-spinner" *ngIf="spinner">
     <app-spinner></app-spinner>
   </div>
