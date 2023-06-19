@@ -31,8 +31,10 @@ export class ModoAnonimoComponent implements OnInit {
       const fecha = new Date().getTime();
       
       this.clienteAnonimo.nombre = this.formAnonimo.value.nombre;
+      this.clienteAnonimo.apellido = "";
       this.clienteAnonimo.perfil = "anónimo";
       this.clienteAnonimo.hora = fecha;
+      this.clienteAnonimo.id = `${this.clienteAnonimo.nombre}.${this.clienteAnonimo.hora}`;
 
       this.activarSpinner.emit();
   
