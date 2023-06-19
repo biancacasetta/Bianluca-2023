@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { InicioClientePageRoutingModule } from './inicio-cliente-routing.module';
 
 import { InicioClientePage } from './inicio-cliente.page';
+import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { InicioClientePage } from './inicio-cliente.page';
     IonicModule,
     InicioClientePageRoutingModule
   ],
+  providers: [Vibration],
   declarations: [InicioClientePage]
 })
 export class InicioClientePageModule {}

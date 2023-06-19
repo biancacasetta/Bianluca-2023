@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase/compat/app';
+import firebase from 'firebase/compat/app';
 import { FirebaseService } from './firebase.service';
+import { of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +39,7 @@ export class AuthService {
       })
     });
   }
-
+  
   redirigirPorUsuario(perfil:string)
   {
     switch(perfil)
@@ -47,6 +50,9 @@ export class AuthService {
       case "dueño":
         case "supervisor":  
         this.router.navigate(['/dueno-supervisor']);
+        break;
+      case "metre":
+        this.router.navigate(['/metre']);
         break;
         //Falta agregar los otros tipos de usuarios
     }
@@ -82,23 +88,14 @@ export class AuthService {
   crearMensaje(errorCode: string): string {
     let mensaje: string = '';
     switch (errorCode) {
-      case 'auth/internal-error':
-        mensaje = 'Los campos estan vacios';
-        break;
       case 'auth/operation-not-allowed':
         mensaje = 'La operación no está permitida.';
         break;
       case 'auth/email-already-in-use':
         mensaje = 'El email ya está registrado.';
         break;
-      case 'auth/invalid-email':
-        mensaje = 'El email no es valido.';
-        break;
-      case 'auth/weak-password':
-        mensaje = 'La contraseña debe tener al menos 6 caracteres';
-        break;
       case 'auth/user-not-found':
-        mensaje = 'No existe ningún usuario con estos identificadores';
+        mensaje = 'No existe ningún usuario con estos datos';
         break;
       default:
         mensaje = 'Dirección de email y/o contraseña incorrectos';
@@ -106,7 +103,12 @@ export class AuthService {
     }
 
     return mensaje;
-  } // end of createMessage
+  }
+
+  obtenerEmailUsuarioLogueado()
+  {
+    return firebase.auth().currentUser?.email;
+  }
 }
 
 

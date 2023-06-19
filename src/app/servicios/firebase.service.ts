@@ -20,8 +20,8 @@ export class FirebaseService {
   {
     return new Promise<void> ((resolve, rejected) => {
       this.angularFirestore.collection(nombreColeccion).doc(dato.dni + '.' + dato.hora).set({
-      apellido: dato.apellido,
       nombre: dato.nombre,
+      apellido: dato.apellido,
       dni: dato.dni,
       email: dato.email,
       password: dato.password,
@@ -34,6 +34,11 @@ export class FirebaseService {
     })
     .catch(error=>rejected(error))
   });
+  }
+
+  agregarDocumentoGenerico(datos:any,nombreColeccion:string)
+  {
+    return this.angularFirestore.collection(nombreColeccion).add(datos);
   }
 
   
@@ -57,7 +62,6 @@ export class FirebaseService {
     if (rutaFoto != "../../../assets/icon/foto-avatar-avif"){
     
       storageRef.listAll().then((lista)=>{
-
         lista.items.forEach(f => {
           f.getDownloadURL().then((link)=>{
             if (link == rutaFoto){    
@@ -66,9 +70,8 @@ export class FirebaseService {
             }
           });
         });
-
       }).catch(e=>{
-        alert(e);
+        console.log(e);
       });
     }
   }
