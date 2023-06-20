@@ -16,7 +16,6 @@ export class MetrePage implements OnInit {
   constructor(private auth:AuthService, private firestore: FirebaseService) { }
 
   ngOnInit() {
-    this.listaEspera = [];
     this.firestore.obtenerColeccion('lista-espera').subscribe((data)=>{
       this.listaEspera = data;
     });

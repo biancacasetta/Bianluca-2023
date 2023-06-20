@@ -1,31 +1,141 @@
-<ion-fab *ngIf="!spinner" vertical="start" horizontal="end" >
+<!-- <ion-fab *ngIf="!spinner" vertical="start" horizontal="end" >
   <ion-fab-button color="none" (click)="popup = true">
     <img src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
+  </ion-fab-button>
+</ion-fab> -->
+
+<ion-fab vertical="start" horizontal="end" >
+  <ion-fab-button color="none">
+    <img src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Consultar al mozo">
   </ion-fab-button>
 </ion-fab>
 
 <ion-header [translucent]="true" *ngIf="!spinner">
   <ion-toolbar>
-    <ion-title class="ion-text-center">MESA</ion-title>
+    <ion-title class="ion-text-center" *ngIf="usuarioLogueado != null">MESA - {{usuarioLogueado.nombre}} {{usuarioLogueado.apellido}}</ion-title>
+    <ion-title class="ion-text-center" *ngIf="usuarioAnonimo != null">MESA - {{usuarioAnonimo.nombre}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="pantalla">
+  <div class="pantalla" *ngIf="!carrito">
     
-    
-  </div>
+    <h2>COMIDAS</h2>
+    <div class="card" *ngFor="let comida of listaComidas; let i = index">
+      <ion-card>
+        <ion-card-header>
+          <div class="imagenes">
+            <ion-thumbnail *ngFor="let imagen of imagenesComida[i]">
+              <img [src]="imagen"/>
+            </ion-thumbnail>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-card-title>{{comida.nombre}}</ion-card-title>
+          <ion-card-subtitle>${{comida.precio}}</ion-card-subtitle>
+          <div class="cantidad">
+            <ion-button class="boton-cantidad" (click)="restarCantidad(comida)" [disabled]="comida.cantidad == 0">
+              <ion-icon name="remove"></ion-icon>
+            </ion-button>
+            <ion-label>{{comida.cantidad}}</ion-label>
+            <ion-button class="boton-cantidad" (click)="sumarCantidad(comida)">
+              <ion-icon name="add"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
 
-  <div class="contenedor-spinner" *ngIf="spinner">
-    <app-spinner></app-spinner>
-  </div>
+    <h2>BEBIDAS</h2>
+    <div class="card" *ngFor="let bebida of listaBebidas; let i = index">
+      <ion-card>
+        <ion-card-header>
+          <div class="imagenes">
+            <ion-thumbnail *ngFor="let imagen of imagenesBebida[i]">
+              <img [src]="imagen"/>
+            </ion-thumbnail>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-card-title>{{bebida.nombre}}</ion-card-title>
+          <ion-card-subtitle>${{bebida.precio}}</ion-card-subtitle>
+          <div class="cantidad">
+            <ion-button class="boton-cantidad" (click)="restarCantidad(bebida)" [disabled]="bebida.cantidad == 0">
+              <ion-icon name="remove"></ion-icon>
+            </ion-button>
+            <ion-label>{{bebida.cantidad}}</ion-label>
+            <ion-button class="boton-cantidad" (click)="sumarCantidad(bebida)">
+              <ion-icon name="add"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
 
-  <div class="popup" *ngIf="popup">
-    <h4>¿Desea cerrar sesión?</h4>
-    <div class="botonera-popup">
-      <ion-button (click)="popup = false">CANCELAR</ion-button>
-      <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
+    <h2>POSTRES</h2>
+    <div class="card" *ngFor="let postre of listaPostres; let i = index">
+      <ion-card>
+        <ion-card-header>
+          <div class="imagenes">
+            <ion-thumbnail *ngFor="let imagen of imagenesPostre[i]">
+              <img [src]="imagen"/>
+            </ion-thumbnail>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-card-title>{{postre.nombre}}</ion-card-title>
+          <ion-card-subtitle>${{postre.precio}}</ion-card-subtitle>
+          <div class="cantidad">
+            <ion-button class="boton-cantidad" (click)="restarCantidad(postre)" [disabled]="postre.cantidad == 0">
+              <ion-icon name="remove"></ion-icon>
+            </ion-button>
+            <ion-label>{{postre.cantidad}}</ion-label>
+            <ion-button class="boton-cantidad" (click)="sumarCantidad(postre)">
+              <ion-icon name="add"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
     </div>
   </div>
 
+  <div class="pantalla carrito" *ngIf="carrito">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>DETALLE DEL PEDIDO</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+        <div class="item-pedido" *ngFor="let item of pedido">
+          <ion-label>{{item.nombre}} x{{item.cantidad}}</ion-label>
+          <ion-label>${{item.precio}}</ion-label>
+        </div>
+
+        <hr>
+        <ion-label>TOTAL: ${{precioTotal}}</ion-label>
+        <div class="botones-detalle">
+          <ion-button (click)="carrito = false">VOLVER</ion-button>
+          <ion-button (click)="confirmarPedido(pedido)">CONFIRMAR</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  
+  <div class="contenedor-spinner" *ngIf="spinner">
+    <app-spinner></app-spinner>
+  </div>  
 </ion-content>
+
+<ion-footer *ngIf="precioTotal > 0 && !carrito">
+  <ion-toolbar>
+    <div>
+      <ion-title>SUBTOTAL $ {{precioTotal}}</ion-title>
+      <ion-button (click)="generarDetallePedido()">AGREGAR<br>AL CARRITO</ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>
+
+<div class="popup" *ngIf="popup">
+  <h4>{{mensajePopup}}</h4>
+  <ion-button (click)="popup = false">ACEPTAR</ion-button>
+</div>

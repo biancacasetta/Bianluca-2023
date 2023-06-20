@@ -12,6 +12,27 @@ ion-header ion-toolbar
     --color: white;
 }
 
+ion-footer ion-toolbar
+{
+    font-family: KATO;
+    --background:  #FA5046;
+    --color: white;
+}
+
+ion-footer ion-toolbar div
+{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+ion-footer ion-toolbar ion-button
+{
+    font-family: KATO;
+    --background: #FF8F82;
+    margin-right: 5vw;
+}
+
 ion-fab-button
 {
     width: 40px;
@@ -31,6 +52,130 @@ ion-fab-button
     font-family: KATO;
     background-color: rgb(240, 240, 240);
 }
+
+.pantalla .card
+{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pantalla .card ion-card
+{
+    width: 90%;
+    height: 200px;
+    --background: #FF8F82;
+    --color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Mate SC', serif;
+    text-align: center;
+}
+
+.pantalla ion-card ion-card-header
+{
+    padding-bottom: 0;
+}
+
+.pantalla ion-card ion-card-header .imagenes
+{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.pantalla ion-card ion-card-subtitle
+{
+    --color: white;
+    font-size: 1.1em;
+}
+
+.pantalla ion-card ion-card-content
+{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 1.3em;
+}
+
+.pantalla ion-card ion-card-content .cantidad
+{
+    width: 50%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 2vh;
+}
+
+.pantalla ion-card ion-thumbnail
+{
+    margin: 2vh;
+}
+
+.boton-cantidad
+{
+    width: 50px;
+    height: 50px;
+    --background: #FA5046;
+    font-family: KATO;
+    --border-radius: 50%;
+}
+
+.carrito ion-card
+{
+    width: 90%;
+    --background: #FF8F82;
+    --color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Mate SC', serif;
+    text-align: center;
+}
+
+.carrito ion-card ion-card-header
+{
+    font-family: KATO;
+    margin-bottom: 2vh;
+}
+
+.carrito ion-card ion-card-content
+{
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.carrito ion-card ion-card-content .item-pedido
+{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.carrito ion-card ion-card-content .botones-detalle
+{
+    width: 90%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.carrito ion-card ion-card-content .botones-detalle ion-button
+{
+    --background: #FA5046;
+    font-family: KATO;
+}
+
 
 .contenedor-spinner
 {
@@ -66,14 +211,7 @@ ion-fab-button
     padding: 2vh;
 }
 
-.popup .botonera-popup
-{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.popup .botonera-popup ion-button
+.popup ion-button
 {
     font-family: KATO;
     --background:#FF8F82;
