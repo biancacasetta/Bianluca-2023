@@ -68,9 +68,9 @@ export class FirebaseService {
     })
   }
 
-  actualizarPedidoPorId(pedidoActualizado:any)
+  actualizarPedidoPorId(pedidoActualizado:any,nombreColeccion:string)
   {
-    this.angularFirestore.collection('pedidos',ref => ref.where('id','==',pedidoActualizado.id)).get()
+    this.angularFirestore.collection(nombreColeccion,ref => ref.where('id','==',pedidoActualizado.id)).get()
     .subscribe(QuerySnapshot => {
       QuerySnapshot.forEach(doc =>{
         doc.ref.update(pedidoActualizado);

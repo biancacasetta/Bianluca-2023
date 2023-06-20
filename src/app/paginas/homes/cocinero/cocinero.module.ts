@@ -7,12 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { CocineroPageRoutingModule } from './cocinero-routing.module';
 
 import { CocineroPage } from './cocinero.page';
+import { SpinnerModule } from 'src/app/componentes/spinner/spinner.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    SpinnerModule,
     CocineroPageRoutingModule
   ],
   declarations: [CocineroPage]
