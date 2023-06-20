@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
-  selector: 'app-mozo',
-  templateUrl: './mozo.page.html',
-  styleUrls: ['./mozo.page.scss'],
+  selector: 'app-cocinero',
+  templateUrl: './cocinero.page.html',
+  styleUrls: ['./cocinero.page.scss'],
 })
-export class MozoPage implements OnInit {
+export class CocineroPage implements OnInit {
+
   listaPedidos:any []=[];
-  pantalla:string = 'solicitados';
   constructor(private firebaseServ:FirebaseService) { }
 
   ngOnInit() {
@@ -17,17 +17,10 @@ export class MozoPage implements OnInit {
     });
   } 
 
-  listarPedido(pedido:any)
+  terminarPedido(pedido:any)
   {
-    pedido.estado = 'En preparación';
+    pedido.estado = 'Terminado';
     this.firebaseServ.actualizarPedidoPorId(pedido);
-    //FALTA ENVIARSELO AL COCINERO Y BARTENDER
+    //SOLO LA PARTE DEL PEDIDO DEL COCINERO SE TERMINA
   }
-
-  entregarPedido(pedido:any)
-  {
-    pedido.estado = 'Entregado';
-    this.firebaseServ.actualizarPedidoPorId(pedido);
-  }
-
 }

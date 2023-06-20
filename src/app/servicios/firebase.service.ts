@@ -68,6 +68,16 @@ export class FirebaseService {
     })
   }
 
+  actualizarPedidoPorId(pedidoActualizado:any)
+  {
+    this.angularFirestore.collection('pedidos',ref => ref.where('id','==',pedidoActualizado.id)).get()
+    .subscribe(QuerySnapshot => {
+      QuerySnapshot.forEach(doc =>{
+        doc.ref.update(pedidoActualizado);
+      });
+    })
+  }
+
   agregarDocumentoAnonimo(dato:any,nombreColeccion:string)
   {
     return new Promise<void> ((resolve, rejected) => {
@@ -86,6 +96,7 @@ export class FirebaseService {
     .catch(error=>rejected(error))
   });
   }
+
 
   obtenerClienteAnonimo()
   {

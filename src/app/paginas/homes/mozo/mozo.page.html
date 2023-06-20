@@ -1,13 +1,87 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>mozo</ion-title>
+    <ion-title class="ion-text-center">PEDIDOS</ion-title>
   </ion-toolbar>
 </ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">mozo</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="pantalla" *ngIf="pantalla=='solicitados'">
+    <h4 class="ion-text-center">PEDIDOS SOLICITADOS</h4>
+    <div class="card" *ngFor="let pedido of listaPedidos">
+      <ion-card *ngIf="pedido.estado == 'Solicitado'">
+        <ion-card-header>
+          <ion-card-title>Mesa: {{pedido.mesa}}</ion-card-title>
+          <ion-card-subtitle>
+            <span>Estado pedido:</span>  
+            <span class="estado-pedido">{{pedido.estado}}</span>
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="pedido">
+            <h6>Milanesa</h6>
+            <span>x2</span>
+          </div>
+          <div class="pedido">
+            <h6>Albaca</h6>
+            <span>x2</span>
+          </div>
+          <ion-button (click)="listarPedido(pedido)">TOMAR PEDIDO</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+  <!-- PEDIDOS TERMINADOS -->
+  <div class="pantalla" *ngIf="pantalla=='terminado'">
+    <h4 class="ion-text-center">PEDIDOS TERMINADOS</h4>
+    <div class="card" *ngFor="let pedido of listaPedidos">
+      <ion-card *ngIf="pedido.estado == 'Terminado'">
+        <ion-card-header>
+          <ion-card-title>Mesa: {{pedido.mesa}}.</ion-card-title>
+          <ion-card-subtitle>Estado pedido: {{pedido.estado}}.</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="pedido">
+            <h6>Milanesa</h6>
+            <span>x2</span>
+          </div>
+          <ion-button mode="md" (click)="entregarPedido(pedido)">ENTREGAR</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+  <!-- PEDIDOS EN PREPARACIÓN -->
+  <div class="pantalla" *ngIf="pantalla=='en preparacion'">
+    <h4 class="ion-text-center">PEDIDOS EN PREPARACIÓN</h4>
+    <div class="card" *ngFor="let pedido of listaPedidos">
+      <ion-card *ngIf="pedido.estado == 'En preparación'">
+        <ion-card-header>
+          <ion-card-title>Mesa: {{pedido.mesa}}.</ion-card-title>
+          <ion-card-subtitle>Estado pedido: {{pedido.estado}}.</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="pedido">
+            <h6>Milanesa</h6>
+            <span>x2</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
 </ion-content>
+
+<!-- SEGMENT -->
+<ion-segment>
+  <ion-segment-button (click)="pantalla = 'solicitados'">
+    <img class="imagen-segment" src="../../../../assets/mozo/comida-solicitada.png" alt="Comida solicitada">
+    <span class="span-segment">SOLICITADOS</span>
+  </ion-segment-button>
+  
+  <ion-segment-button (click)="pantalla = 'en preparacion'">
+    <img class="imagen-segment" src="../../../../assets/mozo/comida-en-preparacion.png" alt="Comida en preparacion">
+    <span class="span-segment">EN PREPARACIÓN</span>
+  </ion-segment-button>
+
+  <ion-segment-button (click)="pantalla = 'terminado'">
+    <img class="imagen-segment" src="../../../../assets/mozo/comida-terminada.png" alt="Comida terminada">
+    <span class="span-segment">TERMINADOS</span>
+  </ion-segment-button>
+</ion-segment>
