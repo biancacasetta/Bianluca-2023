@@ -8,19 +8,60 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 })
 export class CocineroPage implements OnInit {
 
-  listaPedidos:any []=[];
+  listaPedidosCocinero:any []=[];
+  listaPedidosGenerales:any []=[];
+  spinner:boolean = false;
   constructor(private firebaseServ:FirebaseService) { }
 
   ngOnInit() {
+    this.firebaseServ.obtenerColeccion('pedidos-cocinero').subscribe((pedidos)=>{
+      this.listaPedidosCocinero = pedidos;
+    });
     this.firebaseServ.obtenerColeccion('pedidos').subscribe((pedidos)=>{
-      this.listaPedidos = pedidos;
+      this.listaPedidosGenerales = pedidos;
     });
   } 
 
-  terminarPedido(pedido:any)
+  activarSpinner()
   {
-    pedido.estado = 'Terminado';
-    this.firebaseServ.actualizarPedidoPorId(pedido);
+    this.spinner = true;
+    setTimeout(() => {
+      this.spinner = false;
+    }, 2000);
+  }
+
+ 
+
+  terminarPedido(pedidoCocinero:any)
+  {
+    this.cambiarEstadoItem(pedidoCocinero);
+    pedidoCocinero.terminado = true;
+    this.firebaseServ.actualizarPedidoPorId(pedidoCocinero,'pedidos-cocinero');
+    this.actualizarPedidoMozo(pedidoCocinero);
+    this.activarSpinner();
     //SOLO LA PARTE DEL PEDIDO DEL COCINERO SE TERMINA
+  }
+
+  cambiarEstadoItem(pedido:any)
+  {
+    pedido.items.forEach((item:any) => {
+      item.terminado = true;
+    });
+  }
+
+  actualizarPedidoMozo(pedidoCocinero:any)
+  {
+    this.listaPedidosGenerales.forEach((pedido:any)=>{
+      if(pedido.id == pedidoCocinero.id)
+      {
+        pedido.items.forEach((item:any)=>{
+          if(item.tipo == 'comida' || item.tipo == 'postre')
+          {
+            item.terminado = true;
+          }
+        });
+        this.firebaseServ.actualizarPedidoPorId(pedido,'pedidos');
+      }
+    })
   }
 }
