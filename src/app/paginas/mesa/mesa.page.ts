@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
@@ -19,13 +22,18 @@ export class MesaPage implements OnInit {
   listaPostres:any[] = [];
   precioTotal:number = 0;
   carrito:boolean = false;
+  menu:boolean = false;
+  pedidos:any[] = [];
   pedido:any[] = [];
+  pedidoActual:any = {};
   hayPedido:boolean = false;
+  chequearPedido:boolean = false;
   usuarioLogueado:any = null;
   usuarioAnonimo:any = null;
   mesa:any;
   mesas:any;
   titulo:string = "";
+  scannerActive:boolean = false;
 
   imagenesComida:any = [
     [
@@ -81,7 +89,7 @@ export class MesaPage implements OnInit {
     ]
   ];
 
-  constructor(private auth:AuthService, private firestore: FirebaseService)
+  constructor(private auth:AuthService, private firestore: FirebaseService, private vibration: Vibration, private router: Router)
   {
     this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
       res.forEach((usuario)=>{
@@ -119,7 +127,6 @@ export class MesaPage implements OnInit {
       });
     }
     
-    
   }
 
   ngOnInit() {
@@ -130,6 +137,8 @@ export class MesaPage implements OnInit {
       this.listaProductos = data;
       this.separarProductos(this.listaProductos);
     });
+
+    this.actualizarPedidos();
   }
 
   ngOnDestroy()
@@ -194,6 +203,7 @@ export class MesaPage implements OnInit {
   {
     this.activarSpinner();
     this.carrito = true;
+    this.menu = false;
     this.pedido = [];
 
     this.listaComidas.forEach((comida) => {
@@ -246,8 +256,8 @@ export class MesaPage implements OnInit {
   confirmarPedido(detallePedido:any)
   {
     this.activarSpinner();
-    this.resetearCantidades();
     this.carrito = false;
+    this.menu = false;
 
     const fecha = new Date().getTime();
     let nombre = "";
@@ -271,11 +281,13 @@ export class MesaPage implements OnInit {
     };
 
     this.firestore.agregarDocumentoGenerico(pedido, "pedidos");
-
     this.hayPedido = true;
+    this.resetearCantidades();
 
     this.mensajePopup = "El pedido se realizó con éxito";
-    this.popup = true;
+    setTimeout(() => {
+      this.popup = true;
+    }, 2000);
   }
 
   resetearCantidades()
@@ -302,5 +314,74 @@ export class MesaPage implements OnInit {
         postre.cantidad = 0;
       }
     });
+  }
+
+  async checkPermission() {
+    return new Promise(async (resolve, reject) => {
+      const status = await BarcodeScanner.checkPermission({ force: true });
+      if (status.granted) {
+        resolve(true);
+      } else if (status.denied) {
+        BarcodeScanner.openAppSettings();
+        resolve(false);
+      }
+    });
+  }
+
+  async startScanner() {
+    this.scannerActive = true;
+    const allowed = await this.checkPermission();
+    if (allowed) {
+      BarcodeScanner.hideBackground();
+      const resultado = await BarcodeScanner.startScan();
+      if (resultado.hasContent) 
+      {
+        this.vibration.vibrate(300);
+        this.stopScan();
+        
+        if(resultado.content.startsWith("mesa"))
+        {
+          let idMesa = resultado.content.split('-')[1];
+          
+          this.actualizarPedidos();
+
+          for (let i = 0; i < this.pedidos.length; i++) {
+            if(this.pedidos[i].mesa == idMesa)
+            {
+              this.pedidoActual = this.pedidos[i];
+              this.chequearPedido = true;
+            }
+          }
+        }
+      } else {
+        alert('NO DATA FOUND!');
+      }
+    } else {
+      alert('NOT ALLOWED!');
+    }
+  }
+
+  stopScan()  {
+    this.scannerActive = false;
+    BarcodeScanner.showBackground();
+    BarcodeScanner.stopScan();
+  }
+
+  actualizarPedidos()
+  {
+    this.firestore.obtenerColeccion("pedidos").subscribe((data) => {
+      this.pedidos = data;
+    });
+  }
+
+  confirmarRecepcionPedido()
+  {
+    this.pedidoActual.estado = "Recibido";
+    this.firestore.actualizarPedidoPorId(this.pedidoActual, "pedidos");
+
+    this.activarSpinner();
+    this.chequearPedido = false;
+    this.menu = false;
+    this.carrito = false;
   }
 }
