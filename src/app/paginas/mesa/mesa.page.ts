@@ -249,11 +249,25 @@ export class MesaPage implements OnInit {
     this.resetearCantidades();
     this.carrito = false;
 
+    const fecha = new Date().getTime();
+    let nombre = "";
+
+    if(this.usuarioAnonimo)
+    {
+      nombre = this.usuarioAnonimo.nombre;
+    }
+    else
+    {
+      nombre = this.usuarioLogueado.nombre + " " + this.usuarioLogueado.apellido;
+    }
+
     const pedido = {
       precio: this.precioTotal,
       items: detallePedido,
       estado: "Solicitado",
-      id: new Date().getTime()
+      id: this.mesa.id + "." + fecha,
+      mesa: this.mesa.id,
+      nombre: nombre
     };
 
     this.firestore.agregarDocumentoGenerico(pedido, "pedidos");
