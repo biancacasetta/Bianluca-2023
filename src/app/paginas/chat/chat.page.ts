@@ -66,8 +66,9 @@ export class ChatPage implements OnInit {
     const fecha = new Date();
     const hora = fecha.getHours().toString().padStart(2, '0');
     const minutos = fecha.getMinutes().toString().padStart(2, '0');
+    const segundos = fecha.getSeconds().toString().padStart(2, '0');
 
-    const horaMensaje = `${hora}:${minutos}`;
+    const horaMensaje = `${hora}:${minutos}:${segundos}`;
     const mensaje = {
       usuario: this.usuario.perfil,
       texto: this.nuevoMensaje,
