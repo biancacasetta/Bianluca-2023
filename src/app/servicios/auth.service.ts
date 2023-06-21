@@ -57,7 +57,12 @@ export class AuthService {
       case "mozo":
         this.router.navigate(['/mozo']);
         break;  
-        //Falta agregar los otros tipos de usuarios
+      case "bartender":
+        this.router.navigate(['bartender']);
+        break;
+      case "cocinero":
+        this.router.navigate(['cocinero']);
+        break;    
     }
   }
 

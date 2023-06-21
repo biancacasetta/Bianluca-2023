@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/servicios/auth.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -7,11 +8,12 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
   styleUrls: ['./cocinero.page.scss'],
 })
 export class CocineroPage implements OnInit {
-
+  popup:boolean=false;
   listaPedidosCocinero:any []=[];
   listaPedidosGenerales:any []=[];
   spinner:boolean = false;
-  constructor(private firebaseServ:FirebaseService) { }
+  constructor(private firebaseServ:FirebaseService,
+    private authServ:AuthService) { }
 
   ngOnInit() {
     this.firebaseServ.obtenerColeccion('pedidos-cocinero').subscribe((pedidos)=>{
@@ -30,7 +32,12 @@ export class CocineroPage implements OnInit {
     }, 2000);
   }
 
- 
+  cerrarSesion()
+  {
+    this.popup = false;
+    this.activarSpinner();
+    this.authServ.cerrarSesion();
+  }
 
   terminarPedido(pedidoCocinero:any)
   {

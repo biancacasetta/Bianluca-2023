@@ -39,6 +39,25 @@ export class FirebaseService {
   });
   }
 
+  guardarEncuestaCliente(datos:any){
+    return new Promise((resolve, rejected) => {
+      this.angularFirestore.collection("encuestasClientes").add({
+        mesa: datos.mesa,
+        cliente: datos.idCliente,
+        fecha: Date.now(),
+        rangoEdad: datos.rangoEdad,
+        gustosDelLocal: datos.gustosDelLocal,
+        limpieza: datos.limpieza,
+        recomendados: datos.recomendados,
+        sugerencia: datos.comentario,
+        fotos: datos.fotos
+      }).catch(error => {
+        alert(error);
+        rejected(error)
+      });
+  });
+   }
+
   eliminarClientePorCampo(nombreVariable:string,valorVariable:string,nombreColeccion:string)
   {
     this.angularFirestore.collection(nombreColeccion, ref => ref.where(nombreVariable,'==',valorVariable)).get()
