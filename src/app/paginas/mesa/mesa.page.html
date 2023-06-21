@@ -1,23 +1,50 @@
-<ion-fab *ngIf="!spinner" vertical="start" horizontal="start" >
+<ion-fab *ngIf="!spinner && !menu && !carrito && !chequearPedido && !scannerActive" vertical="start" horizontal="start" >
   <ion-fab-button color="none" (click)="logout = true">
     <img src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
   </ion-fab-button>
 </ion-fab>
 
-<ion-fab class="chat" *ngIf="!spinner" vertical="start" horizontal="end" >
+<ion-fab  *ngIf="menu || carrito || chequearPedido" class="volver" vertical="start" horizontal="start" >
+  <ion-fab-button color="none" (click)="menu = false; carrito = false; chequearPedido = false">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<ion-fab class="chat" *ngIf="!spinner || !scannerActive" vertical="start" horizontal="end" >
   <ion-fab-button color="none" routerLink="/chat">
     <ion-icon name="chatbubble"></ion-icon>
   </ion-fab-button>
 </ion-fab>
 
-<ion-header [translucent]="true" *ngIf="!spinner">
+
+<ion-header [translucent]="true" *ngIf="!spinner || !scannerActive">
   <ion-toolbar>
     <ion-title class="ion-text-center">{{titulo}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="pantalla" *ngIf="!carrito">
+<ion-content *ngIf="!scannerActive">
+
+  <div class="pantalla principal" *ngIf="!menu && !carrito && !chequearPedido">
+    <ion-card>
+      <ion-card-content>
+        <img src="../../../assets/icon/icon.png" alt="Logo Bianluca">
+    
+        <div class="accion-pedidos" *ngIf="!hayPedido">
+          <ion-text>No hay pedidos activos</ion-text>
+          <ion-button (click)="menu = true">REALIZAR PEDIDO</ion-button>
+        </div>
+        <div class="accion-pedidos" *ngIf="hayPedido">
+          <ion-text>Escanee el QR de su mesa para ver el estado del pedido</ion-text>
+          <ion-button class="boton-scan" (click)="startScanner()">
+            <ion-icon name="qr-code-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div class="pantalla" *ngIf="menu">
     
     <h2>COMIDAS</h2>
     <div class="card" *ngFor="let comida of listaComidas; let i = index">
@@ -113,11 +140,37 @@
         <hr>
         <ion-label>TOTAL: ${{precioTotal}}</ion-label>
         <div class="botones-detalle">
-          <ion-button (click)="carrito = false">VOLVER</ion-button>
+          <ion-button (click)="carrito = false; menu = true">VOLVER</ion-button>
           <ion-button (click)="confirmarPedido(pedido)">CONFIRMAR</ion-button>
         </div>
       </ion-card-content>
     </ion-card>
+  </div>
+
+  <div class="pantalla hay-pedido" *ngIf="chequearPedido">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>SU PEDIDO</ion-card-title>
+        <ion-card-subtitle>Estado: {{pedidoActual.estado}}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+
+        <div class="item-pedido" *ngFor="let item of pedidoActual.items">
+          <ion-label>{{item.nombre}} x{{item.cantidad}}</ion-label>
+          <ion-label>${{item.precio}}</ion-label>
+        </div>
+
+        <hr>
+        <ion-label>TOTAL: ${{pedidoActual.precio}}</ion-label>
+        <div class="botones-detalle">
+          <ion-button *ngIf="pedidoActual.estado == 'Entregado'"
+          (click)="confirmarRecepcionPedido()">CONFIRMAR RECEPCIÓN</ion-button>
+          <ion-button *ngIf="pedidoActual.estado == 'Recibido'">PEDIR LA CUENTA</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button routerLink="/encuesta">COMPLETAR ENCUESTA</ion-button>
   </div>
   
   <div class="contenedor-spinner" *ngIf="spinner">
@@ -125,7 +178,7 @@
   </div>  
 </ion-content>
 
-<ion-footer *ngIf="precioTotal > 0 && !carrito">
+<ion-footer *ngIf="precioTotal > 0 && !carrito && !scannerActive">
   <ion-toolbar>
     <div>
       <ion-title>SUBTOTAL $ {{precioTotal}}</ion-title>
@@ -134,15 +187,22 @@
   </ion-toolbar>
 </ion-footer>
 
-<div class="popup" *ngIf="popup">
+<div class="popup" *ngIf="popup && !scannerActive">
   <h4>{{mensajePopup}}</h4>
   <ion-button (click)="popup = false">ACEPTAR</ion-button>
 </div>
 
-<div class="popup" *ngIf="logout">
+<div class="popup" *ngIf="logout && !scannerActive">
   <h4>¿Desea cerrar sesión?</h4>
     <div class="botonera-popup">
       <ion-button (click)="logout = false">CANCELAR</ion-button>
       <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
     </div>
+</div>
+
+<div *ngIf="scannerActive" class="pantalla-scan">
+  <div class="scan-box"></div>
+  <ion-button (click)="stopScan()" class="boton-cerrar">
+    <ion-icon name="close"></ion-icon>
+  </ion-button>
 </div>
