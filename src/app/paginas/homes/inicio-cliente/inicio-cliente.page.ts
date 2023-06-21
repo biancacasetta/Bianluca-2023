@@ -153,7 +153,7 @@ export class InicioClientePage implements OnInit {
             this.obtenerMesa(resultado.content.split('-')[1]);
             this.stopScan();
             this.activarSpinner();
-            setTimeout(()=>{
+            setTimeout(() => {
               if(!this.mesa.ocupada)
               {
                 this.asignarDatosMesa(parseInt(resultado.content.split('-')[1]));
@@ -190,12 +190,19 @@ export class InicioClientePage implements OnInit {
 
   async obtenerMesa(idMesa:any) 
   {
-    this.listaMesas.forEach((mesa)=>{
+    /*this.listaMesas.forEach((mesa)=>{
       if(mesa.id == idMesa)
       {
         this.mesa = mesa;
       }
-    })
+    })*/
+
+    for (let i = 0; i < this.listaMesas.length; i++) {
+      if(this.listaMesas[i].id == idMesa)
+      {
+        this.mesa = this.listaMesas[i];
+      }
+    }
   }
 
   asignarDatosMesa(idMesa:number)

@@ -3,6 +3,13 @@
     <ion-title class="ion-text-center">PEDIDOS MOZO</ion-title>
   </ion-toolbar>
 </ion-header>
+
+<ion-fab class="chat" *ngIf="!spinner" vertical="start" horizontal="end" >
+  <ion-fab-button color="none" routerLink="/chat">
+    <ion-icon name="chatbubble"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
 <ion-content>
   <div class="pantalla" *ngIf="pantalla=='solicitados'">
     <h4 class="ion-text-center">PEDIDOS SOLICITADOS</h4>
