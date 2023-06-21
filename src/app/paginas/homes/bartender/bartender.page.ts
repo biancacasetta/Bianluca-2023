@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/servicios/auth.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -10,7 +11,9 @@ export class BartenderPage implements OnInit {
   listaPedidosBartender:any []=[];
   listaPedidosGenerales:any []=[];
   spinner:any;
-  constructor(private firebaseServ:FirebaseService) { }
+  popup:boolean = false;
+  constructor(private firebaseServ:FirebaseService,
+    private authServ:AuthService) { }
 
   ngOnInit() {
     this.firebaseServ.obtenerColeccion('pedidos').subscribe((pedidos)=>{
@@ -29,6 +32,12 @@ export class BartenderPage implements OnInit {
     }, 2000);
   }
 
+  cerrarSesion()
+  {
+    this.popup = false;
+    this.activarSpinner();
+    this.authServ.cerrarSesion();
+  }
 
   terminarPedido(pedidosBartender:any)
   {

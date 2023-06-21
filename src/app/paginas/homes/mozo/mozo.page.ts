@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
+import { AuthService } from 'src/app/servicios/auth.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -14,8 +15,10 @@ export class MozoPage implements OnInit {
   pedidosEnPreparacion:any []=[];
   pedidosTerminado:any []=[];
   spinner:boolean = false;
+  popup:boolean = false;
   //@ts-ignore
-  constructor(private firebaseServ:FirebaseService) 
+  constructor(private firebaseServ:FirebaseService,
+    private authServ:AuthService) 
   { 
   }
   
@@ -126,4 +129,10 @@ export class MozoPage implements OnInit {
     this.activarSpinner();
   }
 
+  cerrarSesion()
+  {
+    this.popup = false;
+    this.activarSpinner();
+    this.authServ.cerrarSesion();
+  }
 }

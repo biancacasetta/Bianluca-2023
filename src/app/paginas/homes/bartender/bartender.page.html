@@ -1,8 +1,13 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" *ngIf="!spinner">
   <ion-toolbar>
     <ion-title class="ion-text-center">PEDIDOS BARRA</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-fab  vertical="start" horizontal="end" *ngIf="!spinner">
+  <ion-fab-button color="none" (click)="popup = true" class="sin-fondo">
+    <img class="imagen-cerrar-sesion" src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
+  </ion-fab-button>
+</ion-fab>
 <ion-content>
   <div class="pantalla">
     <h4 class="ion-text-center">PEDIDOS EN PREPARACIÓN</h4>
@@ -23,6 +28,13 @@
   </div>
   <div class="contenedor-spinner" *ngIf="spinner">
     <app-spinner></app-spinner>
+  </div>
+  <div class="popup" *ngIf="popup">
+    <h5>¿Desea cerrar sesión?</h5>
+    <div class="botonera-popup">
+      <ion-button (click)="popup = false">CANCELAR</ion-button>
+      <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
+    </div>
   </div>
 </ion-content>
 
