@@ -12,6 +12,7 @@ export class MesaPage implements OnInit {
   spinner:boolean = false;
   popup:boolean = false;
   mensajePopup:string = "";
+  logout:boolean = false;
   listaProductos:any[] = [];
   listaComidas:any[] = [];
   listaBebidas:any[] = [];
@@ -23,62 +24,103 @@ export class MesaPage implements OnInit {
   usuarioLogueado:any = null;
   usuarioAnonimo:any = null;
   mesa:any;
+  mesas:any;
+  titulo:string = "";
 
   imagenesComida:any = [
     [
       "/assets/mesa/sushi1.jpeg",
-      "/assets/mesa/sushi1.jpeg",
-      "/assets/mesa/sushi1.jpeg"
+      "/assets/mesa/sushi2.jpg",
+      "/assets/mesa/sushi3.jpg"
     ],
     [
       "/assets/mesa/onigiri1.jpeg",
-      "/assets/mesa/onigiri1.jpeg",
-      "/assets/mesa/onigiri1.jpeg"
+      "/assets/mesa/onigiri2.jpg",
+      "/assets/mesa/onigiri3.jpg"
     ],
     [
       "/assets/mesa/ramen1.jpg",
       "/assets/mesa/ramen2.jpg",
-      "/assets/mesa/ramen1.jpg"
+      "/assets/mesa/ramen3.jpg"
     ]
   ];
 
   imagenesBebida:any = [
     [
-      "/assets/mesa/sushi1.jpeg",
-      "/assets/mesa/sushi1.jpeg",
-      "/assets/mesa/sushi1.jpeg"
+      "/assets/mesa/leche-banana1.jpg",
+      "/assets/mesa/leche-banana2.jpeg",
+      "/assets/mesa/leche-banana3.jpg"
     ],
     [
-      "/assets/mesa/onigiri1.jpeg",
-      "/assets/mesa/onigiri1.jpeg",
-      "/assets/mesa/onigiri1.jpeg"
+      "/assets/mesa/sake1.jpg",
+      "/assets/mesa/sake2.jpg",
+      "/assets/mesa/sake3.jpg"
     ],
     [
-      "/assets/mesa/ramen1.jpg",
-      "/assets/mesa/ramen1.jpg",
-      "/assets/mesa/ramen1.jpg"
+      "/assets/mesa/matcha1.jpg",
+      "/assets/mesa/matcha2.jpg",
+      "/assets/mesa/matcha3.jpg"
     ]
   ];
 
   imagenesPostre:any = [
     [
-      "/assets/mesa/sushi1.jpeg",
-      "/assets/mesa/sushi1.jpeg",
-      "/assets/mesa/sushi1.jpeg"
+      "/assets/mesa/dorayaki1.jpg",
+      "/assets/mesa/dorayaki2.jpg",
+      "/assets/mesa/dorayaki3.jpg"
     ],
     [
-      "/assets/mesa/onigiri1.jpeg",
-      "/assets/mesa/onigiri1.jpeg",
-      "/assets/mesa/onigiri1.jpeg"
+      "/assets/mesa/mochi1.jpeg",
+      "/assets/mesa/mochi2.jpg",
+      "/assets/mesa/mochi3.jpg"
     ],
     [
-      "/assets/mesa/ramen1.jpg",
-      "/assets/mesa/ramen1.jpg",
-      "/assets/mesa/ramen1.jpg"
+      "/assets/mesa/taiyaki1.jpg",
+      "/assets/mesa/taiyaki2.jpg",
+      "/assets/mesa/taiyaki3.jpg"
     ]
   ];
 
-  constructor(private auth:AuthService, private firestore: FirebaseService) { }
+  constructor(private auth:AuthService, private firestore: FirebaseService)
+  {
+    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
+      res.forEach((usuario)=>{
+        
+        if(usuario.email != undefined && usuario.email == this.auth.obtenerEmailUsuarioLogueado())
+        {
+          this.usuarioLogueado = usuario;
+
+          this.firestore.obtenerColeccion("mesas").subscribe((data) => {
+            data.forEach((mesa) => {
+              if(mesa.cliente != undefined && mesa.cliente.id == usuario.id)
+              {
+                this.mesa = mesa;
+                this.titulo = `MESA ${this.mesa.id} - ${this.usuarioLogueado.nombre}`;
+              }
+            })
+          });
+        }
+
+      });
+    });
+    
+    this.usuarioAnonimo = this.firestore.obtenerClienteAnonimo();
+    if(this.usuarioAnonimo != null)
+    {
+      this.usuarioLogueado = null;
+      this.firestore.obtenerColeccion("mesas").subscribe((data) => {
+        data.forEach((mesa) => {
+          if(mesa.cliente != undefined && mesa.cliente.id == this.usuarioAnonimo.id)
+          {
+            this.mesa = mesa;
+            this.titulo = `MESA ${this.mesa.id} - ${this.usuarioAnonimo.nombre}`;
+          }
+        });
+      });
+    }
+    
+    
+  }
 
   ngOnInit() {
     this.mensajePopup = "Bienvenido a su mesa. Ya puede hacer sus pedidos.";
@@ -88,22 +130,18 @@ export class MesaPage implements OnInit {
       this.listaProductos = data;
       this.separarProductos(this.listaProductos);
     });
+  }
 
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
-      res.forEach((usuario)=>{
-        if(usuario.email == this.auth.obtenerEmailUsuarioLogueado())
-        {
-          this.usuarioLogueado = usuario;
-        }
-    })
-    });
-
-    this.usuarioAnonimo = this.firestore.obtenerClienteAnonimo();
+  ngOnDestroy()
+  {
+    this.cerrarSesion();
   }
 
   cerrarSesion()
   {
-    this.popup = false;
+    this.logout = false;
+    this.usuarioLogueado = null;
+    this.usuarioAnonimo = null;
     this.activarSpinner();
     this.auth.cerrarSesion();
   }
@@ -165,7 +203,8 @@ export class MesaPage implements OnInit {
           nombre: comida.nombre,
           cantidad: comida.cantidad,
           precio: comida.precio * comida.cantidad,
-          tipo: comida.tipo
+          tipo: comida.tipo,
+          terminado: false
         };
 
         this.pedido.push(itemPedido);
@@ -179,7 +218,8 @@ export class MesaPage implements OnInit {
           nombre: bebida.nombre,
           cantidad: bebida.cantidad,
           precio: bebida.precio * bebida.cantidad,
-          tipo: bebida.tipo
+          tipo: bebida.tipo,
+          terminado: false
         };
 
         this.pedido.push(itemPedido);
@@ -193,14 +233,14 @@ export class MesaPage implements OnInit {
           nombre: postre.nombre,
           cantidad: postre.cantidad,
           precio: postre.precio * postre.cantidad,
-          tipo: postre.tipo
+          tipo: postre.tipo,
+          terminado: false
         };
 
         this.pedido.push(itemPedido);
       }
     });
 
-    console.log(this.pedido);
   }
 
   confirmarPedido(detallePedido:any)
@@ -212,7 +252,8 @@ export class MesaPage implements OnInit {
     const pedido = {
       precio: this.precioTotal,
       items: detallePedido,
-      estado: "Solicitado"
+      estado: "Solicitado",
+      id: new Date().getTime()
     };
 
     this.firestore.agregarDocumentoGenerico(pedido, "pedidos");

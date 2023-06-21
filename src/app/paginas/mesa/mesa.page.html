@@ -1,19 +1,18 @@
-<!-- <ion-fab *ngIf="!spinner" vertical="start" horizontal="end" >
-  <ion-fab-button color="none" (click)="popup = true">
+<ion-fab *ngIf="!spinner" vertical="start" horizontal="start" >
+  <ion-fab-button color="none" (click)="logout = true">
     <img src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
   </ion-fab-button>
-</ion-fab> -->
+</ion-fab>
 
-<ion-fab vertical="start" horizontal="end" >
-  <ion-fab-button color="none">
-    <img src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Consultar al mozo">
+<ion-fab class="chat" *ngIf="!spinner" vertical="start" horizontal="end" >
+  <ion-fab-button color="none" routerLink="/chat">
+    <ion-icon name="chatbubble"></ion-icon>
   </ion-fab-button>
 </ion-fab>
 
 <ion-header [translucent]="true" *ngIf="!spinner">
   <ion-toolbar>
-    <ion-title class="ion-text-center" *ngIf="usuarioLogueado != null">MESA - {{usuarioLogueado.nombre}} {{usuarioLogueado.apellido}}</ion-title>
-    <ion-title class="ion-text-center" *ngIf="usuarioAnonimo != null">MESA - {{usuarioAnonimo.nombre}}</ion-title>
+    <ion-title class="ion-text-center">{{titulo}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -138,4 +137,12 @@
 <div class="popup" *ngIf="popup">
   <h4>{{mensajePopup}}</h4>
   <ion-button (click)="popup = false">ACEPTAR</ion-button>
+</div>
+
+<div class="popup" *ngIf="logout">
+  <h4>¿Desea cerrar sesión?</h4>
+    <div class="botonera-popup">
+      <ion-button (click)="logout = false">CANCELAR</ion-button>
+      <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
+    </div>
 </div>

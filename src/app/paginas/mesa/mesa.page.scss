@@ -64,7 +64,7 @@ ion-fab-button
 .pantalla .card ion-card
 {
     width: 90%;
-    height: 200px;
+    height: 225px;
     --background: #FF8F82;
     --color: white;
     display: flex;
@@ -77,14 +77,31 @@ ion-fab-button
 
 .pantalla ion-card ion-card-header
 {
-    padding-bottom: 0;
+    width: 90%;
+    padding: 0;
 }
 
 .pantalla ion-card ion-card-header .imagenes
 {
+    width: 100%;
+    height: 75px;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+}
+
+.pantalla ion-card ion-card-header ion-thumbnail
+{
+    width: 30%;
+    height: 75px;
+    margin: 1vh;
+}
+
+.pantalla ion-card ion-card-header .imagenes ion-thumbnail img
+{
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
 }
 
 .pantalla ion-card ion-card-subtitle
@@ -101,6 +118,7 @@ ion-fab-button
     align-items: center;
     flex-direction: column;
     font-size: 1.3em;
+    padding: 0;
 }
 
 .pantalla ion-card ion-card-content .cantidad
@@ -109,12 +127,6 @@ ion-fab-button
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin-bottom: 2vh;
-}
-
-.pantalla ion-card ion-thumbnail
-{
-    margin: 2vh;
 }
 
 .boton-cantidad
@@ -211,10 +223,22 @@ ion-fab-button
     padding: 2vh;
 }
 
+.popup .botonera-popup
+{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
 .popup ion-button
 {
     font-family: KATO;
     --background:#FF8F82;
+}
+
+.chat ion-icon
+{
+    color: white;
 }
 
 

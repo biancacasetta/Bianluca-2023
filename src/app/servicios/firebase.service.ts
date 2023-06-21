@@ -8,7 +8,8 @@ import { QuerySnapshot } from 'firebase/firestore';
   providedIn: 'root'
 })
 export class FirebaseService {
-  private usuarioAnonimo:any;
+  private usuarioAnonimo:any = null;
+  private usuarioRegistrado:any = null;
   constructor(private angularFirestore: AngularFirestore) { }
 
   obtenerColeccion(nombreColeccion:string)
@@ -97,12 +98,11 @@ export class FirebaseService {
   });
   }
 
-
   obtenerClienteAnonimo()
   {
     return this.usuarioAnonimo;
   }
-
+  
   agregarDocumentoGenerico(datos:any,nombreColeccion:string)
   {
     return this.angularFirestore.collection(nombreColeccion).add(datos);
@@ -141,4 +141,12 @@ export class FirebaseService {
     }
   }
 
+  elimiarColeccionChat() {
+    this.angularFirestore.collection('chat').snapshotChanges().subscribe(documents => {
+      documents.forEach(document => {
+        const id = document.payload.doc.id;
+        this.angularFirestore.collection('chat').doc(id).delete();
+      });
+    });
+  }
 }

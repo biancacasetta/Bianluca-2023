@@ -148,3 +148,14 @@ ion-segment ion-segment-button {
     transform: translate(-50%, -50%);
     z-index: 9999;
 }
+
+.chat ion-icon
+{
+    color: white;
+}
+
+ion-fab-button
+{
+    width: 40px;
+    --box-shadow: none;
+}

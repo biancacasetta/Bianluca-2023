@@ -38,13 +38,18 @@ const routes: Routes = [
   {
     path: 'mozo',
     loadChildren: () => import('./paginas/homes/mozo/mozo.module').then( m => m.MozoPageModule)
-  },  {
+  },
+  {
     path: 'cocinero',
     loadChildren: () => import('./paginas/homes/cocinero/cocinero.module').then( m => m.CocineroPageModule)
   },
   {
     path: 'bartender',
     loadChildren: () => import('./paginas/homes/bartender/bartender.module').then( m => m.BartenderPageModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./paginas/chat/chat.module').then( m => m.ChatPageModule)
   }
 
 
