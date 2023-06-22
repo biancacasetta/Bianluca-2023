@@ -85,11 +85,11 @@ export class AuthService {
   {
     this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email,nuevoUsuario.password)
     .then(()=>{
-      alert(`Usuario ${nuevoUsuario.nombre} registrado exitosamente`);
+      console.log(`Usuario ${nuevoUsuario.nombre} registrado exitosamente`);
       this.cerrarSesion();
     })
     .catch((error)=>{
-      alert(error.code);
+      console.log(error.code);
     })
   }
 
