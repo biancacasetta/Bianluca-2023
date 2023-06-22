@@ -25,7 +25,7 @@
 
 <ion-content *ngIf="!scannerActive">
 
-  <div class="pantalla principal" *ngIf="!menu && !carrito && !chequearPedido">
+  <div class="pantalla principal" *ngIf="!menu && !carrito && !chequearPedido && !pedirCuenta">
     <ion-card>
       <ion-card-content>
         <img src="../../../assets/icon/icon.png" alt="Logo Bianluca">
@@ -34,8 +34,15 @@
           <ion-text>No hay pedidos activos</ion-text>
           <ion-button (click)="menu = true">REALIZAR PEDIDO</ion-button>
         </div>
-        <div class="accion-pedidos" *ngIf="hayPedido">
+        <div class="accion-pedidos" *ngIf="hayPedido && !cuentaPagada">
           <ion-text>Escanee el QR de su mesa para ver el estado del pedido</ion-text>
+          <ion-button class="boton-scan" (click)="startScanner()">
+            <ion-icon name="qr-code-outline"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="accion-pedidos" *ngIf="cuentaPagada">
+          <ion-text>¡Gracias por su visita!</ion-text>
+          <ion-text>Escanee el QR de lista de espera para visualizar los resultados de las encuestas</ion-text>
           <ion-button class="boton-scan" (click)="startScanner()">
             <ion-icon name="qr-code-outline"></ion-icon>
           </ion-button>
@@ -152,6 +159,7 @@
       <ion-card-header>
         <ion-card-title>SU PEDIDO</ion-card-title>
         <ion-card-subtitle>Estado: {{pedidoActual.estado}}</ion-card-subtitle>
+        <ion-card-subtitle>Demora estimada: {{pedidoActual.demora}} minutos</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
 
@@ -165,12 +173,44 @@
         <div class="botones-detalle">
           <ion-button *ngIf="pedidoActual.estado == 'Entregado'"
           (click)="confirmarRecepcionPedido()">CONFIRMAR RECEPCIÓN</ion-button>
-          <ion-button *ngIf="pedidoActual.estado == 'Recibido'">PEDIR LA CUENTA</ion-button>
+          <ion-button *ngIf="pedidoActual.estado == 'Recibido'"
+          (click)="pedirCuenta = true; chequearPedido = false">PEDIR LA CUENTA</ion-button>
         </div>
       </ion-card-content>
     </ion-card>
 
-    <ion-button routerLink="/encuesta">COMPLETAR ENCUESTA</ion-button>
+    <ion-button routerLink="/encuesta-cliente">COMPLETAR ENCUESTA</ion-button>
+  </div>
+
+  <div class="pantalla pedir-cuenta" *ngIf="pedirCuenta">
+
+    <ion-text>Escanee el QR de la propina que quiera dar</ion-text>
+    <ion-button class="boton-scan" (click)="startScanner()">
+      <ion-icon name="qr-code-outline"></ion-icon>
+    </ion-button>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>RESUMEN DE SU PEDIDO</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+        <div class="item-pedido" *ngFor="let item of pedidoActual.items">
+          <ion-label>{{item.nombre}} x{{item.cantidad}}</ion-label>
+          <ion-label>${{item.precio}}</ion-label>
+        </div>
+
+        <hr>
+        <div class="dinero">
+          <ion-label>SUBTOTAL: ${{pedidoActual.precio}}</ion-label>
+          <ion-label>PROPINA: ${{propina}} ({{porcentajePropina}}%) - {{mensajePropina}}</ion-label>
+          <ion-label>TOTAL: ${{pedidoActual.precio + propina}}</ion-label>
+        </div>
+        <div class="botones-detalle">
+          <ion-button [disabled]="!escaneoPropina" (click)="pagarPedido()">PAGAR</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
   
   <div class="contenedor-spinner" *ngIf="spinner">

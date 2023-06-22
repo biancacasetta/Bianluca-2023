@@ -316,6 +316,87 @@ ion-fab-button
     font-size: 3em;
 }
 
+.pedir-cuenta
+{
+    justify-content: center;
+}
+
+.pedir-cuenta ion-text
+{
+    font-family: 'Mate SC', serif;
+}
+
+.pedir-cuenta .boton-scan
+{
+    --background: #FA5046;
+    height: 10vh;
+}
+
+.pedir-cuenta .boton-scan ion-icon
+{
+    font-size: 3em;
+}
+
+.pedir-cuenta ion-card
+{
+    width: 90%;
+    --background: #FF8F82;
+    --color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Mate SC', serif;
+    text-align: center;
+    padding: 3vh 0;
+}
+
+.pedir-cuenta ion-card ion-card-header
+{
+    font-family: KATO;
+    margin-bottom: 2vh;
+}
+
+.pedir-cuenta ion-card ion-card-content
+{
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.pedir-cuenta ion-card ion-card-content .item-pedido
+{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pedir-cuenta ion-card ion-card-content .botones-detalle
+{
+    width: 90%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.pedir-cuenta ion-card ion-card-content .botones-detalle ion-button
+{
+    --background: #FA5046;
+    font-family: KATO;
+}
+
+.pedir-cuenta ion-card ion-card-content .dinero
+{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    width: 80%;
+}
+
 .contenedor-spinner
 {
     position: absolute;
