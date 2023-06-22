@@ -53,6 +53,10 @@ const routes: Routes = [
   },  {
     path: 'encuesta-cliente',
     loadChildren: () => import('./paginas/encuesta-cliente/encuesta-cliente.module').then( m => m.EncuestaClientePageModule)
+  },
+  {
+    path: 'graficos',
+    loadChildren: () => import('./paginas/graficos/graficos.module').then( m => m.GraficosPageModule)
   }
 
 

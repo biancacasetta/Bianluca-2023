@@ -1,0 +1,17 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title clasS="ion-text-center">ESTADÍSTICAS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="pantalla">
+    <div class="contenedor-grafico-barra">
+      <canvas id="barChart" height="250px"></canvas>
+    </div>
+    <div class="contenedor-grafico-circular">
+      <ion-label class="ion-text-center">Preferencias de la gente</ion-label>
+      <canvas id="pieChart"></canvas>
+    </div>
+  </div>
+</ion-content>

@@ -103,6 +103,7 @@ export class MozoPage implements OnInit {
     {
       let pedidoCocinero = {
         id: pedido.id,
+        idMesa: pedido.mesa,
         items: itemsCocinero,
         terminado: false
       }
@@ -114,6 +115,7 @@ export class MozoPage implements OnInit {
       let pedidoBartender =
       {
         id: pedido.id,
+        idMesa: pedido.mesa,
         items: itemsBartender,
         terminado: false
       }
