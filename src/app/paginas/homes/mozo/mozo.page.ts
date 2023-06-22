@@ -154,7 +154,7 @@ export class MozoPage implements OnInit {
     this.obtenerMesa(pedido.mesa)
     this.mesa.ocupada = false;
     this.mesa.cliente = new Array();
-    this.firebaseServ.actualizarMesaPorId(this.mesa.id);
+    this.firebaseServ.actualizarMesaPorId(this.mesa);
   }
 
   async obtenerMesa(idMesa:any) 
