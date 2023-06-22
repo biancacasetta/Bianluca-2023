@@ -24,6 +24,7 @@ export class GraficosPage implements OnInit {
   listaEncuestas:any = new Array();
   barChart:any;
   pieChart:any;
+  spinner:boolean = false;
   constructor(private firebaseServ:FirebaseService) {
     Chart.register(
       BarElement,
@@ -50,6 +51,19 @@ export class GraficosPage implements OnInit {
       this.cargarValoresGustos();
     },2000)
     console.log(this.valoracionGustos);
+  }
+
+  ngAfterViewInit()
+  {
+    this. activarSpinner();
+  }
+
+  activarSpinner()
+  {
+    this.spinner = true;
+    setTimeout(()=>{
+      this.spinner = false;
+    },2000);
   }
 
   cargarValoresGustos()

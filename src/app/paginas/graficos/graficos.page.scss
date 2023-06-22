@@ -55,3 +55,25 @@ ion-header ion-toolbar
     width: 100%;
     padding: 15px;
 }
+
+ion-fab-button
+{
+    width: 40px;
+    --box-shadow: none;
+    color: white;
+}
+
+  /* SPINNER */
+  .contenedor-spinner
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(3px);
+    background-color: rgba(0, 0, 0, 0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
