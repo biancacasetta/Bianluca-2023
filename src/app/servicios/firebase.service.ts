@@ -41,9 +41,7 @@ export class FirebaseService {
 
   guardarEncuestaCliente(datos:any){
     return new Promise((resolve, rejected) => {
-      this.angularFirestore.collection("encuestasClientes").add({
-        mesa: datos.mesa,
-        cliente: datos.idCliente,
+      this.angularFirestore.collection("encuestas-clientes").add({
         fecha: Date.now(),
         rangoEdad: datos.rangoEdad,
         gustosDelLocal: datos.gustosDelLocal,

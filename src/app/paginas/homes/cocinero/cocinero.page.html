@@ -14,7 +14,7 @@
     <div class="card" *ngFor="let pedido of listaPedidosCocinero">
       <ion-card *ngIf="!pedido.terminado">
         <ion-card-header>
-          <ion-card-title>Mesa: Que mas aplauda</ion-card-title>
+          <ion-card-title>Mesa: {{pedido.idMesa}}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="pedido" *ngFor="let item of pedido.items">

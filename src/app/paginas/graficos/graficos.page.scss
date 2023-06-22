@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
+
+@font-face {
+    font-family: KATO;
+    src: url(../../../assets/fonts/KATO____.ttf);
+}
+
+.pantalla
+{
+    min-height: 100%;
+    background-color: rgb(240,240,240);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    color: black;
+}
+
+ion-label
+{
+    color:rgb(3, 3, 3);
+    font-family: 'Mate SC', serif;
+}
+ion-header ion-toolbar
+{
+    font-family: KATO;
+    --background:  #FA5046;
+    --color: white;
+}
+
+.contenedor-grafico-barra
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 50%;
+    padding: 15px;
+    width: 100%;
+}
+
+.contenedor-grafico-barra canvas
+{
+    height: 250px;
+}
+
+.contenedor-grafico-circular
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    padding: 15px;
+}

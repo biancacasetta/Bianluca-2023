@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
@@ -20,64 +21,16 @@ export class EncuestaClientePage implements OnInit {
   error:string = "";
   errorFotos = false;
   arrayFotos:any = new Array();
-  usuarioLogueado:any;
-  usuarioAnonimo:any;
-  usuario:any;
-  mesa:any;
   spinner:any;
   constructor(private vibracion:Vibration,
     private fotoServ:FotoService,
     private firestore:FirebaseService,
-    private auth:AuthService) {
-      this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
-        res.forEach((usuario)=>{          
-          if(usuario.email != undefined && usuario.email == this.auth.obtenerEmailUsuarioLogueado())
-          {
-            this.usuarioLogueado = usuario;
-            this.firestore.obtenerColeccion("mesas").subscribe((data) => {
-              data.forEach((mesa) => {
-                if(mesa.cliente != undefined && mesa.cliente.id == usuario.id)
-                {
-                  this.mesa = mesa;
-                }
-              })
-            });
-          }
-  
-        });
-      });
-      
-      this.usuarioAnonimo = this.firestore.obtenerClienteAnonimo();
-      if(this.usuarioAnonimo != null)
-      {
-        console.log(this.usuarioAnonimo);
-        this.usuarioLogueado = null;
-        this.firestore.obtenerColeccion("mesas").subscribe((data) => {
-          data.forEach((mesa) => {
-            if( mesa.cliente.id == this.usuarioAnonimo.id)
-            {
-              this.mesa = mesa;
-              console.log(this.mesa);
-            }
-          });
-        });
-      }
+    private router: Router) {
      }
 
   ngOnInit() {
   }
 
-  verificarUsuario()
-  {
-    if(this.usuarioAnonimo != null)
-    {
-      this.usuario = this.usuarioAnonimo;
-    }
-    else
-    {
-      this.usuario = this.usuarioLogueado;
-    }
-  }
 
   cammbiarValorLimpieza(e:any) {
     this.nivelLimpieza = e.detail.value;
@@ -165,7 +118,6 @@ export class EncuestaClientePage implements OnInit {
   async obtenerFotosEncuesta()
   {
     let foto = {
-      usuario: this.usuario,
       hora: ''
     }
     await this.fotoServ.obtenerImagenes(foto);
@@ -213,12 +165,10 @@ export class EncuestaClientePage implements OnInit {
       {
         arrayRecomendados.push("Trabajo");
       }
-      
+      this.activarSpinner();
       let datos =
       {
         recomendados: arrayRecomendados,
-        mesa: this.mesa.id, //CONSEGUIR MESA
-        idCliente: this.usuario.id, //CONSEGUIR CLIENTE
         rangoEdad: this.rangoEdad,
         gustosDelLocal: this.valorSelect,
         limpieza: this.nivelLimpieza,
@@ -226,8 +176,19 @@ export class EncuestaClientePage implements OnInit {
         fotos: this.arrayFotos 
       }
       this.firestore.guardarEncuestaCliente(datos);
-      console.log(datos);
-      //SERVICIO PARA SUBIR A DB LA ENCUESTA
+      this.limpiarDatos();
+      this.router.navigate(['/inicio-cliente/mesa']);
     }
+  }
+
+  limpiarDatos()
+  {
+   this.nivelLimpieza = "0";
+   this.valorSelect = "Elegir";
+   this.rangoEdad = "";
+   this.comentario = "";
+   this.recomendadosCumpleanios = false;
+   this.recomendadosFamilia = false;
+   this.recomendadosTrabajo = false;
   }
 }
