@@ -75,6 +75,26 @@
       </ion-card>
     </div>
   </div>
+
+   <!-- PEDIDOS PAGADOS -->
+   <div class="pantalla" *ngIf="pantalla=='pagados'">
+    <h4 class="ion-text-center">PEDIDOS PAGADOS</h4>
+    <div class="card" *ngFor="let pedido of pedidosPagados">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Mesa: {{pedido.mesa}}</ion-card-title>
+          <ion-card-subtitle>Estado pedido: {{pedido.estado}}.</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="pedido" *ngFor="let item of pedido.items">
+            <h6>{{item.nombre}}</h6>
+            <span>x{{item.cantidad}}</span>
+          </div>
+          <ion-button mode="md" (click)="confirmarPago(pedido)">CONFIRMAR PAGO</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
   <div class="contenedor-spinner" *ngIf="spinner">
     <app-spinner></app-spinner>
   </div>
@@ -96,11 +116,16 @@
   
   <ion-segment-button (click)="pantalla = 'en preparacion'">
     <img class="imagen-segment" src="../../../../assets/mozo/comida-en-preparacion.png" alt="Comida en preparacion">
-    <span class="span-segment">EN PREPARACIÓN</span>
+    <span class="span-segment">PREPARACIÓN</span>
   </ion-segment-button>
 
   <ion-segment-button (click)="pantalla = 'terminado'">
     <img class="imagen-segment" src="../../../../assets/mozo/comida-terminada.png" alt="Comida terminada">
     <span class="span-segment">TERMINADOS</span>
+  </ion-segment-button>
+
+  <ion-segment-button (click)="pantalla = 'pagados'">
+    <img class="imagen-segment" src="../../../../assets/mozo/pagar.png" alt="Comida terminada">
+    <span class="span-segment">PAGADOS</span>
   </ion-segment-button>
 </ion-segment>

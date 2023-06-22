@@ -86,6 +86,7 @@ export class FirebaseService {
     })
   }
 
+
   actualizarPedidoPorId(pedidoActualizado:any,nombreColeccion:string)
   {
     this.angularFirestore.collection(nombreColeccion,ref => ref.where('id','==',pedidoActualizado.id)).get()

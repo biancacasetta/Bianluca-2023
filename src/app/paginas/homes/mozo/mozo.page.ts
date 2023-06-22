@@ -14,8 +14,11 @@ export class MozoPage implements OnInit {
   pedidosSolicitados:any []=[];
   pedidosEnPreparacion:any []=[];
   pedidosTerminado:any []=[];
+  pedidosPagados:any []=[];
+  listaMesas:any []=[];
   spinner:boolean = false;
   popup:boolean = false;
+  mesa:any;
   //@ts-ignore
   constructor(private firebaseServ:FirebaseService,
     private authServ:AuthService) 
@@ -60,6 +63,9 @@ export class MozoPage implements OnInit {
         }
       })  
     });
+    this.firebaseServ.obtenerColeccion('mesas').subscribe((mesas)=>{
+      this.listaMesas = mesas;
+    });
   } 
   
   seccionarPedidos(pedidos:any)
@@ -67,6 +73,7 @@ export class MozoPage implements OnInit {
     this.pedidosSolicitados = [];
     this.pedidosTerminado = [];
     this.pedidosEnPreparacion = [];
+    this.pedidosPagados = [];
     pedidos.forEach((pedido:any) => {
       switch(pedido.estado)
       {
@@ -78,7 +85,11 @@ export class MozoPage implements OnInit {
           break;
         case 'Terminado':
           this.pedidosTerminado.push(pedido);
-          break;    
+          break;   
+      }
+      if(pedido.pagado)
+      {
+        this.pedidosPagados.push(pedido);
       }
     });
   }
@@ -136,5 +147,23 @@ export class MozoPage implements OnInit {
     this.popup = false;
     this.activarSpinner();
     this.authServ.cerrarSesion();
+  }
+
+  confirmarPago(pedido:any)
+  {
+    this.obtenerMesa(pedido.mesa)
+    this.mesa.ocupada = false;
+    this.mesa.cliente = new Array();
+    this.firebaseServ.actualizarMesaPorId(this.mesa.id);
+  }
+
+  async obtenerMesa(idMesa:any) 
+  {
+    for (let i = 0; i < this.listaMesas.length; i++) {
+      if(this.listaMesas[i].id == idMesa)
+      {
+        this.mesa = this.listaMesas[i];
+      }
+    }
   }
 }
