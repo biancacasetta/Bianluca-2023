@@ -28,6 +28,13 @@ export class MesaPage implements OnInit {
   pedidoActual:any = {};
   hayPedido:boolean = false;
   chequearPedido:boolean = false;
+  maxDuracion = 0;
+  pedirCuenta:boolean = false;
+  cuentaPagada:boolean = false;
+  propina = 0;
+  porcentajePropina = 0;
+  mensajePropina:string = "";
+  escaneoPropina:boolean = false;
   usuarioLogueado:any = null;
   usuarioAnonimo:any = null;
   mesa:any;
@@ -218,6 +225,10 @@ export class MesaPage implements OnInit {
         };
 
         this.pedido.push(itemPedido);
+        if(this.maxDuracion < comida.duracion)
+        {
+          this.maxDuracion = comida.duracion;
+        }
       }
     });
 
@@ -233,6 +244,10 @@ export class MesaPage implements OnInit {
         };
 
         this.pedido.push(itemPedido);
+        if(this.maxDuracion < bebida.duracion)
+        {
+          this.maxDuracion = bebida.duracion;
+        }
       }
     });
 
@@ -248,6 +263,10 @@ export class MesaPage implements OnInit {
         };
 
         this.pedido.push(itemPedido);
+        if(this.maxDuracion < postre.duracion)
+        {
+          this.maxDuracion = postre.duracion;
+        }
       }
     });
 
@@ -277,7 +296,9 @@ export class MesaPage implements OnInit {
       estado: "Solicitado",
       id: this.mesa.id + "." + fecha,
       mesa: this.mesa.id,
-      nombre: nombre
+      nombre: nombre,
+      pagado: false,
+      demora: this.maxDuracion
     };
 
     this.firestore.agregarDocumentoGenerico(pedido, "pedidos");
@@ -353,6 +374,37 @@ export class MesaPage implements OnInit {
             }
           }
         }
+        else if(resultado.content.startsWith("propina"))
+        {
+          this.porcentajePropina = parseInt(resultado.content.split('-')[1]);
+          this.propina = this.pedidoActual.precio * this.porcentajePropina / 100;
+
+          switch(this.porcentajePropina)
+          {
+            case 0:
+              this.mensajePropina = "Malo";
+              break;
+            case 5:
+              this.mensajePropina = "Regular";
+              break;
+            case 10:
+              this.mensajePropina = "Bueno";
+              break;
+            case 15:
+              this.mensajePropina = "Muy bueno";
+              break;
+            case 20:
+              this.mensajePropina = "Escelente";
+              break;
+          }
+
+          this.escaneoPropina = true;
+        }
+        else if(resultado.content == "lista-espera")
+        {
+          this.router.navigateByUrl("/graficos");
+        }
+
       } else {
         alert('NO DATA FOUND!');
       }
@@ -383,5 +435,15 @@ export class MesaPage implements OnInit {
     this.chequearPedido = false;
     this.menu = false;
     this.carrito = false;
+  }
+
+  pagarPedido()
+  {
+    this.pedidoActual.pagado = true;
+    this.firestore.actualizarPedidoPorId(this.pedidoActual, "pedidos");
+
+    this.activarSpinner();
+    this.pedirCuenta = false;
+    this.cuentaPagada = true;
   }
 }
