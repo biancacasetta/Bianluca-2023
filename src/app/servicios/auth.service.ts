@@ -12,11 +12,11 @@ import { Firestore, collection, getDocs, updateDoc, doc } from '@angular/fire/fi
   providedIn: 'root'
 })
 export class AuthService {
-<<<<<<< Updated upstream
   usuarioAceptado:any;
   listaUsuario: any []=[];
   constructor( private router: Router, private angularFireAuth: AngularFireAuth,
-    private firebaseServ:FirebaseService) {
+    private firebaseServ:FirebaseService,
+    private firestore2: Firestore) {
       this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
         this.listaUsuario = res;
       });
@@ -31,29 +31,12 @@ export class AuthService {
         this.redirigirPorUsuario(this.usuarioAceptado.perfil);
           
         //},1500);   
-=======
-  usuarioAceptado: any;
-  constructor(private router: Router,
-    private angularFireAuth: AngularFireAuth,
-    private firebaseServ: FirebaseService,
-    private firestore2: Firestore
-  ) { }
-
-  iniciarSesion(email: string, contraseña: string) {
-    return new Promise((resolve, rejected) => {
-      this.angularFireAuth.signInWithEmailAndPassword(email, contraseña).then(usuario => {
-        this.obtenerUsuarioPorEmail(email);
-        setTimeout(() => {
-          this.redirigirPorUsuario(this.usuarioAceptado.perfil);
-        }, 1500);
->>>>>>> Stashed changes
         resolve(usuario);
       })
         .catch(error => rejected(error));
     });
   }
 
-<<<<<<< Updated upstream
   obtenerUsuarioPorEmail(email:string)
   {
     for (let i = 0; i < this.listaUsuario.length; i++) {;
@@ -64,16 +47,6 @@ export class AuthService {
         break;
       }
     }
-=======
-  obtenerUsuarioPorEmail(email: string) {
-    this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      res.forEach((usuario) => {
-        if (usuario.email == email) {
-          this.usuarioAceptado = usuario;
-        }
-      })
-    });
->>>>>>> Stashed changes
   }
 
   async obtenerUsuarioPorEmail2(email: string) {
@@ -121,7 +94,6 @@ export class AuthService {
     }
   }
 
-<<<<<<< Updated upstream
   registrarUsuario(nuevoUsuario:any)
   {
     this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email,nuevoUsuario.password)
@@ -133,17 +105,6 @@ export class AuthService {
     .catch((error)=>{
       console.log(error.code);
     })
-=======
-  registrarUsuario(nuevoUsuario: any) {
-    this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email, nuevoUsuario.password)
-      .then(() => {
-        console.log(`Usuario ${nuevoUsuario.nombre} registrado exitosamente`);
-        this.cerrarSesion();
-      })
-      .catch((error) => {
-        console.log(error.code);
-      })
->>>>>>> Stashed changes
   }
 
   crearMensaje(errorCode: string): string {
