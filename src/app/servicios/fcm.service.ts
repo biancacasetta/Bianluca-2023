@@ -53,7 +53,8 @@ export class FirebaseCloudMessagingService {
     return this.http.post<Observable<any>>('https://fcm.googleapis.com/fcm/send', body, {
       headers: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        Authorization: `key=${environment.fcmServerKey}`,
+        Authorization: "key=AAAAHLQlBJw:APA91bG_8qHdJPv03YZj6kKCVhzubhVBOVz-VwHt9YPbEraMbnCHIAEsFxXNIF2dvQq6b5zFfwg9T05YhPbiR0Xn-H0ZPx9_t1167W9YP63LlJOpVuBMs6BC-ZjwJGz2k9q7avPE2GKj",
+
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'Content-Type': 'application/json',
       },
