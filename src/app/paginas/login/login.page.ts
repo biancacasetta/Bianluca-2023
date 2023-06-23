@@ -59,19 +59,19 @@ export class LoginPage implements OnInit {
     return mensaje;
   }
     
-  login()
+  async login()
   {
     this.spinner = true;
     
     if (this.formLogin.valid)
     {
-      setTimeout( () => {
+      setTimeout(async () => {
 
         let estado = this.verificarEmail(this.formLogin.value.email);
         switch(estado)
         {
           case "":
-            this.auth.iniciarSesion(this.formLogin.value.email, this.formLogin.value.password).then(() => {
+            await this.auth.iniciarSesion(this.formLogin.value.email, this.formLogin.value.password).then(() => {
               console.log("¡Login exitoso!");
             })
             .catch((error) => {
