@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AuthService } from 'src/app/servicios/auth.service';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -12,37 +13,37 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 })
 export class MesaPage implements OnInit {
 
-  spinner:boolean = false;
-  popup:boolean = false;
-  mensajePopup:string = "";
-  logout:boolean = false;
-  listaProductos:any[] = [];
-  listaComidas:any[] = [];
-  listaBebidas:any[] = [];
-  listaPostres:any[] = [];
-  precioTotal:number = 0;
-  carrito:boolean = false;
-  menu:boolean = false;
-  pedidos:any[] = [];
-  pedido:any[] = [];
-  pedidoActual:any = {};
-  hayPedido:boolean = false;
-  chequearPedido:boolean = false;
+  spinner: boolean = false;
+  popup: boolean = false;
+  mensajePopup: string = "";
+  logout: boolean = false;
+  listaProductos: any[] = [];
+  listaComidas: any[] = [];
+  listaBebidas: any[] = [];
+  listaPostres: any[] = [];
+  precioTotal: number = 0;
+  carrito: boolean = false;
+  menu: boolean = false;
+  pedidos: any[] = [];
+  pedido: any[] = [];
+  pedidoActual: any = {};
+  hayPedido: boolean = false;
+  chequearPedido: boolean = false;
   maxDuracion = 0;
-  pedirCuenta:boolean = false;
-  cuentaPagada:boolean = false;
+  pedirCuenta: boolean = false;
+  cuentaPagada: boolean = false;
   propina = 0;
   porcentajePropina = 0;
-  mensajePropina:string = "";
-  escaneoPropina:boolean = false;
-  usuarioLogueado:any = null;
-  usuarioAnonimo:any = null;
-  mesa:any;
-  mesas:any;
-  titulo:string = "";
-  scannerActive:boolean = false;
+  mensajePropina: string = "";
+  escaneoPropina: boolean = false;
+  usuarioLogueado: any = null;
+  usuarioAnonimo: any = null;
+  mesa: any;
+  mesas: any;
+  titulo: string = "";
+  scannerActive: boolean = false;
 
-  imagenesComida:any = [
+  imagenesComida: any = [
     [
       "/assets/mesa/sushi1.jpeg",
       "/assets/mesa/sushi2.jpg",
@@ -60,7 +61,7 @@ export class MesaPage implements OnInit {
     ]
   ];
 
-  imagenesBebida:any = [
+  imagenesBebida: any = [
     [
       "/assets/mesa/leche-banana1.jpg",
       "/assets/mesa/leche-banana2.jpeg",
@@ -78,7 +79,7 @@ export class MesaPage implements OnInit {
     ]
   ];
 
-  imagenesPostre:any = [
+  imagenesPostre: any = [
     [
       "/assets/mesa/dorayaki1.jpg",
       "/assets/mesa/dorayaki2.jpg",
@@ -96,19 +97,16 @@ export class MesaPage implements OnInit {
     ]
   ];
 
-  constructor(private auth:AuthService, private firestore: FirebaseService, private vibration: Vibration, private router: Router)
-  {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
-      res.forEach((usuario)=>{
-        
-        if(usuario.email != undefined && usuario.email == this.auth.obtenerEmailUsuarioLogueado())
-        {
+  constructor(private auth: AuthService, private firestore: FirebaseService, private vibration: Vibration, private router: Router, private fcmService: FirebaseCloudMessagingService) {
+    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
+      res.forEach((usuario) => {
+
+        if (usuario.email != undefined && usuario.email == this.auth.obtenerEmailUsuarioLogueado()) {
           this.usuarioLogueado = usuario;
 
           this.firestore.obtenerColeccion("mesas").subscribe((data) => {
             data.forEach((mesa) => {
-              if(mesa.cliente != undefined && mesa.cliente.id == usuario.id)
-              {
+              if (mesa.cliente != undefined && mesa.cliente.id == usuario.id) {
                 this.mesa = mesa;
                 this.titulo = `MESA ${this.mesa.id} - ${this.usuarioLogueado.nombre}`;
               }
@@ -118,22 +116,20 @@ export class MesaPage implements OnInit {
 
       });
     });
-    
+
     this.usuarioAnonimo = this.firestore.obtenerClienteAnonimo();
-    if(this.usuarioAnonimo != null)
-    {
+    if (this.usuarioAnonimo != null) {
       this.usuarioLogueado = null;
       this.firestore.obtenerColeccion("mesas").subscribe((data) => {
         data.forEach((mesa) => {
-          if(mesa.cliente != undefined && mesa.cliente.id == this.usuarioAnonimo.id)
-          {
+          if (mesa.cliente != undefined && mesa.cliente.id == this.usuarioAnonimo.id) {
             this.mesa = mesa;
             this.titulo = `MESA ${this.mesa.id} - ${this.usuarioAnonimo.nombre}`;
           }
         });
       });
     }
-    
+
   }
 
   ngOnInit() {
@@ -148,13 +144,11 @@ export class MesaPage implements OnInit {
     this.actualizarPedidos();
   }
 
-  ngOnDestroy()
-  {
+  ngOnDestroy() {
     this.cerrarSesion();
   }
 
-  cerrarSesion()
-  {
+  cerrarSesion() {
     this.logout = false;
     this.usuarioLogueado = null;
     this.usuarioAnonimo = null;
@@ -162,37 +156,31 @@ export class MesaPage implements OnInit {
     this.auth.cerrarSesion();
   }
 
-  activarSpinner()
-  {
+  activarSpinner() {
     this.spinner = true;
     setTimeout(() => {
       this.spinner = false;
     }, 2000);
   }
 
-  restarCantidad(producto:any)
-  {
-    if(producto.cantidad > 0)
-    {
+  restarCantidad(producto: any) {
+    if (producto.cantidad > 0) {
       producto.cantidad--;
     }
 
     this.precioTotal -= producto.precio;
   }
 
-  sumarCantidad(producto:any)
-  {
+  sumarCantidad(producto: any) {
     producto.cantidad++;
 
     this.precioTotal += producto.precio;
   }
 
-  separarProductos(productos:any)
-  {
+  separarProductos(productos: any) {
     for (let i = 0; i < productos.length; i++) {
-      
-      switch(productos[i].tipo)
-      {
+
+      switch (productos[i].tipo) {
         case "comida":
           this.listaComidas.push(productos[i]);
           break;
@@ -202,20 +190,18 @@ export class MesaPage implements OnInit {
         case "postre":
           this.listaPostres.push(productos[i]);
           break;
-      } 
+      }
     }
   }
 
-  generarDetallePedido()
-  {
+  generarDetallePedido() {
     this.activarSpinner();
     this.carrito = true;
     this.menu = false;
     this.pedido = [];
 
     this.listaComidas.forEach((comida) => {
-      if(comida.cantidad > 0)
-      {
+      if (comida.cantidad > 0) {
         let itemPedido = {
           nombre: comida.nombre,
           cantidad: comida.cantidad,
@@ -225,16 +211,14 @@ export class MesaPage implements OnInit {
         };
 
         this.pedido.push(itemPedido);
-        if(this.maxDuracion < comida.duracion)
-        {
+        if (this.maxDuracion < comida.duracion) {
           this.maxDuracion = comida.duracion;
         }
       }
     });
 
     this.listaBebidas.forEach((bebida) => {
-      if(bebida.cantidad > 0)
-      {
+      if (bebida.cantidad > 0) {
         let itemPedido = {
           nombre: bebida.nombre,
           cantidad: bebida.cantidad,
@@ -244,16 +228,14 @@ export class MesaPage implements OnInit {
         };
 
         this.pedido.push(itemPedido);
-        if(this.maxDuracion < bebida.duracion)
-        {
+        if (this.maxDuracion < bebida.duracion) {
           this.maxDuracion = bebida.duracion;
         }
       }
     });
 
     this.listaPostres.forEach((postre) => {
-      if(postre.cantidad > 0)
-      {
+      if (postre.cantidad > 0) {
         let itemPedido = {
           nombre: postre.nombre,
           cantidad: postre.cantidad,
@@ -263,8 +245,7 @@ export class MesaPage implements OnInit {
         };
 
         this.pedido.push(itemPedido);
-        if(this.maxDuracion < postre.duracion)
-        {
+        if (this.maxDuracion < postre.duracion) {
           this.maxDuracion = postre.duracion;
         }
       }
@@ -272,8 +253,7 @@ export class MesaPage implements OnInit {
 
   }
 
-  confirmarPedido(detallePedido:any)
-  {
+  confirmarPedido(detallePedido: any) {
     this.activarSpinner();
     this.carrito = false;
     this.menu = false;
@@ -281,12 +261,10 @@ export class MesaPage implements OnInit {
     const fecha = new Date().getTime();
     let nombre = "";
 
-    if(this.usuarioAnonimo)
-    {
+    if (this.usuarioAnonimo) {
       nombre = this.usuarioAnonimo.nombre;
     }
-    else
-    {
+    else {
       nombre = this.usuarioLogueado.nombre + " " + this.usuarioLogueado.apellido;
     }
 
@@ -305,33 +283,32 @@ export class MesaPage implements OnInit {
     this.hayPedido = true;
     this.resetearCantidades();
 
+    // push pedido realizado
+    this.fcmService.nuevoPedidoPushNotification();
+
     this.mensajePopup = "El pedido se realizó con éxito";
     setTimeout(() => {
       this.popup = true;
     }, 2000);
   }
 
-  resetearCantidades()
-  {
+  resetearCantidades() {
     this.precioTotal = 0;
 
     this.listaComidas.forEach((comida) => {
-      if(comida.cantidad > 0)
-      {
+      if (comida.cantidad > 0) {
         comida.cantidad = 0;
       }
     });
 
     this.listaBebidas.forEach((bebida) => {
-      if(bebida.cantidad > 0)
-      {
+      if (bebida.cantidad > 0) {
         bebida.cantidad = 0;
       }
     });
 
     this.listaPostres.forEach((postre) => {
-      if(postre.cantidad > 0)
-      {
+      if (postre.cantidad > 0) {
         postre.cantidad = 0;
       }
     });
@@ -355,32 +332,27 @@ export class MesaPage implements OnInit {
     if (allowed) {
       BarcodeScanner.hideBackground();
       const resultado = await BarcodeScanner.startScan();
-      if (resultado.hasContent) 
-      {
+      if (resultado.hasContent) {
         this.vibration.vibrate(300);
         this.stopScan();
-        
-        if(resultado.content.startsWith("mesa"))
-        {
+
+        if (resultado.content.startsWith("mesa")) {
           let idMesa = resultado.content.split('-')[1];
-          
+
           this.actualizarPedidos();
 
           for (let i = 0; i < this.pedidos.length; i++) {
-            if(this.pedidos[i].mesa == idMesa)
-            {
+            if (this.pedidos[i].mesa == idMesa) {
               this.pedidoActual = this.pedidos[i];
               this.chequearPedido = true;
             }
           }
         }
-        else if(resultado.content.startsWith("propina"))
-        {
+        else if (resultado.content.startsWith("propina")) {
           this.porcentajePropina = parseInt(resultado.content.split('-')[1]);
           this.propina = this.pedidoActual.precio * this.porcentajePropina / 100;
 
-          switch(this.porcentajePropina)
-          {
+          switch (this.porcentajePropina) {
             case 0:
               this.mensajePropina = "Malo";
               break;
@@ -400,8 +372,7 @@ export class MesaPage implements OnInit {
 
           this.escaneoPropina = true;
         }
-        else if(resultado.content == "lista-espera")
-        {
+        else if (resultado.content == "lista-espera") {
           this.router.navigateByUrl("/graficos");
         }
 
@@ -413,21 +384,19 @@ export class MesaPage implements OnInit {
     }
   }
 
-  stopScan()  {
+  stopScan() {
     this.scannerActive = false;
     BarcodeScanner.showBackground();
     BarcodeScanner.stopScan();
   }
 
-  actualizarPedidos()
-  {
+  actualizarPedidos() {
     this.firestore.obtenerColeccion("pedidos").subscribe((data) => {
       this.pedidos = data;
     });
   }
 
-  confirmarRecepcionPedido()
-  {
+  confirmarRecepcionPedido() {
     this.pedidoActual.estado = "Recibido";
     this.firestore.actualizarPedidoPorId(this.pedidoActual, "pedidos");
 
@@ -437,8 +406,7 @@ export class MesaPage implements OnInit {
     this.carrito = false;
   }
 
-  pagarPedido()
-  {
+  pagarPedido() {
     this.pedidoActual.pagado = true;
     this.firestore.actualizarPedidoPorId(this.pedidoActual, "pedidos");
 

@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.bianluca.pps',
   appName: 'La_Comanda_PPS',
   webDir: 'www',
   server: {
@@ -23,7 +23,10 @@ const config: CapacitorConfig = {
       "splashImmersive": true,
       "layoutName": "launch_screen",
       "useDialog": true
-    }
+    },
+    LocalNotifications: {
+      iconColor: "#488AFF",
+    },
   }
 };
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { interval } from 'rxjs';
 import { AuthService } from 'src/app/servicios/auth.service';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -9,32 +10,29 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
   styleUrls: ['./mozo.page.scss'],
 })
 export class MozoPage implements OnInit {
-  listaPedidos:any []=[];
-  pantalla:string = 'solicitados';
-  pedidosSolicitados:any []=[];
-  pedidosEnPreparacion:any []=[];
-  pedidosTerminado:any []=[];
-  pedidosPagados:any []=[];
-  listaMesas:any []=[];
-  spinner:boolean = false;
-  popup:boolean = false;
-  mesa:any;
+  listaPedidos: any[] = [];
+  pantalla: string = 'solicitados';
+  pedidosSolicitados: any[] = [];
+  pedidosEnPreparacion: any[] = [];
+  pedidosTerminado: any[] = [];
+  pedidosPagados: any[] = [];
+  listaMesas: any[] = [];
+  spinner: boolean = false;
+  popup: boolean = false;
+  mesa: any;
   //@ts-ignore
-  constructor(private firebaseServ:FirebaseService,
-    private authServ:AuthService) 
-  { 
-  }
-  
-  verificarItems(pedido:any)
-  {
+  constructor(
+    private firebaseServ: FirebaseService,
+    private authServ: AuthService,
+    private fcmService: FirebaseCloudMessagingService
+  ) { }
+
+  verificarItems(pedido: any) {
     let pedidoTerminado = false;
-    if(pedido.estado == 'En preparación')
-    {
+    if (pedido.estado == 'En preparación') {
       pedidoTerminado = true;
-      for(let i = 0; i < pedido.items.length; i++)
-      {
-        if(!pedido.items[i].terminado)
-        {
+      for (let i = 0; i < pedido.items.length; i++) {
+        if (!pedido.items[i].terminado) {
           pedidoTerminado = false;
         }
       }
@@ -42,8 +40,7 @@ export class MozoPage implements OnInit {
     return pedidoTerminado;
   }
 
-  activarSpinner()
-  {
+  activarSpinner() {
     this.spinner = true;
     setTimeout(() => {
       this.spinner = false;
@@ -51,32 +48,32 @@ export class MozoPage implements OnInit {
   }
 
 
-  ngOnInit() {
-    this.firebaseServ.obtenerColeccion('pedidos').subscribe((pedidos)=>{
+  async ngOnInit() {
+    this.firebaseServ.obtenerColeccion('pedidos').subscribe((pedidos) => {
       this.listaPedidos = pedidos;
       this.seccionarPedidos(this.listaPedidos);
-      pedidos.forEach((pedido)=>{
-        if(this.verificarItems(pedido))
-        {
+      pedidos.forEach((pedido) => {
+        if (this.verificarItems(pedido)) {
           pedido.estado = 'Terminado';
-          this.firebaseServ.actualizarPedidoPorId(pedido,'pedidos');
+          this.firebaseServ.actualizarPedidoPorId(pedido, 'pedidos');
         }
-      })  
+      })
     });
-    this.firebaseServ.obtenerColeccion('mesas').subscribe((mesas)=>{
+    this.firebaseServ.obtenerColeccion('mesas').subscribe((mesas) => {
       this.listaMesas = mesas;
     });
-  } 
-  
-  seccionarPedidos(pedidos:any)
-  {
+
+    // Init push notifications listener
+    await this.fcmService.initPush();
+  }
+
+  seccionarPedidos(pedidos: any) {
     this.pedidosSolicitados = [];
     this.pedidosTerminado = [];
     this.pedidosEnPreparacion = [];
     this.pedidosPagados = [];
-    pedidos.forEach((pedido:any) => {
-      switch(pedido.estado)
-      {
+    pedidos.forEach((pedido: any) => {
+      switch (pedido.estado) {
         case 'Solicitado':
           this.pedidosSolicitados.push(pedido);
           break;
@@ -85,44 +82,41 @@ export class MozoPage implements OnInit {
           break;
         case 'Terminado':
           this.pedidosTerminado.push(pedido);
-          break;   
+          break;
       }
-      if(pedido.pagado)
-      {
+      if (pedido.pagado) {
         this.pedidosPagados.push(pedido);
       }
     });
   }
 
-  listarPedido(pedido:any)
-  {
+  listarPedido(pedido: any) {
     pedido.estado = 'En preparación';
-    this.firebaseServ.actualizarPedidoPorId(pedido,'pedidos');
-    let itemsCocinero: any[]=[];
-    let itemsBartender: any[]=[];
-    pedido.items.forEach((item:any)=>{
-      if(item.tipo == 'comida' || item.tipo == 'postre')
-      {
+    this.firebaseServ.actualizarPedidoPorId(pedido, 'pedidos');
+    let itemsCocinero: any[] = [];
+    let itemsBartender: any[] = [];
+    pedido.items.forEach((item: any) => {
+      if (item.tipo == 'comida' || item.tipo == 'postre') {
         itemsCocinero.push(item);
       }
-      else
-      {
+      else {
         itemsBartender.push(item);
       }
     });
-    if(itemsCocinero.length > 0)
-    {
+    if (itemsCocinero.length > 0) {
       let pedidoCocinero = {
         id: pedido.id,
         idMesa: pedido.mesa,
         items: itemsCocinero,
         terminado: false
       }
-      this.firebaseServ.agregarDocumentoGenerico(pedidoCocinero,'pedidos-cocinero');
+      this.firebaseServ.agregarDocumentoGenerico(pedidoCocinero, 'pedidos-cocinero');
+
+      // push notification nuevo pedido
+      this.fcmService.sendCocineroPushNotification();
     }
 
-    if(itemsBartender.length > 0)
-    {
+    if (itemsBartender.length > 0) {
       let pedidoBartender =
       {
         id: pedido.id,
@@ -130,38 +124,40 @@ export class MozoPage implements OnInit {
         items: itemsBartender,
         terminado: false
       }
-      this.firebaseServ.agregarDocumentoGenerico(pedidoBartender,'pedidos-bartender');
+      this.firebaseServ.agregarDocumentoGenerico(pedidoBartender, 'pedidos-bartender');
+
+      // push notification nuevo pedido
+      this.fcmService.sendBartenderPushNotification();
     }
+
+    // push notification para el usuario
+    this.fcmService.pedidoEnPreparacionPushNotification();
+
     this.activarSpinner();
   }
 
-  entregarPedido(pedido:any)
-  {
+  entregarPedido(pedido: any) {
     pedido.estado = 'Entregado';
-    this.firebaseServ.actualizarPedidoPorId(pedido,'pedidos');
+    this.firebaseServ.actualizarPedidoPorId(pedido, 'pedidos');
     this.activarSpinner();
   }
 
-  cerrarSesion()
-  {
+  cerrarSesion() {
     this.popup = false;
     this.activarSpinner();
     this.authServ.cerrarSesion();
   }
 
-  confirmarPago(pedido:any)
-  {
+  confirmarPago(pedido: any) {
     this.obtenerMesa(pedido.mesa)
     this.mesa.ocupada = false;
     this.mesa.cliente = new Array();
     this.firebaseServ.actualizarMesaPorId(this.mesa);
   }
 
-  async obtenerMesa(idMesa:any) 
-  {
+  async obtenerMesa(idMesa: any) {
     for (let i = 0; i < this.listaMesas.length; i++) {
-      if(this.listaMesas[i].id == idMesa)
-      {
+      if (this.listaMesas[i].id == idMesa) {
         this.mesa = this.listaMesas[i];
       }
     }

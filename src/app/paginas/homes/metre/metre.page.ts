@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/servicios/auth.service';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -9,35 +10,39 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 })
 export class MetrePage implements OnInit {
 
-  listaEspera:any[] = [];
-  spinner:boolean = false;
-  popup:boolean = false;
+  listaEspera: any[] = [];
+  spinner: boolean = false;
+  popup: boolean = false;
 
-  constructor(private auth:AuthService, private firestore: FirebaseService) { }
+  constructor(
+    private auth: AuthService,
+    private firestore: FirebaseService,
+    private fcmService: FirebaseCloudMessagingService
+  ) { }
 
-  ngOnInit() {
-    this.firestore.obtenerColeccion('lista-espera').subscribe((data)=>{
+  async ngOnInit() {
+    this.firestore.obtenerColeccion('lista-espera').subscribe((data) => {
       this.listaEspera = data;
     });
+
+    // Init push notifications listener
+    await this.fcmService.initPush();
   }
 
-  cerrarSesion()
-  {
+  cerrarSesion() {
     this.popup = false;
     this.activarSpinner();
     this.auth.cerrarSesion();
   }
 
-  activarSpinner()
-  {
+  activarSpinner() {
     this.spinner = true;
     setTimeout(() => {
       this.spinner = false;
     }, 2000);
   }
 
-  sentarCliente(cliente:any)
-  {
+  sentarCliente(cliente: any) {
     cliente.sentado = true;
     this.firestore.actualizarClientePorId("lista-espera", cliente);
     this.activarSpinner();

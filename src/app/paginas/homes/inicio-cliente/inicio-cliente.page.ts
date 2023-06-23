@@ -5,6 +5,7 @@ import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 import { Subscription, interval } from 'rxjs';
 import { Router } from '@angular/router';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
 
 @Component({
   selector: 'app-inicio-cliente',
@@ -12,61 +13,69 @@ import { Router } from '@angular/router';
   styleUrls: ['./inicio-cliente.page.scss'],
 })
 export class InicioClientePage implements OnInit {
+<<<<<<< Updated upstream
   contadorPersonas:number = 1;
   popup:boolean = false;
   logOut:boolean = false;
   listaEspera:any[]=[];
   listaMesas:any[]=[];
   mensajePopUp:string = "";
+=======
+  contadorPersonas: number = 1;
+  popup: boolean = false;
+  listaEspera: any[] = [];
+  listaMesas: any[] = [];
+  mensajePopUp: string = "";
+>>>>>>> Stashed changes
   scannerActive: boolean = false;
-  resultadoQR:string = "";
-  usuarioLogueado:any;
-  clienteEsperando:any = {};
-  email:string = "";
-  spinnerActivo:boolean = false;
+  resultadoQR: string = "";
+  usuarioLogueado: any;
+  clienteEsperando: any = {};
+  email: string = "";
+  spinnerActivo: boolean = false;
   seEnlisto: boolean = false;
-  pantalla:number = 1;
+  pantalla: number = 1;
   // PANTALLA 2
   mensajeToolBar = "BIENVENIDO";
   clienteSentado = false;
 
-  mesa:any = {};
+  mesa: any = {};
   //@ts-ignore
   private verificacionSubscripcion: Subscription;
   // PANTALLA 3
-  constructor(private authServ:AuthService,
+  constructor(private authServ: AuthService,
     private vibration: Vibration,
-    private firebaseServ:FirebaseService,
-    private router: Router) { 
-      this. verificarEstadoMesa();
-    }
-    
-  ngOnInit() 
-  {   
-    this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
-      res.forEach((usuario)=>{
-        if(usuario.email == this.authServ.obtenerEmailUsuarioLogueado())
-        {
+    private firebaseServ: FirebaseService,
+    private router: Router,
+    private fcmService: FirebaseCloudMessagingService) {
+    this.verificarEstadoMesa();
+  }
+
+  async ngOnInit() {
+    this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
+      res.forEach((usuario) => {
+        if (usuario.email == this.authServ.obtenerEmailUsuarioLogueado()) {
           this.usuarioLogueado = usuario;
         }
       })
     });
-    this.firebaseServ.obtenerColeccion('lista-espera').subscribe((usuarios)=>{
+    this.firebaseServ.obtenerColeccion('lista-espera').subscribe((usuarios) => {
       this.listaEspera = usuarios;
     });
-    this.firebaseServ.obtenerColeccion('mesas').subscribe((mesas)=>{
+    this.firebaseServ.obtenerColeccion('mesas').subscribe((mesas) => {
       this.listaMesas = mesas;
     });
+
+    // Init push notifications listener
+    await this.fcmService.initPush();
   }
 
-  verificarEstadoMesa()
-  {
+  verificarEstadoMesa() {
     const intervalo = interval(2000);
-    this.verificacionSubscripcion = intervalo.subscribe(()=>{
-      this.firebaseServ.obtenerColeccion('lista-espera').subscribe((usuarios)=>{
-        usuarios.forEach((usuario)=>{
-          if(usuario.id == this.clienteEsperando.id)
-          {
+    this.verificacionSubscripcion = intervalo.subscribe(() => {
+      this.firebaseServ.obtenerColeccion('lista-espera').subscribe((usuarios) => {
+        usuarios.forEach((usuario) => {
+          if (usuario.id == this.clienteEsperando.id) {
             this.clienteEsperando.sentado = usuario.sentado;
           }
         });
@@ -74,49 +83,44 @@ export class InicioClientePage implements OnInit {
     });
   }
 
-  ngOnDestroy()
-  {
-    if(this.verificacionSubscripcion)
-    {
+  ngOnDestroy() {
+    if (this.verificacionSubscripcion) {
       this.verificacionSubscripcion.unsubscribe();
     }
   }
-  
-  activarSpinner()
-  {
+
+  activarSpinner() {
     this.spinnerActivo = true;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.spinnerActivo = false;
-    },2000);
+    }, 2000);
   }
+<<<<<<< Updated upstream
   cerrarSesion()
   {
     this.logOut = false;
     this.activarSpinner();
+=======
+  cerrarSesion() {
+>>>>>>> Stashed changes
     this.authServ.cerrarSesion();
   }
 
-  sumarPersonas()
-  {
-    if(this.contadorPersonas < 10)
-    {
+  sumarPersonas() {
+    if (this.contadorPersonas < 10) {
       this.contadorPersonas++;
     }
-    else
-    {
+    else {
       this.popup = true;
       this.mensajePopUp = "El máximo permitido es de 10 personas.";
     }
   }
 
-  restarPersonas()
-  {
-    if(this.contadorPersonas > 1)
-    {
+  restarPersonas() {
+    if (this.contadorPersonas > 1) {
       this.contadorPersonas--;
     }
-    else
-    {
+    else {
       this.popup = true;
       this.mensajePopUp = "Debe haber mínimo una persona.";
     }
@@ -141,44 +145,39 @@ export class InicioClientePage implements OnInit {
     if (allowed) {
       BarcodeScanner.hideBackground();
       const resultado = await BarcodeScanner.startScan();
-      if (resultado.hasContent) 
-      {
+      if (resultado.hasContent) {
         this.vibration.vibrate(300);
-        if(resultado.content == "lista-espera")
-        {
+        if (resultado.content == "lista-espera") {
           this.ponerseEnListaEspera();
           this.seEnlisto = true;
+
+          // enviar push notification list de espera a metres
+          this.fcmService.clienteEnListaDeEsperaPushNotification();
         }
-        else if(resultado.content.includes("mesa"))
-        {
-          if(this.seEnlisto)
-          {
+        else if (resultado.content.includes("mesa")) {
+          if (this.seEnlisto) {
             this.obtenerMesa(resultado.content.split('-')[1]);
             this.stopScan();
             this.activarSpinner();
             setTimeout(() => {
-              if(!this.mesa.ocupada)
-              {
+              if (!this.mesa.ocupada) {
                 this.asignarDatosMesa(parseInt(resultado.content.split('-')[1]));
-                this.activarSpinner(); 
+                this.activarSpinner();
                 this.router.navigate(['/inicio-cliente/mesa']);
               }
-              else
-              {
+              else {
                 this.mensajePopUp = "La mesa está ocupada.";
                 this.popup = true;
-              } 
-            },2000);
+              }
+            }, 2000);
           }
-          else
-          {
+          else {
             this.mensajePopUp = "Para escanear la mesa, debe estar en lista de espera.";
             this.popup = true;
             this.stopScan();
           }
         }
-        else
-        {
+        else {
           this.mensajePopUp = "Debe utilizar un QR válido de la empresa.";
           this.popup = true;
           this.stopScan();
@@ -191,8 +190,7 @@ export class InicioClientePage implements OnInit {
     }
   }
 
-  async obtenerMesa(idMesa:any) 
-  {
+  async obtenerMesa(idMesa: any) {
     /*this.listaMesas.forEach((mesa)=>{
       if(mesa.id == idMesa)
       {
@@ -201,62 +199,52 @@ export class InicioClientePage implements OnInit {
     })*/
 
     for (let i = 0; i < this.listaMesas.length; i++) {
-      if(this.listaMesas[i].id == idMesa)
-      {
+      if (this.listaMesas[i].id == idMesa) {
         this.mesa = this.listaMesas[i];
       }
     }
   }
 
-  asignarDatosMesa(idMesa:number)
-  {
+  asignarDatosMesa(idMesa: number) {
     this.mesa.cliente = this.clienteEsperando;
     this.mesa.ocupada = true;
     this.mesa.id = idMesa;
     this.firebaseServ.actualizarMesaPorId(this.mesa);
   }
 
-  ponerseEnListaEspera()
-  {   
+  ponerseEnListaEspera() {
     this.clienteEsperando.comenzales = this.contadorPersonas;
-    if(this.usuarioLogueado.perfil == "cliente")
-    {
-      if(!this.verificarListaEspera())
-      {
+    if (this.usuarioLogueado.perfil == "cliente") {
+      if (!this.verificarListaEspera()) {
         this.asignarDatos(this.usuarioLogueado);
-        this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
+        this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando, 'lista-espera');
       }
-      else
-      {
+      else {
         this.mensajePopUp = "Ya está ingresado en la lista de espera.";
         this.popup = true;
       }
     }
-    else
-    {
+    else {
       this.asignarDatos(this.firebaseServ.obtenerClienteAnonimo());
-      this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando,'lista-espera');
+      this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando, 'lista-espera');
     }
     this.stopScan();
     this.contadorPersonas = 1;
     this.pantalla = 2;
-    this.activarSpinner();     
+    this.activarSpinner();
   }
 
-  verificarListaEspera()
-  {
+  verificarListaEspera() {
     let estaEnLista = false;
-    this.listaEspera.forEach((usuario)=>{
-      if(this.usuarioLogueado.dni == usuario.dni)
-      {
+    this.listaEspera.forEach((usuario) => {
+      if (this.usuarioLogueado.dni == usuario.dni) {
         estaEnLista = true;
       }
     });
     return estaEnLista;
   }
 
-  asignarDatos(cliente:any)
-  {
+  asignarDatos(cliente: any) {
     this.clienteEsperando = {
       id: cliente.id,
       nombre: cliente.nombre,
@@ -269,7 +257,7 @@ export class InicioClientePage implements OnInit {
     };
   }
 
-  stopScan()  {
+  stopScan() {
     this.scannerActive = false;
     BarcodeScanner.showBackground();
     BarcodeScanner.stopScan();

@@ -1,4 +1,4 @@
-package com.AgnoliCasetta.Bianluca;
+package com.bianluca.pps;
 
 import com.getcapacitor.BridgeActivity;
 

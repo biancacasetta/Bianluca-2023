@@ -3,6 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  fcmServerKey:
+    // eslint-disable-next-line max-len
+    'AAAAHLQlBJw:APA91bG_8qHdJPv03YZj6kKCVhzubhVBOVz-VwHt9YPbEraMbnCHIAEsFxXNIF2dvQq6b5zFfwg9T05YhPbiR0Xn-H0ZPx9_t1167W9YP63LlJOpVuBMs6BC-ZjwJGz2k9q7avPE2GKj',
   firebase: {
     projectId: 'bianluca-pps',
     appId: '1:123281409180:web:6b3912e3ce15e4479c9959',
