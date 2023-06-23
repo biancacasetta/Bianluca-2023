@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 export class InicioClientePage implements OnInit {
   contadorPersonas:number = 1;
   popup:boolean = false;
+  logOut:boolean = false;
   listaEspera:any[]=[];
   listaMesas:any[]=[];
   mensajePopUp:string = "";
@@ -90,6 +91,8 @@ export class InicioClientePage implements OnInit {
   }
   cerrarSesion()
   {
+    this.logOut = false;
+    this.activarSpinner();
     this.authServ.cerrarSesion();
   }
 

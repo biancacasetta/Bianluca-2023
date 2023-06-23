@@ -12,16 +12,23 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class AuthService {
   usuarioAceptado:any;
+  listaUsuario: any []=[];
   constructor( private router: Router, private angularFireAuth: AngularFireAuth,
-    private firebaseServ:FirebaseService) { }
+    private firebaseServ:FirebaseService) {
+      this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
+        this.listaUsuario = res;
+      });
+     }
 
-  iniciarSesion(email:string, contraseña:string){
+  async iniciarSesion(email:string, contraseña:string){
     return new Promise((resolve, rejected) => {
       this.angularFireAuth.signInWithEmailAndPassword(email,contraseña).then(usuario =>{
+        console.log("for");
         this.obtenerUsuarioPorEmail(email); 
-        setTimeout(()=>{
-          this.redirigirPorUsuario(this.usuarioAceptado.perfil);
-        },1500);   
+        //setTimeout(()=>{
+        this.redirigirPorUsuario(this.usuarioAceptado.perfil);
+          
+        //},1500);   
         resolve(usuario);
       })
       .catch(error => rejected(error));
@@ -30,14 +37,14 @@ export class AuthService {
 
   obtenerUsuarioPorEmail(email:string)
   {
-    this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
-      res.forEach((usuario)=>{
-        if(usuario.email == email)
-        {
-          this.usuarioAceptado = usuario;
-        }
-      })
-    });
+    for (let i = 0; i < this.listaUsuario.length; i++) {;
+      if(this.listaUsuario[i].email == email)
+      {
+        this.usuarioAceptado = this.listaUsuario[i];
+        console.log(this.listaUsuario[i]);
+        break;
+      }
+    }
   }
   
   redirigirPorUsuario(perfil:string)
@@ -86,7 +93,8 @@ export class AuthService {
     this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email,nuevoUsuario.password)
     .then(()=>{
       console.log(`Usuario ${nuevoUsuario.nombre} registrado exitosamente`);
-      this.cerrarSesion();
+      //this.cerrarSesion();
+      this.iniciarSesion('duenio@duenio.com','duenio');
     })
     .catch((error)=>{
       console.log(error.code);

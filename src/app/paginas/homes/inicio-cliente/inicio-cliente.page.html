@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-fab  vertical="start" horizontal="end" *ngIf="!scannerActive">
-  <ion-fab-button color="none" (click)="cerrarSesion()" class="sin-fondo">
+  <ion-fab-button color="none" (click)="logOut = true" class="sin-fondo">
     <img class="imagen-cerrar-sesion" src="../../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
   </ion-fab-button>
 </ion-fab>
@@ -75,6 +75,13 @@
   <div class="popup" *ngIf="popup">
     <h4>{{mensajePopUp}}</h4>
       <ion-button (click)="popup = false">ACEPTAR</ion-button>
+  </div>
+  <div class="popup" *ngIf="logOut">
+    <h4>¿Desea cerrar sesión?</h4>
+    <div class="botonera-popup">
+      <ion-button (click)="logOut = false">CANCELAR</ion-button>
+      <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
+    </div>
   </div>
 </ion-content>
 
