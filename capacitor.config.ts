@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.bianluca.pps',
-  appName: 'La_Comanda_PPS',
+  appName: 'Bianluca',
   webDir: 'www',
   server: {
     androidScheme: 'https'
