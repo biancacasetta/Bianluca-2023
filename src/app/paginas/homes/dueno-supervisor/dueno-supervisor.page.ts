@@ -4,6 +4,7 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 import * as emailjs from 'emailjs-com';
 import { init } from "emailjs-com";
 import { AuthService } from 'src/app/servicios/auth.service';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
 init("3Ur_in2ApRQf6g6Ka");
 
 @Component({
@@ -13,89 +14,84 @@ init("3Ur_in2ApRQf6g6Ka");
 })
 export class DuenoSupervisorPage implements OnInit {
   spinnerActivo = false;
-  listaClientes:any[]=[];
-  popUp:any;
+  listaClientes: any[] = [];
+  popUp: any;
   formPopUp: FormGroup;
-  razonesTouched:boolean = false;
-  verificarCuentaCliente:boolean = false;
-  clienteARechazar:any;
-  popup:boolean = false;
-  
-  constructor(private firebaseServ:FirebaseService,
-    private formBuilder:FormBuilder,
-    private authServ:AuthService) { 
-      this.formPopUp = this.formBuilder.group({
-        razones: ['',[Validators.required,Validators.minLength(10), Validators.maxLength(40)]]
-      })
-    }
+  razonesTouched: boolean = false;
+  verificarCuentaCliente: boolean = false;
+  clienteARechazar: any;
+  popup: boolean = false;
 
-  ngOnInit() {
+  constructor(private firebaseServ: FirebaseService,
+    private formBuilder: FormBuilder,
+    private authServ: AuthService,
+    private fcmService: FirebaseCloudMessagingService) {
+    this.formPopUp = this.formBuilder.group({
+      razones: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(40)]]
+    })
+  }
+
+  async ngOnInit() {
     this.cargarClientes();
+
+    // Init push notifications listener
+    await this.fcmService.initPush();
   }
 
-  ngAfterViewInit()
-  {
+  ngAfterViewInit() {
     this.popUp = document.getElementById('contenedor-pop-up');
-    
+
   }
 
-  cerrarSesion()
-  {
+  cerrarSesion() {
     this.popup = false;
     this.activarSpinner();
     this.authServ.cerrarSesion();
   }
 
-  cargarClientes()
-  {
+  cargarClientes() {
     this.listaClientes = [];
-    this.firebaseServ.obtenerColeccion('clientes-pendientes').subscribe((res)=>{
+    this.firebaseServ.obtenerColeccion('clientes-pendientes').subscribe((res) => {
       this.listaClientes = res;
-    });  
+    });
   }
 
-  aceptarCliente(clienteAceptado:any)
-  {
-    this.firebaseServ.agregarDocumento(clienteAceptado,'usuarios-aceptados');
-    this.firebaseServ.eliminarDocumento(clienteAceptado,'clientes-pendientes');
+  aceptarCliente(clienteAceptado: any) {
+    this.firebaseServ.agregarDocumento(clienteAceptado, 'usuarios-aceptados');
+    this.firebaseServ.eliminarDocumento(clienteAceptado, 'clientes-pendientes');
     this.authServ.registrarUsuario(clienteAceptado);
     const listaAux = this.listaClientes;
     this.listaClientes = listaAux.filter(cliente => cliente != clienteAceptado);
-    this.enviarEmail(clienteAceptado,"Fuiste aceptado. Ya podés iniciar sesión","cliente_aceptado");
+    this.enviarEmail(clienteAceptado, "Fuiste aceptado. Ya podés iniciar sesión", "cliente_aceptado");
     this.activarSpinner();
   }
 
-  activarSpinner()
-  {
+  activarSpinner() {
     this.spinnerActivo = true;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.spinnerActivo = false;
-    },2000);
+    }, 2000);
   }
 
-  accionRechazar(cliente:any)
-  {
+  accionRechazar(cliente: any) {
     this.popUp = document.getElementById('contenedor-pop-up');
     this.popUp.classList.remove("esconder");
     this.clienteARechazar = cliente;
   }
 
-  cancelarRechazo()
-  {
+  cancelarRechazo() {
     this.popUp.classList.add("esconder");
   }
 
-  async rechazarCliente()
-  {
+  async rechazarCliente() {
     this.razonesTouched = true;
-    if(this.formPopUp.valid)
-    {
-      this.firebaseServ.agregarDocumento(this.clienteARechazar,'clientes-rechazados');
-      this.firebaseServ.eliminarDocumento(this.clienteARechazar,'clientes-pendientes');
+    if (this.formPopUp.valid) {
+      this.firebaseServ.agregarDocumento(this.clienteARechazar, 'clientes-rechazados');
+      this.firebaseServ.eliminarDocumento(this.clienteARechazar, 'clientes-pendientes');
       this.firebaseServ.borrarFoto(this.clienteARechazar.rutaFoto);
       const listaAux = this.listaClientes;
       this.listaClientes = listaAux.filter(cliente => cliente != cliente);
-      this.enviarEmail(this.clienteARechazar,this.formPopUp.getRawValue().razones,"cliente_rechazado");
+      this.enviarEmail(this.clienteARechazar, this.formPopUp.getRawValue().razones, "cliente_rechazado");
       this.cargarClientes();
       this.popUp.classList.add("esconder");
       this.razonesTouched = false;
@@ -103,16 +99,15 @@ export class DuenoSupervisorPage implements OnInit {
     }
   }
 
-  enviarEmail(usuario:any,mensaje:string,templateId:string)
-  {
+  enviarEmail(usuario: any, mensaje: string, templateId: string) {
     const template = {
       user_email: usuario.email,
       to_name: usuario.nombre,
       message: mensaje,
       nombre_restaurante: 'Restaurante Bianluca'
     };
-    emailjs.send("service_xljpmy6",templateId,template)
-    .then(res => console.log("Correo enviado.", res.status, res.text))
-    .catch(error => console.log("Error al enviar", error));
+    emailjs.send("service_xljpmy6", templateId, template)
+      .then(res => console.log("Correo enviado.", res.status, res.text))
+      .catch(error => console.log("Error al enviar", error));
   }
 }

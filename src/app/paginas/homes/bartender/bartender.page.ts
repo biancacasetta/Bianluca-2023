@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/servicios/auth.service';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -8,66 +9,63 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
   styleUrls: ['./bartender.page.scss'],
 })
 export class BartenderPage implements OnInit {
-  listaPedidosBartender:any []=[];
-  listaPedidosGenerales:any []=[];
-  spinner:any;
-  popup:boolean = false;
-  constructor(private firebaseServ:FirebaseService,
-    private authServ:AuthService) { }
+  listaPedidosBartender: any[] = [];
+  listaPedidosGenerales: any[] = [];
+  spinner: any;
+  popup: boolean = false;
+  constructor(private firebaseServ: FirebaseService,
+    private authServ: AuthService,
+    private fcmService: FirebaseCloudMessagingService) { }
 
-  ngOnInit() {
-    this.firebaseServ.obtenerColeccion('pedidos').subscribe((pedidos)=>{
+  async ngOnInit() {
+    this.firebaseServ.obtenerColeccion('pedidos').subscribe((pedidos) => {
       this.listaPedidosGenerales = pedidos;
     });
-    this.firebaseServ.obtenerColeccion('pedidos-bartender').subscribe((pedidosBartender)=>{
+    this.firebaseServ.obtenerColeccion('pedidos-bartender').subscribe((pedidosBartender) => {
       this.listaPedidosBartender = pedidosBartender;
     });
-  } 
 
-  activarSpinner()
-  {
+    // Init push notifications listener
+    await this.fcmService.initPush();
+  }
+
+  activarSpinner() {
     this.spinner = true;
     setTimeout(() => {
       this.spinner = false;
     }, 2000);
   }
 
-  cerrarSesion()
-  {
+  cerrarSesion() {
     this.popup = false;
     this.activarSpinner();
     this.authServ.cerrarSesion();
   }
 
-  terminarPedido(pedidosBartender:any)
-  {
+  terminarPedido(pedidosBartender: any) {
     this.cambiarEstadoItem(pedidosBartender);
     pedidosBartender.terminado = true;
-    this.firebaseServ.actualizarPedidoPorId(pedidosBartender,'pedidos-bartender');
+    this.firebaseServ.actualizarPedidoPorId(pedidosBartender, 'pedidos-bartender');
     this.actualizarPedidoMozo(pedidosBartender);
     this.activarSpinner();
     //SOLO LA PARTE DEL PEDIDO DEL COCINERO SE TERMINA
   }
 
-  cambiarEstadoItem(pedido:any)
-  {
-    pedido.items.forEach((item:any) => {
+  cambiarEstadoItem(pedido: any) {
+    pedido.items.forEach((item: any) => {
       item.terminado = true;
     });
   }
 
-  actualizarPedidoMozo(pedidoBartender:any)
-  {
-    this.listaPedidosGenerales.forEach((pedido:any)=>{
-      if(pedido.id == pedidoBartender.id)
-      {
-        pedido.items.forEach((item:any)=>{
-          if(item.tipo == 'bebida')
-          {
+  actualizarPedidoMozo(pedidoBartender: any) {
+    this.listaPedidosGenerales.forEach((pedido: any) => {
+      if (pedido.id == pedidoBartender.id) {
+        pedido.items.forEach((item: any) => {
+          if (item.tipo == 'bebida') {
             item.terminado = true;
           }
         });
-        this.firebaseServ.actualizarPedidoPorId(pedido,'pedidos');
+        this.firebaseServ.actualizarPedidoPorId(pedido, 'pedidos');
       }
     })
   }

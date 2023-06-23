@@ -5,12 +5,14 @@ import firebase from 'firebase/compat/app';
 import { FirebaseService } from './firebase.service';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+
+import { Firestore, collection, getDocs, updateDoc, doc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+<<<<<<< Updated upstream
   usuarioAceptado:any;
   listaUsuario: any []=[];
   constructor( private router: Router, private angularFireAuth: AngularFireAuth,
@@ -29,12 +31,29 @@ export class AuthService {
         this.redirigirPorUsuario(this.usuarioAceptado.perfil);
           
         //},1500);   
+=======
+  usuarioAceptado: any;
+  constructor(private router: Router,
+    private angularFireAuth: AngularFireAuth,
+    private firebaseServ: FirebaseService,
+    private firestore2: Firestore
+  ) { }
+
+  iniciarSesion(email: string, contraseña: string) {
+    return new Promise((resolve, rejected) => {
+      this.angularFireAuth.signInWithEmailAndPassword(email, contraseña).then(usuario => {
+        this.obtenerUsuarioPorEmail(email);
+        setTimeout(() => {
+          this.redirigirPorUsuario(this.usuarioAceptado.perfil);
+        }, 1500);
+>>>>>>> Stashed changes
         resolve(usuario);
       })
-      .catch(error => rejected(error));
+        .catch(error => rejected(error));
     });
-  }  
+  }
 
+<<<<<<< Updated upstream
   obtenerUsuarioPorEmail(email:string)
   {
     for (let i = 0; i < this.listaUsuario.length; i++) {;
@@ -45,17 +64,33 @@ export class AuthService {
         break;
       }
     }
+=======
+  obtenerUsuarioPorEmail(email: string) {
+    this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
+      res.forEach((usuario) => {
+        if (usuario.email == email) {
+          this.usuarioAceptado = usuario;
+        }
+      })
+    });
+>>>>>>> Stashed changes
   }
-  
-  redirigirPorUsuario(perfil:string)
-  {
-    switch(perfil)
-    {
+
+  async obtenerUsuarioPorEmail2(email: string) {
+    const usersCol = collection(this.firestore2, 'usuarios-aceptados');
+    const usersSnapshot = await getDocs(usersCol);
+    const users = usersSnapshot.docs.map(doc => doc.data());
+
+    return users.find(user => user['email'] === email);
+  }
+
+  redirigirPorUsuario(perfil: string) {
+    switch (perfil) {
       case "cliente":
         this.router.navigate(['/inicio-cliente']);
         break;
       case "dueño":
-        case "supervisor":  
+      case "supervisor":
         this.router.navigate(['/dueno-supervisor']);
         break;
       case "metre":
@@ -63,31 +98,30 @@ export class AuthService {
         break;
       case "mozo":
         this.router.navigate(['/mozo']);
-        break;  
+        break;
       case "bartender":
         this.router.navigate(['bartender']);
         break;
       case "cocinero":
         this.router.navigate(['cocinero']);
-        break;    
+        break;
     }
   }
 
-  cerrarSesion()
-  {
-    try
-    {
+  cerrarSesion() {
+    try {
       this.angularFireAuth.signOut().then(() => {
         setTimeout(() => {
           console.log("Sesión cerrada exitosamente.");
           this.router.navigate(['/login']);
         }, 2000);
       });
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error.message);
     }
   }
 
+<<<<<<< Updated upstream
   registrarUsuario(nuevoUsuario:any)
   {
     this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email,nuevoUsuario.password)
@@ -99,6 +133,17 @@ export class AuthService {
     .catch((error)=>{
       console.log(error.code);
     })
+=======
+  registrarUsuario(nuevoUsuario: any) {
+    this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email, nuevoUsuario.password)
+      .then(() => {
+        console.log(`Usuario ${nuevoUsuario.nombre} registrado exitosamente`);
+        this.cerrarSesion();
+      })
+      .catch((error) => {
+        console.log(error.code);
+      })
+>>>>>>> Stashed changes
   }
 
   crearMensaje(errorCode: string): string {
@@ -121,8 +166,7 @@ export class AuthService {
     return mensaje;
   }
 
-  obtenerEmailUsuarioLogueado()
-  {
+  obtenerEmailUsuarioLogueado() {
     return firebase.auth().currentUser?.email;
   }
 }

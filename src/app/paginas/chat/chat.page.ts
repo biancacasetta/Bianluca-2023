@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { ChatService } from 'src/app/servicios/chat.service';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
 @Component({
@@ -11,14 +12,20 @@ import { FirebaseService } from 'src/app/servicios/firebase.service';
 })
 export class ChatPage implements OnInit {
 
-  popup:boolean = false;
-  mensajePopup:string = "";
-  mensajes:any[] = [];
-  usuario:any;
-  mesa:any;
-  nuevoMensaje:string = "";
+  popup: boolean = false;
+  mensajePopup: string = "";
+  mensajes: any[] = [];
+  usuario: any;
+  mesa: any;
+  nuevoMensaje: string = "";
 
-  constructor(private firestore: FirebaseService, private auth: AuthService, private chat: ChatService, private router: Router) { }
+  constructor(
+    private firestore: FirebaseService,
+    private auth: AuthService,
+    private chat: ChatService,
+    private router: Router,
+    private fcmService: FirebaseCloudMessagingService
+  ) { }
 
   ngOnInit() {
     this.chat.obtenerMensajes().subscribe((data: any) => {
@@ -33,24 +40,21 @@ export class ChatPage implements OnInit {
 
     this.usuario = this.firestore.obtenerClienteAnonimo();
 
-    if(this.usuario == null)
-    {
-      this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
-        res.forEach((usuario)=>{
-          if(usuario.email == this.auth.obtenerEmailUsuarioLogueado())
-          {
+    if (this.usuario == null) {
+      this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
+        res.forEach((usuario) => {
+          if (usuario.email == this.auth.obtenerEmailUsuarioLogueado()) {
             this.usuario = usuario;
 
             this.firestore.obtenerColeccion("mesas").subscribe((data) => {
               data.forEach((mesa) => {
-                if(mesa.cliente != undefined && mesa.cliente.id == usuario.id)
-                {
+                if (mesa.cliente != undefined && mesa.cliente.id == usuario.id) {
                   this.mesa = mesa;
                 }
               })
             })
           }
-      });
+        });
       });
     }
   }
@@ -77,6 +81,15 @@ export class ChatPage implements OnInit {
     this.chat.crearMensaje(mensaje);
     this.nuevoMensaje = '';
     this.deslizarPantallaHaciaAbajo();
+
+    if (this.usuario.perfil === 'cliente') {
+      // enviar push notification mensaje consulta
+      this.fcmService.nuevoMensajePushNotification(this.usuario.nombre + " " + this.usuario.apellido, mensaje.texto, 'mozo');
+    }
+    else {
+      // enviar push notification mensaje respuesta chat
+      this.fcmService.nuevoMensajePushNotification('Soporte', mensaje.texto, this.usuario.id);
+    }
   }
 
   deslizarPantallaHaciaAbajo() {
@@ -92,14 +105,11 @@ export class ChatPage implements OnInit {
     }
   }
 
-  verificarPerfil()
-  {
-    if(this.usuario.perfil == "mozo")
-    {
+  verificarPerfil() {
+    if (this.usuario.perfil == "mozo") {
       this.router.navigateByUrl("/mozo");
     }
-    else
-    {
+    else {
       this.router.navigateByUrl("/inicio-cliente/mesa");
     }
 
