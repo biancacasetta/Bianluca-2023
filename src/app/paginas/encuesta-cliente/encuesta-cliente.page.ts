@@ -22,6 +22,7 @@ export class EncuestaClientePage implements OnInit {
   errorFotos = false;
   arrayFotos:any = new Array();
   spinner:any;
+  popup:boolean=false;
   constructor(private vibracion:Vibration,
     private fotoServ:FotoService,
     private firestore:FirebaseService,
@@ -117,12 +118,13 @@ export class EncuestaClientePage implements OnInit {
 
   async obtenerFotosEncuesta()
   {
+    this.arrayFotos = new Array();
     let foto = {
       hora: ''
     }
+    this.spinner = true;
     await this.fotoServ.obtenerImagenes(foto);
-    this.activarSpinner();
-    setTimeout(()=>{
+    this.spinner = false;
       this.arrayFotos = this.fotoServ.obtenerArrayFotos();
       if(this.arrayFotos.length > 3)
       {
@@ -134,7 +136,6 @@ export class EncuestaClientePage implements OnInit {
         this.errorFotos = false;
       }
       this.fotoServ.limpiarArrayFotos();
-    },1800);
   }
 
   activarSpinner()
@@ -165,19 +166,22 @@ export class EncuestaClientePage implements OnInit {
       {
         arrayRecomendados.push("Trabajo");
       }
-      this.activarSpinner();
-      let datos =
-      {
-        recomendados: arrayRecomendados,
-        rangoEdad: this.rangoEdad,
-        gustosDelLocal: this.valorSelect,
-        limpieza: this.nivelLimpieza,
-        comentario: this.comentario,
-        fotos: this.arrayFotos 
-      }
-      this.firestore.guardarEncuestaCliente(datos);
-      this.limpiarDatos();
-      this.router.navigate(['/inicio-cliente/mesa']);
+      this.spinner = true;
+      setTimeout(()=>{
+        let datos =
+        {
+          recomendados: arrayRecomendados,
+          rangoEdad: this.rangoEdad,
+          gustosDelLocal: this.valorSelect,
+          limpieza: this.nivelLimpieza,
+          comentario: this.comentario,
+          fotos: this.arrayFotos 
+        }
+        this.firestore.guardarEncuestaCliente(datos);
+        this.limpiarDatos();
+        this.spinner = false;
+        this.popup = true;
+      },2000);
     }
   }
 

@@ -104,7 +104,11 @@
       
       <ion-button (click)="enviarRespuestas()">ENVIAR</ion-button>
   </div>
-  <div class="contenedor-spinner" *ngIf="spinner">
-    <app-spinner></app-spinner>
-  </div> 
 </ion-content>
+<div class="contenedor-spinner" *ngIf="spinner">
+  <app-spinner></app-spinner>
+</div> 
+<div class="popup" *ngIf="popup">
+  <h4>Encuesta enviada</h4>
+  <ion-button routerLink="/inicio-cliente/mesa">ACEPTAR</ion-button>
+</div>
