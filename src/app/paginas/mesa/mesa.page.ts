@@ -338,7 +338,7 @@ export class MesaPage implements OnInit {
 
         if (resultado.content.startsWith("mesa"))
         {
-          if(this.pedidoActual.estado != "Finalizado")
+          if(this.pedidoActual.estado != "Finalizado" && !this.pedidoActual.pagado)
           {
             let idMesa = resultado.content.split('-')[1];
   

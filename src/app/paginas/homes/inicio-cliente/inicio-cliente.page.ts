@@ -135,11 +135,20 @@ export class InicioClientePage implements OnInit {
       if (resultado.hasContent) {
         this.vibration.vibrate(300);
         if (resultado.content == "lista-espera") {
-          this.ponerseEnListaEspera();
-          this.seEnlisto = true;
-
-          // enviar push notification list de espera a metres
-          this.fcmService.clienteEnListaDeEsperaPushNotification();
+          if (!this.seEnlisto)
+          {
+            this.ponerseEnListaEspera();
+            this.seEnlisto = true;
+  
+            // enviar push notification list de espera a metres
+            this.fcmService.clienteEnListaDeEsperaPushNotification();
+          }
+          else
+          {
+            this.mensajePopUp = "Ya fue aceptado de la lista de espera.";
+            this.popup = true;
+            this.stopScan();
+          }
         }
         else if (resultado.content.includes("mesa")) {
           if (this.seEnlisto) {
@@ -164,16 +173,22 @@ export class InicioClientePage implements OnInit {
             this.stopScan();
           }
         }
+        else if(resultado.content.includes("propina"))
+        {
+          this.mensajePopUp = "No puede acceder a la propina sin un pago pendiente.";
+          this.popup = true;
+          this.stopScan();
+        }
         else {
           this.mensajePopUp = "Debe utilizar un QR válido de la empresa.";
           this.popup = true;
           this.stopScan();
         }
       } else {
-        alert('NO DATA FOUND!');
+        console.log('NO DATA FOUND!');
       }
     } else {
-      alert('NOT ALLOWED!');
+      console.log('NOT ALLOWED!');
     }
   }
 
@@ -224,7 +239,7 @@ export class InicioClientePage implements OnInit {
   verificarListaEspera() {
     let estaEnLista = false;
     for (let i = 0; i < this.listaEspera.length; i++) {
-      if (this.usuarioLogueado.dni == this.listaEspera[i].dni) {
+      if (this.usuarioLogueado.id == this.listaEspera[i].id) {
         estaEnLista = true;
         break;
       }
