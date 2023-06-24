@@ -129,10 +129,6 @@ export class MozoPage implements OnInit {
       // push notification nuevo pedido
       this.fcmService.sendBartenderPushNotification();
     }
-
-    // push notification para el usuario
-    this.fcmService.pedidoEnPreparacionPushNotification();
-
     this.activarSpinner();
   }
 
@@ -152,6 +148,8 @@ export class MozoPage implements OnInit {
     this.obtenerMesa(pedido.mesa)
     this.mesa.ocupada = false;
     this.mesa.cliente = new Array();
+    pedido.estado = "Finalizado";
+    this.firebaseServ.actualizarPedidoPorId(pedido,'pedidos');
     this.firebaseServ.actualizarMesaPorId(this.mesa);
   }
 

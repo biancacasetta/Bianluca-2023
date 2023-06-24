@@ -73,6 +73,7 @@ export class LoginPage implements OnInit {
           case "":
             await this.auth.iniciarSesion(this.formLogin.value.email, this.formLogin.value.password).then(() => {
               console.log("¡Login exitoso!");
+              this.formLogin.reset();
             })
             .catch((error) => {
               this.mensajePopup = this.auth.crearMensaje(error.code);

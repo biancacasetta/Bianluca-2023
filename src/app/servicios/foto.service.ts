@@ -25,42 +25,45 @@ export class FotoService {
 
   async obtenerImagenes(foto: any) {
     // Open the gallery and select an image
-    const imagenes = await Camera.pickImages({
-      quality: 90,
-      limit: 10,
-    });
-    for (let i = 0; i < imagenes.photos.length; i++) {
-      const image = imagenes.photos[i];
-
-      if (image.webPath) {
-        // Fetch the image data
-        const response = await fetch(image.webPath);
-        const blob = await response.blob();
-        if(i > 0)
-        {
-          delay(500);
+      const imagenes = await Camera.pickImages({
+        quality: 90,
+        limit: 10,
+      });
+      for (let i = 0; i < imagenes.photos.length; i++) {
+        const image = imagenes.photos[i];
+  
+        if (image.webPath) {
+          // Fetch the image data
+          const response = await fetch(image.webPath);
+          const blob = await response.blob();
+          if(i > 0)
+          {
+            delay(500);
+          }
+          const fecha = new Date().getTime();
+          foto.hora = fecha;
+          const nombre = ` ${fecha}`; /*${foto.usuario.nombre}.${foto.idMesa}.*/
+  
+  
+          const ref = this.angularFirestorage.ref(nombre);
+          const task = ref.put(blob);
+  
+          await new Promise<void>((resolve) => {
+            task.snapshotChanges().pipe(
+              finalize(() => {
+                ref.getDownloadURL().subscribe((downloadURL: string) => {
+                  foto.pathFoto = downloadURL;
+                  this.arrayFotos.push(foto);
+                  console.log(foto);
+                  resolve(); // Resuelve la promesa para avanzar al siguiente ciclo
+                });
+              })
+            ).subscribe();
+          });
+        } else {
+          console.log('No selecciono una imagen');
         }
-        const fecha = new Date().getTime();
-        foto.hora = fecha;
-        const nombre = ` ${fecha}`; /*${foto.usuario.nombre}.${foto.idMesa}.*/
-
-
-        const ref = this.angularFirestorage.ref(nombre);
-        const task = ref.put(blob);
-
-        task.snapshotChanges().pipe(
-          finalize(() => {
-            ref.getDownloadURL().subscribe((downloadURL: string) => {
-              foto.pathFoto = downloadURL;
-              this.arrayFotos.push(foto);
-            });
-          })
-        ).subscribe();
-      } else {
-        console.log('No selecciono una imagen');
       }
-    }
-    
   }
 
 }

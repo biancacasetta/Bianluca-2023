@@ -224,11 +224,12 @@ export class InicioClientePage implements OnInit {
 
   verificarListaEspera() {
     let estaEnLista = false;
-    this.listaEspera.forEach((usuario) => {
-      if (this.usuarioLogueado.dni == usuario.dni) {
+    for (let i = 0; i < this.listaEspera.length; i++) {
+      if (this.usuarioLogueado.dni == this.listaEspera[i].dni) {
         estaEnLista = true;
+        break;
       }
-    });
+    }
     return estaEnLista;
   }
 
