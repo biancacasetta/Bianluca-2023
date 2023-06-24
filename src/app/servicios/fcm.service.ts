@@ -62,186 +62,207 @@ export class FirebaseCloudMessagingService {
     });
   }
 
-  sendCocineroPushNotification() {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      const usuarios = res.filter(usuario => usuario.perfil === 'cocinero' && usuario.fcmToken);
-
-      const tokens = usuarios.map(usuario => usuario.fcmToken);
-
-      const body = {
-        registration_ids: tokens,
-        notification: {
-          body: 'Hay nuevos platos para preparar',
-          title: 'Nuevo pedido'
-        }
+  async sendCocineroPushNotification() {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if (usuario['perfil'] === 'cocinero' && usuario['fcmToken']) {
+        tokens.push(usuario['fcmToken']);
       }
-
-      this.sendPushNotification(body).subscribe(
-        response => {
-          console.log('Exito', response);
-        },
-        error => {
-          console.error('Error', error);
-        }
-      );
     });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: 'Hay bebidas para preparar',
+        title: 'Nuevo pedido'
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
   }
 
-  sendBartenderPushNotification() {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      const usuarios = res.filter(usuario => usuario.perfil === 'bartender' && usuario.fcmToken);
-
-      const tokens = usuarios.map(usuario => usuario.fcmToken);
-
-      const body = {
-        registration_ids: tokens,
-        notification: {
-          notification: {
-            body: 'Hay bebidas para preparar',
-            title: 'Nuevo pedido'
-          }
-        }
+  async sendBartenderPushNotification() {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if (usuario['perfil'] === 'bartender' && usuario['fcmToken']) {
+        tokens.push(usuario['fcmToken']);
       }
-
-      this.sendPushNotification(body).subscribe(
-        response => {
-          console.log('Exito', response);
-        },
-        error => {
-          console.error('Error', error);
-        }
-      );
     });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: 'Hay bebidas para preparar',
+        title: 'Nuevo pedido'
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
   }
 
-  pedidoListoPushNotification() {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      const usuarios = res.filter(usuario => usuario.perfil === 'mozo' && usuario.fcmToken);
-
-      const tokens = usuarios.map(usuario => usuario.fcmToken);
-
-      const body = {
-        registration_ids: tokens,
-        notification: {
-          body: 'Hay un pedido listo para entregar al cliente',
-          title: 'Pedido listo'
-        }
+  async pedidoListoPushNotification() {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if (usuario['perfil'] === 'mozo' && usuario['fcmToken']) {
+        tokens.push(usuario['fcmToken']);
       }
-
-      this.sendPushNotification(body).subscribe(
-        response => {
-          console.log('Exito', response);
-        },
-        error => {
-          console.error('Error', error);
-        }
-      );
     });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: 'Hay un pedido listo para entregar al cliente',
+        title: 'Pedido listo'
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
   }
 
-  nuevoPedidoPushNotification() {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      const usuarios = res.filter(usuario => usuario.perfil === 'mozo' && usuario.fcmToken);
-
-      const tokens = usuarios.map(usuario => usuario.fcmToken);
-
-      const body = {
-        registration_ids: tokens,
-        notification: {
-          body: 'Un cliente ha realizado un pedido',
-          title: 'Nuevo pedido'
-        }
+  async nuevoPedidoPushNotification() {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if (usuario['perfil'] === 'mozo' && usuario['fcmToken']) {
+        tokens.push(usuario['fcmToken']);
       }
-
-      this.sendPushNotification(body).subscribe(
-        response => {
-          console.log('Exito', response);
-        },
-        error => {
-          console.error('Error', error);
-        }
-      );
     });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: 'Un cliente ha realizado un pedido',
+        title: 'Nuevo pedido'
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
   }
 
-  nuevoMensajePushNotification(nombreUsuario: string, mensaje: string, dirigidoA: string) {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      let usuarios = [];
+  async nuevoMensajePushNotification(nombreUsuario: string, mensaje: string, dirigidoA: string) {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
       if (dirigidoA === 'mozo') {
-        usuarios = res.filter(usuario => usuario.perfil === 'mozo' && usuario.fcmToken);
+        if (usuario['perfil'] === 'mozo' && usuario['fcmToken']) {
+          tokens.push(usuario['fcmToken']);
+        }
       }
       else {
-        usuarios = res.filter(usuario => (usuario.perfil === 'cliente' || usuario.perfil === 'anónimo') && usuario.fcmToken);
-      }
-
-      const tokens = usuarios.map(usuario => usuario.fcmToken);
-
-      const body = {
-        registration_ids: tokens,
-        notification: {
-          body: mensaje,
-          title: 'Mensaje de: ' + nombreUsuario
+        if ((usuario['perfil'] === 'mozo' || usuario['perfil'] === 'anónimo') && usuario['fcmToken']) {
+          tokens.push(usuario['fcmToken']);
         }
       }
-
-      this.sendPushNotification(body).subscribe(
-        response => {
-          console.log('Exito', response);
-        },
-        error => {
-          console.error('Error', error);
-        }
-      );
     });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: mensaje,
+        title: 'Mensaje de: ' + nombreUsuario
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
   }
 
-  clienteEnListaDeEsperaPushNotification() {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      const usuarios = res.filter(usuario => usuario.perfil === 'metre' && usuario.fcmToken);
-
-      const tokens = usuarios.map(usuario => usuario.fcmToken);
-
-      const body = {
-        registration_ids: tokens,
-        notification: {
-          body: 'Un cliente está esperando una mesa',
-          title: 'Lista de espera'
-        }
+  async clienteEnListaDeEsperaPushNotification() {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if (usuario['perfil'] === 'metre' && usuario['fcmToken']) {
+        tokens.push(usuario['fcmToken']);
       }
-
-      this.sendPushNotification(body).subscribe(
-        response => {
-          console.log('Exito', response);
-        },
-        error => {
-          console.error('Error', error);
-        }
-      );
     });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: 'Un cliente está esperando una mesa',
+        title: 'Lista de espera'
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
   }
 
-  nuevoClientePushNotification() {
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      const usuarios = res.filter(usuario => (usuario.perfil === 'dueño' || usuario.perfil === 'supervisor') && usuario.fcmToken);
-      const tokens = usuarios.map(usuario => usuario.fcmToken);
-
-      const body = {
-        registration_ids: tokens,
-        notification: {
-          body: 'Un nuevo cliente está esperando aprobación',
-          title: 'Hay un nuevo cliente'
-        }
+  async nuevoClientePushNotification() {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if ((usuario['perfil'] === 'dueño' || usuario['perfil'] === 'supervisor') && usuario['fcmToken']) {
+        tokens.push(usuario['fcmToken']);
       }
-
-      this.sendPushNotification(body).subscribe(
-        response => {
-          console.log('Exito', response);
-        },
-        error => {
-          console.error('Error', error);
-        }
-      );
     });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: 'Un nuevo cliente está esperando aprobación',
+        title: 'Hay un nuevo cliente'
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
   }
 
   async deleteUsersWithToken(token: string, uid: string) {
