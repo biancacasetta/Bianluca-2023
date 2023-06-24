@@ -341,6 +341,7 @@ export class FirebaseCloudMessagingService {
               extra: {
                 data: notification.data,
               },
+              schedule: { at: new Date(Date.now() + 1000 * 5) },
             },
           ],
         });
