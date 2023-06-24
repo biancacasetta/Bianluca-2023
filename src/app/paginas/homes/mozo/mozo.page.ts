@@ -147,6 +147,11 @@ export class MozoPage implements OnInit {
   confirmarPago(pedido: any) {
     this.obtenerMesa(pedido.mesa)
     this.mesa.ocupada = false;
+    this.firebaseServ.eliminarClientePorCampo('id',this.mesa.cliente.id,'lista-espera');
+    if(this.mesa.cliente.perfil == 'anónimo')
+    {
+      this.firebaseServ.eliminarClientePorCampo('id',this.mesa.cliente.id,'usuarios-aceptados');
+    }
     this.mesa.cliente = new Array();
     pedido.estado = "Finalizado";
     this.firebaseServ.actualizarPedidoPorId(pedido,'pedidos');
