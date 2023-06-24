@@ -185,7 +185,7 @@ export class FirebaseCloudMessagingService {
         }
       }
       else {
-        if ((usuario['perfil'] === 'mozo' || usuario['perfil'] === 'anónimo') && usuario['fcmToken']) {
+        if ((usuario['perfil'] === 'cliente' || usuario['perfil'] === 'anónimo') && usuario['fcmToken']) {
           tokens.push(usuario['fcmToken']);
         }
       }
