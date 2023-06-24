@@ -68,7 +68,7 @@ export class ChatPage implements OnInit {
       this.popup = true;
       return;
     }
-
+    //
     const fecha = new Date();
     const hora = fecha.getHours().toString().padStart(2, '0');
     const minutos = fecha.getMinutes().toString().padStart(2, '0');
