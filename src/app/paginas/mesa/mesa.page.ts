@@ -336,44 +336,75 @@ export class MesaPage implements OnInit {
         this.vibration.vibrate(300);
         this.stopScan();
 
-        if (resultado.content.startsWith("mesa")) {
-          let idMesa = resultado.content.split('-')[1];
-
-          this.actualizarPedidos();
-
-          for (let i = 0; i < this.pedidos.length; i++) {
-            if (this.pedidos[i].mesa == idMesa) {
-              this.pedidoActual = this.pedidos[i];
-              this.chequearPedido = true;
+        if (resultado.content.startsWith("mesa"))
+        {
+          if(this.pedidoActual.estado != "Recibido")
+          {
+            let idMesa = resultado.content.split('-')[1];
+  
+            this.actualizarPedidos();
+  
+            for (let i = 0; i < this.pedidos.length; i++) {
+              if (this.pedidos[i].mesa == idMesa) {
+                this.pedidoActual = this.pedidos[i];
+                this.chequearPedido = true;
+              }
             }
           }
-        }
-        else if (resultado.content.startsWith("propina")) {
-          this.porcentajePropina = parseInt(resultado.content.split('-')[1]);
-          this.propina = this.pedidoActual.precio * this.porcentajePropina / 100;
-
-          switch (this.porcentajePropina) {
-            case 0:
-              this.mensajePropina = "Malo";
-              break;
-            case 5:
-              this.mensajePropina = "Regular";
-              break;
-            case 10:
-              this.mensajePropina = "Bueno";
-              break;
-            case 15:
-              this.mensajePropina = "Muy bueno";
-              break;
-            case 20:
-              this.mensajePropina = "Escelente";
-              break;
+          else
+          {
+            this.mensajePopup = "Ya no puede darle seguimiento a un pedido recibido";
+            this.popup = true;
           }
-
-          this.escaneoPropina = true;
+        }
+        else if (resultado.content.startsWith("propina"))
+        {
+          if(this.pedirCuenta && !this.pedidoActual.pagado)
+          {
+            this.porcentajePropina = parseInt(resultado.content.split('-')[1]);
+            this.propina = this.pedidoActual.precio * this.porcentajePropina / 100;
+  
+            switch (this.porcentajePropina) {
+              case 0:
+                this.mensajePropina = "Malo";
+                break;
+              case 5:
+                this.mensajePropina = "Regular";
+                break;
+              case 10:
+                this.mensajePropina = "Bueno";
+                break;
+              case 15:
+                this.mensajePropina = "Muy bueno";
+                break;
+              case 20:
+                this.mensajePropina = "Excelente";
+                break;
+            }
+            this.escaneoPropina = true;
+          }
+          else if(this.pedidoActual.pagado)
+          {
+            this.mensajePopup = "La propina ya se escaneó";
+            this.popup = true;
+          }
+          else
+          {
+            this.mensajePopup = "La propina se escanea luego de pedir la cuenta";
+            this.popup = true;
+          }
         }
         else if (resultado.content == "lista-espera") {
-          this.router.navigateByUrl("/graficos");
+          
+          if(this.pedidoActual.pagado)
+          {
+            this.router.navigateByUrl("/graficos");
+          }
+          else
+          {
+            this.mensajePopup = "Solo puede acceder a las estadísticas de encuestas después de pagar";
+            this.popup = true;
+          }
         }
 
       } else {
