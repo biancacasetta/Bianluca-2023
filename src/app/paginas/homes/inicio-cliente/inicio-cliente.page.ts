@@ -13,12 +13,12 @@ import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
   styleUrls: ['./inicio-cliente.page.scss'],
 })
 export class InicioClientePage implements OnInit {
-  contadorPersonas:number = 1;
-  popup:boolean = false;
-  logOut:boolean = false;
-  listaEspera:any[]=[];
-  listaMesas:any[]=[];
-  mensajePopUp:string = "";
+  contadorPersonas: number = 1;
+  popup: boolean = false;
+  logOut: boolean = false;
+  listaEspera: any[] = [];
+  listaMesas: any[] = [];
+  mensajePopUp: string = "";
   scannerActive: boolean = false;
   resultadoQR: string = "";
   usuarioLogueado: any;
@@ -87,8 +87,7 @@ export class InicioClientePage implements OnInit {
       this.spinnerActivo = false;
     }, 2000);
   }
-  cerrarSesion()
-  {
+  cerrarSesion() {
     this.logOut = false;
     this.activarSpinner();
     this.authServ.cerrarSesion();

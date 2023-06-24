@@ -49,6 +49,24 @@ export class CocineroPage implements OnInit {
     this.actualizarPedidoMozo(pedidoCocinero);
     this.activarSpinner();
     //SOLO LA PARTE DEL PEDIDO DEL COCINERO SE TERMINA
+
+    const pedidoGeneral = this.listaPedidosGenerales.find(pedido => pedido.id === pedidoCocinero.id);
+    if (this.verificarItems(pedidoGeneral)) {
+      this.fcmService.pedidoListoPushNotification();
+    }
+  }
+
+  verificarItems(pedido: any) {
+    let pedidoTerminado = false;
+    if (pedido.estado == 'En preparación') {
+      pedidoTerminado = true;
+      for (let i = 0; i < pedido.items.length; i++) {
+        if (!pedido.items[i].terminado) {
+          pedidoTerminado = false;
+        }
+      }
+    }
+    return pedidoTerminado;
   }
 
   cambiarEstadoItem(pedido: any) {

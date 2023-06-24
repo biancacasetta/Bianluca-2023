@@ -7,29 +7,38 @@ import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { Firestore, collection, getDocs, updateDoc, doc } from '@angular/fire/firestore';
+import { AudioService } from './audio.service';
+import { FirebaseCloudMessagingService } from './fcm.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  usuarioAceptado:any;
-  listaUsuario: any []=[];
-  constructor( private router: Router, private angularFireAuth: AngularFireAuth,
-    private firebaseServ:FirebaseService,
-    private firestore2: Firestore) {
-      this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res)=>{
-        this.listaUsuario = res;
-      });
-     }
+  usuarioAceptado: any;
+  listaUsuario: any[] = [];
+  constructor(
+    private router: Router,
+    private angularFireAuth: AngularFireAuth,
+    private firebaseServ: FirebaseService,
+    private firestore2: Firestore,
+    private audioService: AudioService
+  ) {
+    this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
+      this.listaUsuario = res;
+    });
+  }
 
-  async iniciarSesion(email:string, contraseña:string){
+  async iniciarSesion(email: string, contraseña: string) {
     return new Promise((resolve, rejected) => {
-      this.angularFireAuth.signInWithEmailAndPassword(email,contraseña).then(usuario =>{
+      this.angularFireAuth.signInWithEmailAndPassword(email, contraseña).then(async usuario => {
         console.log("for");
-        this.obtenerUsuarioPorEmail(email); 
+        this.obtenerUsuarioPorEmail(email);
+
+        this.audioService.playAudio('../../assets/audio/login.mp3');
+
         //setTimeout(()=>{
         this.redirigirPorUsuario(this.usuarioAceptado.perfil);
-          
+
         //},1500);   
         resolve(usuario);
       })
@@ -37,11 +46,9 @@ export class AuthService {
     });
   }
 
-  obtenerUsuarioPorEmail(email:string)
-  {
-    for (let i = 0; i < this.listaUsuario.length; i++) {;
-      if(this.listaUsuario[i].email == email)
-      {
+  obtenerUsuarioPorEmail(email: string) {
+    for (let i = 0; i < this.listaUsuario.length; i++) {
+      if (this.listaUsuario[i].email == email) {
         this.usuarioAceptado = this.listaUsuario[i];
         console.log(this.listaUsuario[i]);
         break;
@@ -86,6 +93,7 @@ export class AuthService {
       this.angularFireAuth.signOut().then(() => {
         setTimeout(() => {
           console.log("Sesión cerrada exitosamente.");
+          this.audioService.playAudio('../../assets/audio/logout.mp3');
           this.router.navigate(['/login']);
         }, 2000);
       });
@@ -94,17 +102,16 @@ export class AuthService {
     }
   }
 
-  registrarUsuario(nuevoUsuario:any)
-  {
-    this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email,nuevoUsuario.password)
-    .then(()=>{
-      console.log(`Usuario ${nuevoUsuario.nombre} registrado exitosamente`);
-      //this.cerrarSesion();
-      this.iniciarSesion('duenio@duenio.com','duenio');
-    })
-    .catch((error)=>{
-      console.log(error.code);
-    })
+  registrarUsuario(nuevoUsuario: any) {
+    this.angularFireAuth.createUserWithEmailAndPassword(nuevoUsuario.email, nuevoUsuario.password)
+      .then(() => {
+        console.log(`Usuario ${nuevoUsuario.nombre} registrado exitosamente`);
+        //this.cerrarSesion();
+        this.iniciarSesion('duenio@duenio.com', 'duenio');
+      })
+      .catch((error) => {
+        console.log(error.code);
+      })
   }
 
   crearMensaje(errorCode: string): string {
