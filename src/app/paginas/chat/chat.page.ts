@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Firestore, collection, getDocs } from 'firebase/firestore';
+
 import { AuthService } from 'src/app/servicios/auth.service';
 import { ChatService } from 'src/app/servicios/chat.service';
 import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
@@ -26,8 +26,7 @@ export class ChatPage implements OnInit {
     private auth: AuthService,
     private chat: ChatService,
     private router: Router,
-    private fcmService: FirebaseCloudMessagingService,
-    private firestore2: Firestore
+    private fcmService: FirebaseCloudMessagingService
   ) { }
 
   ngOnInit() {
@@ -48,24 +47,14 @@ export class ChatPage implements OnInit {
         res.forEach(async (usuario) => {
           if (usuario.email == this.auth.obtenerEmailUsuarioLogueado()) {
             this.usuario = usuario;
-
-            // this.firestore.obtenerColeccion("mesas").subscribe((data) => {
-            //   data.forEach((mesa) => {
-            //     if (mesa.cliente != undefined && mesa.cliente.id == usuario.id) {
-            //       this.mesa = mesa;
-            //       console.log(this.mesa);
-            //     }
-            //   })
-            // })
-
-            const querySnapshot = await getDocs(collection(this.firestore2, 'mesas'));
-            querySnapshot.forEach(async (doc) => {
-              const mesa = doc.data();
-              if (mesa['cliente'] != undefined && mesa['cliente'].id == usuario.id) {
-                this.mesa = mesa;
-                console.log(this.mesa);
-              }
-            });
+            this.firestore.obtenerColeccion("mesas").subscribe((data) => {
+              data.forEach((mesa) => {
+                if (mesa.cliente != undefined && mesa.cliente.id == usuario.id) {
+                  this.mesa = mesa;
+                  console.log(this.mesa);
+                }
+              })
+            })
           }
         });
       });
@@ -91,7 +80,7 @@ export class ChatPage implements OnInit {
       usuario: this.usuario.perfil,
       texto: this.nuevoMensaje,
       hora: horaMensaje,
-      // mesaId: "",
+      //mesaId: "",
     };
     // if (this.usuario.perfil != 'mozo') {
     //   mensaje.mesaId = this.mesa.id;
