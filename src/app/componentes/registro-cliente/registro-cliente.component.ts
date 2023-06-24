@@ -65,9 +65,9 @@ export class RegistroClienteComponent implements OnInit {
         this.formRegistro.get('dni').setValue(this.resultadoScanDni[4]);
       }
 
-      this.formRegistro.controls["nombre"].markAsTouched();
-      this.formRegistro.controls["apellido"].markAsTouched();
-      this.formRegistro.controls["dni"].markAsTouched();
+      this.formRegistro.get('nombre').markAsTouched();
+      this.formRegistro.get('apellido').markAsTouched();
+      this.formRegistro.get('dni').markAsTouched();
     }
   }
 

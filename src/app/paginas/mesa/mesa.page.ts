@@ -338,7 +338,7 @@ export class MesaPage implements OnInit {
 
         if (resultado.content.startsWith("mesa"))
         {
-          if(this.pedidoActual.estado != "Recibido")
+          if(this.pedidoActual.estado != "Finalizado")
           {
             let idMesa = resultado.content.split('-')[1];
   
@@ -353,7 +353,7 @@ export class MesaPage implements OnInit {
           }
           else
           {
-            this.mensajePopup = "Ya no puede darle seguimiento a un pedido recibido";
+            this.mensajePopup = "Ya no puede darle seguimiento a un pedido finalizado";
             this.popup = true;
           }
         }

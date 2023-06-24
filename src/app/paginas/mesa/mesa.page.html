@@ -10,13 +10,6 @@
   </ion-fab-button>
 </ion-fab>
 
-<ion-fab class="chat" *ngIf="!spinner || !scannerActive" vertical="start" horizontal="end" >
-  <ion-fab-button color="none" routerLink="/chat">
-    <ion-icon name="chatbubble"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
-
-
 <ion-header [translucent]="true" *ngIf="!spinner || !scannerActive">
   <ion-toolbar>
     <ion-title class="ion-text-center">{{titulo}}</ion-title>
@@ -28,6 +21,7 @@
   <div class="pantalla principal" *ngIf="!menu && !carrito && !chequearPedido && !pedirCuenta">
     <ion-card>
       <ion-card-content>
+        <ion-button routerLink="/chat">CONSULTA AL MOZO</ion-button>
         <img src="../../../assets/icon/icon.png" alt="Logo Bianluca">
     
         <div class="accion-pedidos" *ngIf="!hayPedido">
