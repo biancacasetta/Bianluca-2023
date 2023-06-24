@@ -284,6 +284,13 @@ ion-fab-button
     flex-direction: column;
 }
 
+.principal ion-card ion-card-content ion-button
+{
+    --background: #FA5046;
+        font-family: KATO;
+}
+
+
 .principal ion-card ion-card-content img
 {
     width: 70%;
