@@ -68,6 +68,13 @@
     </ion-fab-list>
   </ion-fab>
 
+  <ion-fab slot="fixed" horizontal="end" vertical="top" (click)="toggleSonido()" class="audioFab">
+    <ion-fab-button>
+      <ion-icon name="volume-high-outline" *ngIf="isAudioActive"></ion-icon>
+      <ion-icon name="volume-mute-outline" *ngIf="!isAudioActive"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 
   <div class="contenedor-spinner" *ngIf="spinner">
     <app-spinner></app-spinner>

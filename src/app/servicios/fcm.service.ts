@@ -10,14 +10,16 @@ import {
 import { AuthService } from './auth.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { getMessaging, getToken } from "firebase/messaging";
 import { FirebaseService } from './firebase.service';
-import { deleteField } from 'firebase/firestore';
+import { collection, deleteField, getDocs } from 'firebase/firestore';
 
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { environment } from 'src/environments/environment';
+import { resolve } from 'dns';
+import { Firestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +31,7 @@ export class FirebaseCloudMessagingService {
     private angularFirestore: AngularFirestore,
     private authService: AuthService,
     private firestore: FirebaseService,
+    private firestore2: Firestore,
     private http: HttpClient
   ) { }
 
@@ -36,8 +39,6 @@ export class FirebaseCloudMessagingService {
     if (Capacitor.getPlatform() !== 'web') {
       this.registerPush();
     }
-
-    // getMessaging().
   }
 
   sendPushNotification(body: any): Observable<any> {
@@ -65,25 +66,24 @@ export class FirebaseCloudMessagingService {
     this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
       const usuarios = res.filter(usuario => usuario.perfil === 'cocinero' && usuario.fcmToken);
 
-      usuarios.forEach(usuario => {
+      const tokens = usuarios.map(usuario => usuario.fcmToken);
 
-        const body = {
-          registration_ids: [usuario.fcmToken],
-          notification: {
-            body: 'Hay nuevos platos para preparar',
-            title: 'Nuevo pedido'
-          }
+      const body = {
+        registration_ids: tokens,
+        notification: {
+          body: 'Hay nuevos platos para preparar',
+          title: 'Nuevo pedido'
         }
+      }
 
-        this.sendPushNotification(body).subscribe(
-          response => {
-            console.log('Exito', response);
-          },
-          error => {
-            console.error('Error', error);
-          }
-        );
-      });
+      this.sendPushNotification(body).subscribe(
+        response => {
+          console.log('Exito', response);
+        },
+        error => {
+          console.error('Error', error);
+        }
+      );
     });
   }
 
@@ -91,57 +91,76 @@ export class FirebaseCloudMessagingService {
     this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
       const usuarios = res.filter(usuario => usuario.perfil === 'bartender' && usuario.fcmToken);
 
-      usuarios.forEach(usuario => {
+      const tokens = usuarios.map(usuario => usuario.fcmToken);
 
-        const body = {
-          registration_ids: [usuario.fcmToken],
+      const body = {
+        registration_ids: tokens,
+        notification: {
           notification: {
-            notification: {
-              body: 'Hay bebidas para preparar',
-              title: 'Nuevo pedido'
-            }
+            body: 'Hay bebidas para preparar',
+            title: 'Nuevo pedido'
           }
         }
+      }
 
-        this.sendPushNotification(body).subscribe(
-          response => {
-            console.log('Exito', response);
-          },
-          error => {
-            console.error('Error', error);
-          }
-        );
-      });
+      this.sendPushNotification(body).subscribe(
+        response => {
+          console.log('Exito', response);
+        },
+        error => {
+          console.error('Error', error);
+        }
+      );
     });
   }
 
-  pedidoEnPreparacionPushNotification() {
-    throw new Error('Method not implemented.');
+  pedidoListoPushNotification() {
+    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
+      const usuarios = res.filter(usuario => usuario.perfil === 'mozo' && usuario.fcmToken);
+
+      const tokens = usuarios.map(usuario => usuario.fcmToken);
+
+      const body = {
+        registration_ids: tokens,
+        notification: {
+          body: 'Hay un pedido listo para entregar al cliente',
+          title: 'Pedido listo'
+        }
+      }
+
+      this.sendPushNotification(body).subscribe(
+        response => {
+          console.log('Exito', response);
+        },
+        error => {
+          console.error('Error', error);
+        }
+      );
+    });
   }
 
   nuevoPedidoPushNotification() {
     this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
       const usuarios = res.filter(usuario => usuario.perfil === 'mozo' && usuario.fcmToken);
 
-      usuarios.forEach(usuario => {
+      const tokens = usuarios.map(usuario => usuario.fcmToken);
 
-        const body = {
-          registration_ids: [usuario.fcmToken],
-          notification: {
-            body: 'Un cliente ha realizado un pedido',
-            title: 'Nuevo pedido'
-          }
+      const body = {
+        registration_ids: tokens,
+        notification: {
+          body: 'Un cliente ha realizado un pedido',
+          title: 'Nuevo pedido'
         }
+      }
 
-        this.sendPushNotification(body).subscribe(
-          response => {
-            console.log('Exito', response);
-          },
-          error => {
-            console.error('Error', error);
-          }
-        );
-      });
+      this.sendPushNotification(body).subscribe(
+        response => {
+          console.log('Exito', response);
+        },
+        error => {
+          console.error('Error', error);
+        }
+      );
     });
   }
 
@@ -152,28 +171,27 @@ export class FirebaseCloudMessagingService {
         usuarios = res.filter(usuario => usuario.perfil === 'mozo' && usuario.fcmToken);
       }
       else {
-        usuarios = res.filter(usuario => usuario.id === dirigidoA && usuario.fcmToken);
+        usuarios = res.filter(usuario => (usuario.perfil === 'cliente' || usuario.perfil === 'anónimo') && usuario.fcmToken);
       }
 
-      usuarios.forEach(usuario => {
+      const tokens = usuarios.map(usuario => usuario.fcmToken);
 
-        const body = {
-          registration_ids: [usuario.fcmToken],
-          notification: {
-            body: mensaje,
-            title: 'Mensaje de: ' + nombreUsuario
-          }
+      const body = {
+        registration_ids: tokens,
+        notification: {
+          body: mensaje,
+          title: 'Mensaje de: ' + nombreUsuario
         }
+      }
 
-        this.sendPushNotification(body).subscribe(
-          response => {
-            console.log('Exito', response);
-          },
-          error => {
-            console.error('Error', error);
-          }
-        );
-      });
+      this.sendPushNotification(body).subscribe(
+        response => {
+          console.log('Exito', response);
+        },
+        error => {
+          console.error('Error', error);
+        }
+      );
     });
   }
 
@@ -181,70 +199,63 @@ export class FirebaseCloudMessagingService {
     this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
       const usuarios = res.filter(usuario => usuario.perfil === 'metre' && usuario.fcmToken);
 
-      usuarios.forEach(usuario => {
+      const tokens = usuarios.map(usuario => usuario.fcmToken);
 
-        const body = {
-          registration_ids: [usuario.fcmToken],
-          notification: {
-            body: 'Un cliente está esperando una mesa',
-            title: 'Lista de espera'
-          }
+      const body = {
+        registration_ids: tokens,
+        notification: {
+          body: 'Un cliente está esperando una mesa',
+          title: 'Lista de espera'
         }
+      }
 
-        this.sendPushNotification(body).subscribe(
-          response => {
-            console.log('Exito', response);
-          },
-          error => {
-            console.error('Error', error);
-          }
-        );
-      });
+      this.sendPushNotification(body).subscribe(
+        response => {
+          console.log('Exito', response);
+        },
+        error => {
+          console.error('Error', error);
+        }
+      );
     });
   }
 
   nuevoClientePushNotification() {
     this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
       const usuarios = res.filter(usuario => (usuario.perfil === 'dueño' || usuario.perfil === 'supervisor') && usuario.fcmToken);
+      const tokens = usuarios.map(usuario => usuario.fcmToken);
 
-      usuarios.forEach(usuario => {
-
-        const body = {
-          registration_ids: [usuario.fcmToken],
-          notification: {
-            body: 'Un nuevo cliente está esperando aprobación',
-            title: 'Hay un nuevo cliente'
-          }
+      const body = {
+        registration_ids: tokens,
+        notification: {
+          body: 'Un nuevo cliente está esperando aprobación',
+          title: 'Hay un nuevo cliente'
         }
+      }
 
-        this.sendPushNotification(body).subscribe(
-          response => {
-            console.log('Exito', response);
-          },
-          error => {
-            console.error('Error', error);
-          }
-        );
-      });
+      this.sendPushNotification(body).subscribe(
+        response => {
+          console.log('Exito', response);
+        },
+        error => {
+          console.error('Error', error);
+        }
+      );
     });
   }
 
-  async deleteUsersWithToken(token: string) {
+  async deleteUsersWithToken(token: string, uid: string) {
     // borro los campos token de los usuarios con el mismo token recién ingresado
-    this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
 
-      const usuariosConMismoToken = res.filter(usuario => usuario.fcmToken && usuario.fcmToken === token);
-
-      usuariosConMismoToken.forEach(async usuario => {
-        try {
-          const userRef = await this.angularFirestore.collection('usuarios-aceptados').doc(usuario!['id']);
-          userRef.update({
-            fcmToken: deleteField()
-          });
-        } catch (e: any) {
-          alert(e.message);
-        }
-      });
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if (usuario['id'] !== uid && usuario['fcmToken'] && usuario['fcmToken'] === token) {
+        const userRef = await this.angularFirestore.collection('usuarios-aceptados').doc(usuario!['id']);
+        await userRef.update({
+          fcmToken: deleteField()
+        });
+      }
     });
   }
 
@@ -267,22 +278,23 @@ export class FirebaseCloudMessagingService {
       async (token: Token) => {
         // alert('Push registration success, token: ' + token.value);
 
-        // this.deleteUsersWithToken(token.value);
-
         // guardar el token del dispositivo del usuario
         try {
           const correoUsuario = this.authService.obtenerEmailUsuarioLogueado();
           if (correoUsuario) {
             const usuario = await this.authService.obtenerUsuarioPorEmail2(correoUsuario);
             const userRef = await this.angularFirestore.collection('usuarios-aceptados').doc(usuario!['id']);
-            userRef.update({
+            await userRef.update({
               fcmToken: token.value
             });
+
+            this.deleteUsersWithToken(token.value, usuario!['id']);
           }
         }
         catch (e: any) {
           alert(e.message);
         }
+
       }
     );
 

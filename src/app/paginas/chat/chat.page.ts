@@ -82,13 +82,13 @@ export class ChatPage implements OnInit {
     this.nuevoMensaje = '';
     this.deslizarPantallaHaciaAbajo();
 
-    if (this.usuario.perfil === 'cliente') {
+    if (this.usuario.perfil === 'cliente' || this.usuario.perfil === 'anónimo') {
       // enviar push notification mensaje consulta
       this.fcmService.nuevoMensajePushNotification(this.usuario.nombre + " " + this.usuario.apellido, mensaje.texto, 'mozo');
     }
     else {
       // enviar push notification mensaje respuesta chat
-      this.fcmService.nuevoMensajePushNotification('Soporte', mensaje.texto, this.usuario.id);
+      this.fcmService.nuevoMensajePushNotification('Soporte', mensaje.texto, '');
     }
   }
 
