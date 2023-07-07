@@ -26,6 +26,7 @@ import { Firestore } from '@angular/fire/firestore';
 })
 export class FirebaseCloudMessagingService {
 
+
   constructor(
     private router: Router,
     private angularFirestore: AngularFirestore,
@@ -224,6 +225,34 @@ export class FirebaseCloudMessagingService {
       notification: {
         body: 'Un cliente está esperando una mesa',
         title: 'Lista de espera'
+      }
+    }
+
+    this.sendPushNotification(body).subscribe(
+      response => {
+        console.log('Exito', response);
+      },
+      error => {
+        console.error('Error', error);
+      }
+    );
+  }
+
+  async nuevaReservaPushNotification(fechaHora: Date) {
+    const querySnapshot = await getDocs(collection(this.firestore2, 'usuarios-aceptados'));
+    let tokens: any[] = [];
+    querySnapshot.forEach(async (doc) => {
+      const usuario = doc.data();
+      if ((usuario['perfil'] === 'dueño' || usuario['perfil'] === 'supervisor') && usuario['fcmToken']) {
+        tokens.push(usuario['fcmToken']);
+      }
+    });
+
+    const body = {
+      registration_ids: tokens,
+      notification: {
+        body: 'Para el: ' + fechaHora.toLocaleDateString('es-ES'),
+        title: 'Se ha hecho una reserva'
       }
     }
 

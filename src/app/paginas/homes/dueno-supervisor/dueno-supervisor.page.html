@@ -41,6 +41,7 @@
             </tbody>
         </table>
     </div>
+    
     <div id="contenedor-pop-up" class="esconder pop-up">
       <form [formGroup]="formPopUp" (ngSubmit)="rechazarCliente()">
         <h4>Razones del rechazo</h4>
@@ -66,9 +67,45 @@
       </form>
     </div>
   </div>
+
+  <div class="tabla-reservas">
+    <div class="encabezado-tabla">
+      <!-- <img class="logo" src="../../../../assets/icon/icon.png" alt="Icono empresa"> -->
+      <h3>RESERVAS</h3>
+  </div>
+  <div class="seccion-tabla">
+      <table>
+          <thead>
+              <tr>
+                  <th>CLIENTE</th>
+                  <th>MESA</th>
+                  <th>FECHA</th>
+                  <th>ACCIÓN</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let reserva of listaReservas">
+                <ng-container *ngIf="reserva.estado === 'pendiente'">
+                  <td>{{ reserva.cliente.nombre }}<br>{{ reserva.cliente.apellido }}</td>
+                  <td>{{ reserva.mesa.id }}</td>
+                  <td>{{ reserva.fechaHora.toDate() | date:'dd/MM/YYYY H:mm' }}</td>
+                  <td>
+                    <div class="botonera">
+                      <ion-button class="boton-aceptar" (click)="aceptarReserva(reserva)"></ion-button>
+                      <ion-button class="boton-denegar" (click)="rechazarReserva(reserva)"></ion-button>
+                    </div>
+                  </td>
+                </ng-container>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+  </div>
+
   <div class="contenedor-spinner" *ngIf="spinnerActivo">
     <app-spinner></app-spinner>
   </div>
+  
   <div class="popup" *ngIf="popup">
     <h4>¿Desea cerrar sesión?</h4>
     <div class="botonera-popup">

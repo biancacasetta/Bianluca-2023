@@ -8,12 +8,13 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { Firestore, collection, getDocs, updateDoc, doc } from '@angular/fire/firestore';
 import { AudioService } from './audio.service';
-import { FirebaseCloudMessagingService } from './fcm.service';
+import { User } from '@codetrix-studio/capacitor-google-auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
   usuarioAceptado: any;
   listaUsuario: any[] = [];
   constructor(
@@ -44,6 +45,29 @@ export class AuthService {
       })
         .catch(error => rejected(error));
     });
+  }
+
+  async iniciarSesionGoogle(googleUser: User): Promise<boolean> {
+    this.obtenerUsuarioPorEmail(googleUser.email);
+
+    if (!this.usuarioAceptado) {
+      const cliente = {
+        nombre: googleUser.givenName,
+        apellido: googleUser.familyName,
+        email: googleUser.email,
+        rutaFoto: googleUser.imageUrl,
+        perfil: "cliente"
+      }
+
+      this.firebaseServ.createGoogleUser(cliente);
+
+      return false;
+    }
+    else {
+      this.audioService.playAudio('../../assets/audio/login.mp3');
+      this.redirigirPorUsuario(this.usuarioAceptado.perfil);
+    }
+    return true;
   }
 
   obtenerUsuarioPorEmail(email: string) {

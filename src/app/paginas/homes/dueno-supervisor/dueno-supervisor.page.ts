@@ -22,6 +22,8 @@ export class DuenoSupervisorPage implements OnInit {
   clienteARechazar: any;
   popup: boolean = false;
 
+  listaReservas: any[] = [];
+
   constructor(private firebaseServ: FirebaseService,
     private formBuilder: FormBuilder,
     private authServ: AuthService,
@@ -33,6 +35,8 @@ export class DuenoSupervisorPage implements OnInit {
 
   async ngOnInit() {
     this.cargarClientes();
+
+    this.cargarReservas();
 
     // Init push notifications listener
     await this.fcmService.initPush();
@@ -57,9 +61,15 @@ export class DuenoSupervisorPage implements OnInit {
   }
 
   aceptarCliente(clienteAceptado: any) {
-    this.firebaseServ.agregarDocumento(clienteAceptado, 'usuarios-aceptados');
+    if (clienteAceptado.dni) {
+      this.firebaseServ.agregarDocumento(clienteAceptado, 'usuarios-aceptados');
+      this.authServ.registrarUsuario(clienteAceptado);
+    }
+    else {
+      this.firebaseServ.acceptGoogleUser(clienteAceptado);
+    }
+
     this.firebaseServ.eliminarDocumento(clienteAceptado, 'clientes-pendientes');
-    this.authServ.registrarUsuario(clienteAceptado);
     const listaAux = this.listaClientes;
     this.listaClientes = listaAux.filter(cliente => cliente != clienteAceptado);
     this.enviarEmail(clienteAceptado, "Fuiste aceptado. Ya podés iniciar sesión", "cliente_aceptado");
@@ -86,9 +96,15 @@ export class DuenoSupervisorPage implements OnInit {
   async rechazarCliente() {
     this.razonesTouched = true;
     if (this.formPopUp.valid) {
-      this.firebaseServ.agregarDocumento(this.clienteARechazar, 'clientes-rechazados');
+      if (this.clienteARechazar.dni) {
+        this.firebaseServ.agregarDocumento(this.clienteARechazar, 'clientes-rechazados');
+        this.firebaseServ.borrarFoto(this.clienteARechazar.rutaFoto);
+      }
+      else {
+        this.firebaseServ.rejectGoogleUser(this.clienteARechazar);
+      }
+
       this.firebaseServ.eliminarDocumento(this.clienteARechazar, 'clientes-pendientes');
-      this.firebaseServ.borrarFoto(this.clienteARechazar.rutaFoto);
       const listaAux = this.listaClientes;
       this.listaClientes = listaAux.filter(cliente => cliente != cliente);
       this.enviarEmail(this.clienteARechazar, this.formPopUp.getRawValue().razones, "cliente_rechazado");
@@ -109,5 +125,34 @@ export class DuenoSupervisorPage implements OnInit {
     emailjs.send("service_xljpmy6", templateId, template)
       .then(res => console.log("Correo enviado.", res.status, res.text))
       .catch(error => console.log("Error al enviar", error));
+  }
+
+  cargarReservas() {
+    this.listaReservas = [];
+    this.firebaseServ.obtenerColeccion('reservas').subscribe((res) => {
+      this.listaReservas = res;
+    });
+  }
+
+  aceptarReserva(reserva: any) {
+    try {
+      this.spinnerActivo = true;
+      reserva.estado = 'confirmada';
+      this.firebaseServ.actualizarEstado(reserva);
+      this.listaReservas = this.listaReservas.filter(reservaAux => reservaAux !== reserva);
+    } finally {
+      this.spinnerActivo = false;
+    }
+  }
+
+  rechazarReserva(reserva: any) {
+    try {
+      this.spinnerActivo = true;
+      reserva.estado = 'rechazada';
+      this.firebaseServ.actualizarEstado(reserva);
+      this.listaReservas = this.listaReservas.filter(reservaAux => reservaAux !== reserva);
+    } finally {
+      this.spinnerActivo = false;
+    }
   }
 }

@@ -105,11 +105,11 @@ export class RegistroClienteComponent implements OnInit {
   async registrarCliente(): Promise<void> {
     if (this.formRegistro.valid) {
       this.cliente.nombre = this.formRegistro.value.nombre;
-      this.cliente.apellido = this.formRegistro.value.apellido,
-        this.cliente.dni = this.formRegistro.value.dni,
-        this.cliente.email = this.formRegistro.value.email,
-        this.cliente.password = this.formRegistro.value.password,
-        this.cliente.perfil = "cliente";
+      this.cliente.apellido = this.formRegistro.value.apellido;
+      this.cliente.dni = this.formRegistro.value.dni;
+      this.cliente.email = this.formRegistro.value.email;
+      this.cliente.password = this.formRegistro.value.password;
+      this.cliente.perfil = "cliente";
 
 
       await this.subirFoto();

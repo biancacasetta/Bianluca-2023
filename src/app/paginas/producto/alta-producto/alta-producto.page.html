@@ -1,0 +1,77 @@
+<ion-header [translucent]="true" *ngIf="!spinner">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">CREAR PRODUCTO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-fab  vertical="start" horizontal="start" *ngIf="!spinner">
+  <ion-fab-button color="none" (click)="volverAtras()" class="sin-fondo">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<ion-fab  vertical="start" horizontal="end" *ngIf="!spinner">
+  <ion-fab-button color="none" (click)="cerrarSesionPopup = true" class="sin-fondo">
+    <img class="imagen-cerrar-sesion" src="../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
+  </ion-fab-button>
+</ion-fab>
+
+<ion-content [fullscreen]="true">
+
+  <div class="pantalla">
+    
+    <form [formGroup]="productForm" (ngSubmit)="createProduct()" novalidate>
+
+      <h1 class="title"><strong>CREAR PRODUCTO</strong></h1>
+      
+      <input type="text" placeholder="Nombre" formControlName="nombre">
+
+      <input type="text" placeholder="Descripción" formControlName="descripcion">
+      
+      <input type="number" formControlName="duracion" name="minutes" min="0" placeholder="Minutos">
+
+      <input type="text" (blur)="transformAmount($event)" [(ngModel)]="formattedAmount" [ngModelOptions]="{standalone: true}" placeholder="Precio"/>
+  
+      <div class="image-input">
+          <!-- Add camera button -->
+          <ion-button (click)="takePicture()" class="camera-button" color="danger"><ion-icon name="camera"></ion-icon> SACAR FOTOS</ion-button>
+      </div>
+
+      <div class="image-container">
+        <div>
+          <img *ngIf="image1IsLoaded" [src]="image1Src">
+        </div>
+        <div>
+          <img *ngIf="image2IsLoaded" [src]="image2Src">
+        </div>
+        <div>
+          <img *ngIf="image3IsLoaded" [src]="image3Src">
+        </div>
+      </div>
+
+      <div class="ion-padding-top">
+        <ion-button expand="full" type="submit" [disabled]="productForm.invalid" color="danger">
+          Crear producto
+        </ion-button>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="contenedor-spinner" *ngIf="spinner">
+    <app-spinner></app-spinner>
+  </div>
+
+  <div class="popup" *ngIf="productoCreadoPopup">
+    <h5>Se ha creado el producto.</h5>
+    <ion-button (click)="volverAtras()">ACEPTAR</ion-button>
+  </div>
+
+  <div class="popup" *ngIf="cerrarSesionPopup">
+    <h5>¿Desea cerrar sesión?</h5>
+    <div class="botonera-popup">
+      <ion-button (click)="cerrarSesionPopup = false">CANCELAR</ion-button>
+      <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
+    </div>
+  </div>
+</ion-content>

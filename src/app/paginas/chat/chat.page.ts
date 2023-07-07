@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { AuthService } from 'src/app/servicios/auth.service';
 import { ChatService } from 'src/app/servicios/chat.service';
 import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
@@ -18,7 +17,6 @@ export class ChatPage implements OnInit {
   mensajes: any[] = [];
   usuario: any;
   mesa: any;
-  usuarioAnonimo: any;
   nuevoMensaje: string = "";
 
   constructor(
@@ -44,14 +42,14 @@ export class ChatPage implements OnInit {
 
     if (this.usuario == null) {
       this.firestore.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-        res.forEach(async (usuario) => {
+        res.forEach((usuario) => {
           if (usuario.email == this.auth.obtenerEmailUsuarioLogueado()) {
             this.usuario = usuario;
+
             this.firestore.obtenerColeccion("mesas").subscribe((data) => {
               data.forEach((mesa) => {
                 if (mesa.cliente != undefined && mesa.cliente.id == usuario.id) {
                   this.mesa = mesa;
-                  console.log(this.mesa);
                 }
               })
             })
@@ -75,28 +73,22 @@ export class ChatPage implements OnInit {
     const segundos = fecha.getSeconds().toString().padStart(2, '0');
 
     const horaMensaje = `${hora}:${minutos}:${segundos}`;
-    let mensaje = {
-      // usuario: this.usuario ? this.usuario.perfil : this.usuarioAnonimo.perfil,
+    const mensaje = {
       usuario: this.usuario.perfil,
       texto: this.nuevoMensaje,
       hora: horaMensaje,
-      //mesaId: "",
     };
-    // if (this.usuario.perfil != 'mozo') {
-    //   mensaje.mesaId = this.mesa.id;
-    // }
-
     this.chat.crearMensaje(mensaje);
     this.nuevoMensaje = '';
     this.deslizarPantallaHaciaAbajo();
 
-    if (this.usuario.perfil === 'cliente' || this.usuario.perfil === 'anónimo') {
+    if (this.usuario.perfil === 'cliente') {
       // enviar push notification mensaje consulta
       this.fcmService.nuevoMensajePushNotification(this.usuario.nombre + " " + this.usuario.apellido, mensaje.texto, 'mozo');
     }
     else {
       // enviar push notification mensaje respuesta chat
-      this.fcmService.nuevoMensajePushNotification('Soporte', mensaje.texto, '');
+      this.fcmService.nuevoMensajePushNotification('Soporte', mensaje.texto, this.usuario.id);
     }
   }
 

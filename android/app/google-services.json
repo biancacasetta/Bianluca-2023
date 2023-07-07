@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "123281409180-b6gvqj88ki0o33741qugj6hr7cceeiap.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bianluca.pps",
+            "certificate_hash": "7186f5e4ae6e94daefedb22432c33b6eb7b78fec"
+          }
+        },
+        {
           "client_id": "123281409180-od93cdm279bejo3uhulpg1po4ti99nls.apps.googleusercontent.com",
           "client_type": 3
         }
