@@ -1,0 +1,66 @@
+<ion-header [translucent]="true" *ngIf="!spinner">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">RESERVA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-fab  vertical="start" horizontal="start" *ngIf="!spinner">
+  <ion-fab-button color="none" (click)="volverAtras()" class="sin-fondo">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+<ion-fab  vertical="start" horizontal="end" *ngIf="!spinner">
+  <ion-fab-button color="none" (click)="cerrarSesionPopup = true" class="sin-fondo">
+    <img class="imagen-cerrar-sesion" src="../../../assets/inicio-cliente/cerrar-sesion.png" alt="Cerrar sesión">
+  </ion-fab-button>
+</ion-fab>
+
+<ion-content [fullscreen]="true">
+
+  <div class="pantalla">
+
+    <div class="container">
+    
+      <h1 class="title"><strong>HACER RESERVA</strong></h1>
+
+      <label for="mesas">Elija una mesa:</label>
+      <select #mesasSelect name="mesas" (change)="onSelectMesa(mesasSelect.value)">
+        <option value="">Elija una mesa</option>
+        <option *ngFor="let mesa of mesas" [value]="mesa.id">Mesa {{ mesa.id }}</option>
+      </select>
+      
+
+      <input type="datetime-local" [min]="minDateTime" [(ngModel)]="selectedDateTimeString" (ngModelChange)="onChange()">
+
+      <div class="ion-padding-top">
+        <ion-button expand="full" color="danger" (click)="hacerReserva()" [disabled]="!selectedDateTimeString || !selectedMesa">
+          Hacer reserva
+        </ion-button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="contenedor-spinner" *ngIf="spinner">
+    <app-spinner></app-spinner>
+  </div>
+
+  <div class="popup" *ngIf="errorPopup">
+    <h5>{{ errorMessage }}</h5>
+    <ion-button (click)="errorPopup = false">ACEPTAR</ion-button>
+  </div>
+
+  <div class="popup" *ngIf="reservaCreadaPopup">
+    <h5>Se ha realizado la reserva con éxito.</h5>
+    <ion-button (click)="volverAtras()">ACEPTAR</ion-button>
+  </div>
+
+  <div class="popup" *ngIf="cerrarSesionPopup">
+    <h5>¿Desea cerrar sesión?</h5>
+    <div class="botonera-popup">
+      <ion-button (click)="cerrarSesionPopup = false">CANCELAR</ion-button>
+      <ion-button (click)="cerrarSesion()">ACEPTAR</ion-button>
+    </div>
+  </div>
+</ion-content>

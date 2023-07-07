@@ -43,24 +43,6 @@ export class MesaPage implements OnInit {
   titulo: string = "";
   scannerActive: boolean = false;
 
-  imagenesComida: any = [
-    [
-      "/assets/mesa/sushi1.jpeg",
-      "/assets/mesa/sushi2.jpg",
-      "/assets/mesa/sushi3.jpg"
-    ],
-    [
-      "/assets/mesa/onigiri1.jpeg",
-      "/assets/mesa/onigiri2.jpg",
-      "/assets/mesa/onigiri3.jpg"
-    ],
-    [
-      "/assets/mesa/ramen1.jpg",
-      "/assets/mesa/ramen2.jpg",
-      "/assets/mesa/ramen3.jpg"
-    ]
-  ];
-
   imagenesBebida: any = [
     [
       "/assets/mesa/leche-banana1.jpg",
@@ -336,14 +318,12 @@ export class MesaPage implements OnInit {
         this.vibration.vibrate(300);
         this.stopScan();
 
-        if (resultado.content.startsWith("mesa"))
-        {
-          if(this.pedidoActual.estado != "Finalizado" && !this.pedidoActual.pagado)
-          {
+        if (resultado.content.startsWith("mesa")) {
+          if (this.pedidoActual.estado != "Finalizado" && !this.pedidoActual.pagado) {
             let idMesa = resultado.content.split('-')[1];
-  
+
             this.actualizarPedidos();
-  
+
             for (let i = 0; i < this.pedidos.length; i++) {
               if (this.pedidos[i].mesa == idMesa) {
                 this.pedidoActual = this.pedidos[i];
@@ -351,19 +331,16 @@ export class MesaPage implements OnInit {
               }
             }
           }
-          else
-          {
+          else {
             this.mensajePopup = "Ya no puede darle seguimiento a un pedido finalizado";
             this.popup = true;
           }
         }
-        else if (resultado.content.startsWith("propina"))
-        {
-          if(this.pedirCuenta && !this.pedidoActual.pagado)
-          {
+        else if (resultado.content.startsWith("propina")) {
+          if (this.pedirCuenta && !this.pedidoActual.pagado) {
             this.porcentajePropina = parseInt(resultado.content.split('-')[1]);
             this.propina = this.pedidoActual.precio * this.porcentajePropina / 100;
-  
+
             switch (this.porcentajePropina) {
               case 0:
                 this.mensajePropina = "Malo";
@@ -383,25 +360,21 @@ export class MesaPage implements OnInit {
             }
             this.escaneoPropina = true;
           }
-          else if(this.pedidoActual.pagado)
-          {
+          else if (this.pedidoActual.pagado) {
             this.mensajePopup = "La propina ya se escaneó";
             this.popup = true;
           }
-          else
-          {
+          else {
             this.mensajePopup = "La propina se escanea luego de pedir la cuenta";
             this.popup = true;
           }
         }
         else if (resultado.content == "lista-espera") {
-          
-          if(this.pedidoActual.pagado)
-          {
+
+          if (this.pedidoActual.pagado) {
             this.router.navigateByUrl("/graficos");
           }
-          else
-          {
+          else {
             this.mensajePopup = "Solo puede acceder a las estadísticas de encuestas después de pagar";
             this.popup = true;
           }

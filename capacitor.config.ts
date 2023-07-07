@@ -27,6 +27,15 @@ const config: CapacitorConfig = {
     LocalNotifications: {
       iconColor: "#488AFF",
     },
+    "GoogleAuth": {
+      "scopes": [
+        "profile",
+        "email"
+      ],
+      "serverClientId": "123281409180-od93cdm279bejo3uhulpg1po4ti99nls.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true,
+      "androidClientId": "123281409180-od93cdm279bejo3uhulpg1po4ti99nls.apps.googleusercontent.com"
+    }
   }
 };
 

@@ -4,6 +4,10 @@ import { AudioService } from 'src/app/servicios/audio.service';
 import { AuthService } from 'src/app/servicios/auth.service';
 import { FirebaseService } from 'src/app/servicios/firebase.service';
 
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { isPlatform } from '@ionic/angular';
+import { FirebaseCloudMessagingService } from 'src/app/servicios/fcm.service';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -21,11 +25,15 @@ export class LoginPage implements OnInit {
   mensajePopup: string = "";
   isAudioActive = false;
 
-  constructor(private formBuilder: FormBuilder, private auth: AuthService, private firestore: FirebaseService, private audioService: AudioService) {
+  constructor(private formBuilder: FormBuilder, private auth: AuthService, private firestore: FirebaseService, private audioService: AudioService, private fcmService: FirebaseCloudMessagingService) {
     this.formLogin = this.formBuilder.group({
       email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
       password: ['', [Validators.required, Validators.pattern(".{6,}")]]
     });
+
+    if (!isPlatform('capacitor')) {
+      GoogleAuth.initialize();
+    }
   }
 
   ngOnInit() {
@@ -127,6 +135,36 @@ export class LoginPage implements OnInit {
         break;
     }
   }
+
+  async googleSignup() {
+    try {
+      await GoogleAuth.signOut();
+      const googleUser = await GoogleAuth.signIn();
+
+      switch (this.verificarEmail(googleUser.email)) {
+        case "":
+          if (!await this.auth.iniciarSesionGoogle(googleUser)) {
+            // Envíar push notification de pre-registro
+            this.fcmService.nuevoClientePushNotification();
+            this.mensajePopup = "Se guardó su registro. Va a recibir un correo cuando se apruebe o rechace.";
+            this.popup = true;
+          }
+          break;
+        case "Pendiente":
+          this.mensajePopup = "Aún no se procesó tu registro.";
+          this.popup = true;
+          break;
+        case "Rechazado":
+          this.mensajePopup = "Se rechazó tu registro y no podés iniciar sesión.";
+          this.popup = true;
+          break;
+      }
+    } catch (error: any) {
+      this.mensajePopup = error.message;
+      this.popup = true;
+    }
+  }
+
 
   toggleSonido() {
     this.audioService.isActive = !this.audioService.isActive;

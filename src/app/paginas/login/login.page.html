@@ -40,6 +40,8 @@
 
         <ion-text>Si no te registraste, podés hacerlo <a routerLink="/registro">acá</a></ion-text>
         
+        <ion-button (click)="googleSignup()" class="googleSignIn" color="danger">Ingresar con Google <ion-icon name="logo-google"></ion-icon></ion-button>
+
         <div class="yema-huevo">
           <ion-button type="submit"
           [disabled]="popup">INGRESAR</ion-button>

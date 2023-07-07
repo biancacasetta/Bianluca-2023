@@ -125,7 +125,7 @@ tr:hover{
 
 tbody tr
 {
-    height: 25vh;
+    // height: 25vh;
 }
 
 tbody tr td
@@ -136,12 +136,12 @@ tbody tr td
 
 .botonera
 {
-    height: 18vh;
+    // height: 18vh;
     width: 100%;
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    flex-direction: column;
 }
 
 .boton-aceptar
@@ -202,6 +202,7 @@ form
   color: rgb(253, 253, 253);
   backdrop-filter: blur(0.625rem);
   font-family: 'Mate SC', serif;
+  z-index: 999;
 }
 
 .esconder

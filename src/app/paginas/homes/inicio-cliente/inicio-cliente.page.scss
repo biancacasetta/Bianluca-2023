@@ -146,6 +146,17 @@ ion-label
     font-size: 70px;
   }
 
+.hacer-reserva {
+    width: 80%;
+
+    ion-button
+    {
+        width: 100%;
+        font-family: KATO;
+        --background:#FF695F;
+    }
+}
+
   /* POP UP */
   .popup
 {

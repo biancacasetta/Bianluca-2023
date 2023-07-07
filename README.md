@@ -1,9 +1,11 @@
 # Segundo Parcial - PPS
+
 # 🍜🍣🍙 Grupo Bianluca 🍙🍣🍜
 
 <img width="200px" text-align="center" src="src/assets/icon/icon.png">
 
 ## Integrantes:
+
 - <a href="https://github.com/LucaAg">Luca Nahuel Agnoli</a>
 - <a href="https://github.com/biancacasetta">Bianca Casetta</a>
 - <a href="https://github.com/tkz00">Theo Katz</a>
@@ -15,9 +17,11 @@
 <img width="200px" src="src/assets/readme/splash.jpg">
 
 #### Login
+
 <img width="200px" src="src/assets/readme/login.jpg">
 
 #### Registro
+
 <table>
   <tr>
     <td><img width="200px" src="src/assets/readme/registro-cliente-pagina1.jpg"></td>
@@ -29,18 +33,20 @@
 
 ### Vistas según el perfil
 
-| Dueño/Supervisor |
-|:----------------:|
-| <img width="200px" src="src/assets/readme/dueno-supervisor.jpg">|
+|                         Dueño/Supervisor                         |
+| :--------------------------------------------------------------: |
+| <img width="200px" src="src/assets/readme/dueno-supervisor.jpg"> |
 
-| Metre         |
-|:-------------:|
-| <img width="200px" src="src/assets/readme/metre.jpg">|
+|                         Metre                         |
+| :---------------------------------------------------: |
+| <img width="200px" src="src/assets/readme/metre.jpg"> |
 
 #### Mozo
+
 <img width="200px" src="src/assets/readme/home_mozo.jpg">
 
 #### Cocinero
+
 <img width="200px" src="src/assets/readme/home_cocinero.jpg">
 
 #### Cliente
@@ -79,3 +85,7 @@
 ### Semana 3
 
 <img src="src/assets/readme/tareas_semana3.PNG">
+
+### Recuperatorio
+
+<img src="src/assets/readme/tareas_semana4.PNG">

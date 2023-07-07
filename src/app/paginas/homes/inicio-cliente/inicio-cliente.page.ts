@@ -27,9 +27,13 @@ export class InicioClientePage implements OnInit {
   spinnerActivo: boolean = false;
   seEnlisto: boolean = false;
   pantalla: number = 1;
+  isAnonimo = true;
   // PANTALLA 2
   mensajeToolBar = "BIENVENIDO";
   clienteSentado = false;
+
+  reserva: any;
+  reservas: any[];
 
   mesa: any = {};
   //@ts-ignore
@@ -44,18 +48,75 @@ export class InicioClientePage implements OnInit {
   }
 
   async ngOnInit() {
-    this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
-      res.forEach((usuario) => {
-        if (usuario.email == this.authServ.obtenerEmailUsuarioLogueado()) {
-          this.usuarioLogueado = usuario;
+    // this.firebaseServ.obtenerColeccion('usuarios-aceptados').subscribe((res) => {
+    //   res.forEach((usuario) => {
+    //     if (usuario.email == this.authServ.obtenerEmailUsuarioLogueado()) {
+    //       this.usuarioLogueado = usuario;
+    //       this.isAnonimo = (usuario.perfil === 'anónimo');
+
+    //       if (this.usuarioLogueado && usuario.perfil === 'cliente') {
+    //         const now = new Date(); // Current time
+
+    //         this.firebaseServ.obtenerColeccion('reservas').subscribe((reservas) => {
+    //           this.reservas = reservas;
+    //           this.reserva = reservas.find(reserva => reserva.cliente.id === usuario.id && reserva.fechaHora.toDate() <= now && new Date(reserva.fechaHora.toDate().getTime() + (1 * 60 * 60 * 1000)) >= now && reserva.estado === 'confirmada');
+
+    //           // reservas.forEach(reserva => {
+    //           //   if (reserva.cliente.id === usuario.id && reserva.fechaHora.toDate() <= now && new Date(reserva.fechaHora.toDate().getTime() + (1 * 60 * 60 * 1000)) >= now && reserva.estado === 'confirmada') {
+    //           //     this.reserva = reserva;
+    //           //   }
+    //           // });
+
+    //           if (this.reserva) {
+    //             this.pantalla = 2;
+    //             this.clienteEsperando = usuario;
+    //             this.clienteEsperando.sentado = true;
+    //             this.seEnlisto = true;
+    //           }
+    //         });
+    //       }
+    //     }
+    //   })
+    // });
+
+    const usuarios = await this.firebaseServ.obtenerColeccion2('usuarios-aceptados');
+    usuarios.forEach(usuario => {
+      if (usuario.data['email'] == this.authServ.obtenerEmailUsuarioLogueado()) {
+        this.usuarioLogueado = usuario;
+        this.isAnonimo = (usuario.data['perfil'] === 'anónimo');
+
+        if (this.usuarioLogueado && usuario.data['perfil'] === 'cliente') {
+          const now = new Date(); // Current time
+
+          this.firebaseServ.obtenerColeccion('reservas').subscribe((reservas) => {
+            this.reservas = reservas;
+            this.reserva = reservas.find(reserva => reserva.cliente.id === usuario.id && reserva.fechaHora.toDate() <= now && new Date(reserva.fechaHora.toDate().getTime() + (1 * 60 * 60 * 1000)) >= now && reserva.estado === 'confirmada');
+
+            // reservas.forEach(reserva => {
+            //   if (reserva.cliente.id === usuario.id && reserva.fechaHora.toDate() <= now && new Date(reserva.fechaHora.toDate().getTime() + (1 * 60 * 60 * 1000)) >= now && reserva.estado === 'confirmada') {
+            //     this.reserva = reserva;
+            //   }
+            // });
+
+            if (this.reserva) {
+              this.pantalla = 2;
+              this.clienteEsperando = usuario;
+              this.clienteEsperando.sentado = true;
+              this.seEnlisto = true;
+            }
+          });
         }
-      })
+      }
     });
+
     this.firebaseServ.obtenerColeccion('lista-espera').subscribe((usuarios) => {
       this.listaEspera = usuarios;
     });
     this.firebaseServ.obtenerColeccion('mesas').subscribe((mesas) => {
       this.listaMesas = mesas;
+    });
+    this.firebaseServ.obtenerColeccion('reservas').subscribe((reservas) => {
+      this.reservas = reservas;
     });
 
     // Init push notifications listener
@@ -135,16 +196,14 @@ export class InicioClientePage implements OnInit {
       if (resultado.hasContent) {
         this.vibration.vibrate(300);
         if (resultado.content == "lista-espera") {
-          if (!this.seEnlisto)
-          {
+          if (!this.seEnlisto) {
             this.ponerseEnListaEspera();
             this.seEnlisto = true;
-  
+
             // enviar push notification list de espera a metres
             this.fcmService.clienteEnListaDeEsperaPushNotification();
           }
-          else
-          {
+          else {
             this.mensajePopUp = "Ya fue aceptado de la lista de espera.";
             this.popup = true;
             this.stopScan();
@@ -156,10 +215,17 @@ export class InicioClientePage implements OnInit {
             this.stopScan();
             this.activarSpinner();
             setTimeout(() => {
-              if (!this.mesa.ocupada) {
-                this.asignarDatosMesa(parseInt(resultado.content.split('-')[1]));
-                this.activarSpinner();
-                this.router.navigate(['/inicio-cliente/mesa']);
+              const now = new Date(); // Current time
+              if (!this.mesa.ocupada && !this.reservas.find(reserva => reserva.cliente.id !== this.usuarioLogueado.id && reserva.fechaHora.toDate() <= now && new Date(reserva.fechaHora.toDate().getTime() + (1 * 60 * 60 * 1000)) >= now && reserva.estado === 'confirmada')) {
+                if ((this.reserva && this.reserva.mesa.id === parseInt(resultado.content.split('-')[1])) || !this.reserva) {
+                  this.asignarDatosMesa(parseInt(resultado.content.split('-')[1]));
+                  this.activarSpinner();
+                  this.router.navigate(['/inicio-cliente/mesa']);
+                }
+                else {
+                  this.mensajePopUp = "Esta no es la mesa reservada.";
+                  this.popup = true;
+                }
               }
               else {
                 this.mensajePopUp = "La mesa está ocupada.";
@@ -173,8 +239,7 @@ export class InicioClientePage implements OnInit {
             this.stopScan();
           }
         }
-        else if(resultado.content.includes("propina"))
-        {
+        else if (resultado.content.includes("propina")) {
           this.mensajePopUp = "No puede acceder a la propina sin un pago pendiente.";
           this.popup = true;
           this.stopScan();
@@ -216,7 +281,7 @@ export class InicioClientePage implements OnInit {
 
   ponerseEnListaEspera() {
     this.clienteEsperando.comenzales = this.contadorPersonas;
-    if (this.usuarioLogueado.perfil == "cliente") {
+    if (this.usuarioLogueado.data['perfil'] == "cliente") {
       if (!this.verificarListaEspera()) {
         this.asignarDatos(this.usuarioLogueado);
         this.firebaseServ.agregarDocumentoGenerico(this.clienteEsperando, 'lista-espera');
@@ -250,11 +315,11 @@ export class InicioClientePage implements OnInit {
   asignarDatos(cliente: any) {
     this.clienteEsperando = {
       id: cliente.id,
-      nombre: cliente.nombre,
-      apellido: cliente.apellido,
-      hora: cliente.hora,
-      perfil: cliente.perfil,
-      rutaFoto: cliente.rutaFoto,
+      nombre: cliente.data['nombre'],
+      apellido: cliente.data['apellido'],
+      hora: cliente.data['hora'],
+      perfil: cliente.data['perfil'],
+      rutaFoto: cliente.data['rutaFoto'],
       comenzales: this.contadorPersonas,
       sentado: false,
     };

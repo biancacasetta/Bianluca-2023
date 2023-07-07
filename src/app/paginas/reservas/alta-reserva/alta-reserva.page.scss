@@ -14,14 +14,42 @@ ion-header ion-toolbar
 
 .pantalla
 {
-    width: 100%;
-    min-height: 100%;
-    overflow-y: scroll;
+    min-height: 100vh;
+    max-height: 100vh;
+    background-image: url("../../../../assets/icon/fondo-salmon.avif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: auto;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     flex-direction: column;
     background-color: rgb(228, 224, 224);
+
+    .container {
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 75vw;
+        font-family: 'Mate SC', serif;
+        text-transform: none;
+
+        input, select {
+            background-color: white;
+            color: black;
+            border: none;
+            margin: 5px;
+            padding: 15px 10px;
+            border-radius: 50px;
+            width: 100%;
+        }
+    }
+}
+
+h1 {
+    color: black;
+    font-family: KATO;
 }
 
 h4{
@@ -31,86 +59,6 @@ h4{
 h6
 {
     font-family: 'Mate SC', serif;
-}
-
-.pantalla .card
-{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.pantalla ion-card
-{
-    width: 90%;
-    --background: #FF8F82;
-    --color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.pantalla ion-card ion-card-header
-{
-    padding-bottom: 0;
-    font-family: 'Mate SC', serif;
-    text-align: center;
-    width: 100%;
-}
-
-.pantalla ion-card ion-card-header ion-card-subtitle
-{
-    --color: white;
-    font-size: 1.1em;
-    padding: 1vh;
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.estado-pedido
-{
-    color: #FA5046;
-    font-weight: bolder;
-}
-
-.pantalla ion-card ion-card-content
-{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.pedido
-{
-    width: 80%;
-    padding: 2vh;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;
-    border-top: 1px solid rgb(240, 240, 240);
-    border-bottom: 1px solid rgb(240, 240, 240);
-    margin-bottom: 3px;
-    margin-top: 3px;
-}
-
-.pantalla ion-card ion-button
-{
-    width: 90%;
-    --background: #FA5046;
-    font-family: KATO;
-}
-
-.pantalla ion-button
-{
-    width: 90%;
-    --background: #FA5046;
-    font-family: KATO;
 }
 
 /* SPINNER */
